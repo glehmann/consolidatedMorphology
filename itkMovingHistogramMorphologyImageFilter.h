@@ -82,7 +82,7 @@ public:
     }
 
 
-  inline bool useVectorBasedAlgorithm()
+  inline static bool useVectorBasedAlgorithm()
     {
     // bool, short and char are acceptable for vector based algorithm: they do not require
     // too much memory. Other types are not usable with that algorithm
@@ -268,6 +268,11 @@ public:
   /** Set/Get the boundary value. */
   itkSetMacro(Boundary, PixelType);
   itkGetMacro(Boundary, PixelType);
+
+  /** Return true if the vector based algorithm is used, and
+   * false if the map based algorithm is used */
+  static bool GetUseVectorBasedAlgorithm()
+    { return THistogram::useVectorBasedAlgorithm(); }
   
 protected:
   MovingHistogramMorphologyImageFilter();

@@ -20,6 +20,8 @@
 #include "itkImageToImageFilter.h"
 #include "itkMovingHistogramDilateImageFilter.h"
 #include "itkBasicDilateImageFilter.h"
+#include "itkAnchorDilateImageFilter.h"
+#include "itkCastImageFilter.h"
 #include "itkConstantBoundaryCondition.h"
 
 namespace itk {
@@ -69,6 +71,8 @@ public:
 
   typedef MovingHistogramDilateImageFilter< TInputImage, TOutputImage, TKernel > HistogramFilterType;
   typedef BasicDilateImageFilter< TInputImage, TOutputImage, TKernel > BasicFilterType;
+  typedef AnchorDilateImageFilter< TInputImage, TKernel > AnchorFilterType;
+  typedef CastImageFilter< TInputImage, TOutputImage > CastFilterType;
   
   /** Image related typedefs. */
   itkStaticConstMacro(ImageDimension, unsigned int,
@@ -157,6 +161,7 @@ private:
   // the filters used internally
   typename HistogramFilterType::Pointer m_HistogramFilter;
   typename BasicFilterType::Pointer m_BasicFilter;
+  typename AnchorFilterType::Pointer m_AnchorFilter;
 
   // and the name of the filter
   const char* m_NameOfBackendFilterClass;
