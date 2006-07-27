@@ -92,6 +92,15 @@ SET(CurrentExe "gradient2D_std_kernel")
 ADD_EXECUTABLE(${CurrentExe} ${CurrentExe}.cxx)
 TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
 
+
+SET(CurrentExe "white2D")
+ADD_EXECUTABLE(${CurrentExe} ${CurrentExe}.cxx)
+TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
+
+SET(CurrentExe "white2D_std_kernel")
+ADD_EXECUTABLE(${CurrentExe} ${CurrentExe}.cxx)
+TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
+
 ENDIF(BUILD_TESTING)
 
 #the following line is an example of how to add a test to your project.
@@ -102,5 +111,37 @@ ENDIF(BUILD_TESTING)
 #any tests you can comment out or delete the following line.
 # ADD_TEST(Testname ExecutableToRun arg1 arg2 arg3)
 
-ADD_TEST(Run check ${INPUT_IMAGE} out.png)
-ADD_TEST(CompareImage ${IMAGE_COMPARE} out.png ${CMAKE_SOURCE_DIR}/images/test.png)
+ADD_TEST(Dilate2D dilate2D ${INPUT_IMAGE} dilate2D-basic.png
+dilate2D-histo.png dilate2D-anchor.png)
+ADD_TEST(Dilate2DBasicCompare ${IMAGE_COMPARE} dilate2D-basic.png
+${CMAKE_SOURCE_DIR}/images/dilate2D.png)
+ADD_TEST(Dilate2DHistoCompare ${IMAGE_COMPARE} dilate2D-histo.png
+${CMAKE_SOURCE_DIR}/images/dilate2D.png)
+ADD_TEST(Dilate2DAnchorCompare ${IMAGE_COMPARE} dilate2D-anchor.png
+${CMAKE_SOURCE_DIR}/images/dilate2D.png)
+
+ADD_TEST(Dilate2Dstd dilate2D_std_kernel ${INPUT_IMAGE} dilate2D-std-basic.png
+dilate2D-std-histo.png)
+ADD_TEST(Dilate2DstdBasicCompare ${IMAGE_COMPARE} dilate2D-std-basic.png
+${CMAKE_SOURCE_DIR}/images/dilate2D-std.png)
+ADD_TEST(Dilate2DstdHistoCompare ${IMAGE_COMPARE} dilate2D-std-histo.png
+${CMAKE_SOURCE_DIR}/images/dilate2D-std.png)
+
+
+ADD_TEST(Erode2D erode2D ${INPUT_IMAGE} erode2D-basic.png
+erode2D-histo.png erode2D-anchor.png)
+ADD_TEST(Erode2DBasicCompare ${IMAGE_COMPARE} erode2D-basic.png
+${CMAKE_SOURCE_DIR}/images/erode2D.png)
+ADD_TEST(Erode2DHistoCompare ${IMAGE_COMPARE} erode2D-histo.png
+${CMAKE_SOURCE_DIR}/images/erode2D.png)
+ADD_TEST(Erode2DAnchorCompare ${IMAGE_COMPARE} erode2D-anchor.png
+${CMAKE_SOURCE_DIR}/images/erode2D.png)
+
+ADD_TEST(Erode2Dstd erode2D_std_kernel ${INPUT_IMAGE} erode2D-std-basic.png
+erode2D-std-histo.png)
+ADD_TEST(Erode2DstdBasicCompare ${IMAGE_COMPARE} erode2D-std-basic.png
+${CMAKE_SOURCE_DIR}/images/erode2D-std.png)
+ADD_TEST(Erode2DstdHistoCompare ${IMAGE_COMPARE} erode2D-std-histo.png
+${CMAKE_SOURCE_DIR}/images/erode2D-std.png)
+
+
