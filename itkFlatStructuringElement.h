@@ -2,11 +2,11 @@
 #define __itkFlatStructuringElement_h
 
 #include "itkNeighborhood.h"
-#include "itkBinaryBallStructuringElement.h"
 #include "itkSize.h"
 #include "itkOffset.h"
-#include "itkOffsetLexicographicCompare.h"
-#include <set>
+#include <vector>
+#include "itkVector.h"
+
 namespace itk {
 
 /** \class FlatStructuringElement
@@ -15,74 +15,101 @@ namespace itk {
 **/
 
 template<unsigned int VDimension>
-class ITK_EXPORT FlatStructuringElement
+class ITK_EXPORT FlatStructuringElement : public Neighborhood <bool, VDimension>
 {
 public:
   /** Standard class typedefs. */
-  typedef FlatStructuringElement Self;
-  //typedef Neighborhood<bool, VDimension> Superclass;
+  typedef FlatStructuringElement< VDimension> Self;
+  typedef Neighborhood<bool, VDimension> Superclass;
 
+  /** External support for pixel type. */
+  typedef typename Superclass::PixelType PixelType;
+  
+  /** Iterator typedef support. Note the naming is intentional, i.e.,
+  * ::iterator and ::const_iterator, because the allocator may be a
+  * vnl object or other type, which uses this form. */
+  typedef typename Superclass::Iterator       Iterator;
+  typedef typename Superclass::ConstIterator ConstIterator;
+  
+  /** Size and value typedef support. */
+  typedef typename Superclass::SizeType      SizeType;
+  typedef typename Superclass::SizeValueType SizeValueType;
+  
+  /** Radius typedef support. */
+  typedef typename Superclass::RadiusType RadiusType;
+
+  /** External slice iterator type typedef support. */
+  typedef typename Superclass::SliceIteratorType SliceIteratorType;
+  
   /** External support for dimensionality. */
   itkStaticConstMacro(NeighborhoodDimension, unsigned int, VDimension);
 
-  /** Radius typedef support. */
-  typedef Size<VDimension> RadiusType;
+  typedef Vector<float, VDimension> LType;
+  typedef std::vector<LType> DecompType;
 
   /** Default destructor. */
   virtual ~FlatStructuringElement() {}
 
   /** Default consructor. */
-  FlatStructuringElement() {}
+  FlatStructuringElement() {m_Decomposable=false;}
 
   /** Various constructors */
 
-  static FlatStructuringElement Box(RadiusType radius)
-  {
-    FlatStructuringElement res = FlatStructuringElement();
-   
-    res.m_seType = seBox;
-    for (unsigned i = 0; i < VDimension; ++i)
-      {
-      res.m_Box[i] = 2*radius[i] + 1;
-      }
-    return (res);
-  }
+  static Self Box(RadiusType radius);
   
-  static FlatStructuringElement Ball(RadiusType radius)
+  static Self Ball(RadiusType radius);
+  
+  // lines is the number of elements in the decomposition
+  static Self Poly(RadiusType radius, unsigned lines);
+
+  bool GetDecomposable()
   {
-    FlatStructuringElement res = FlatStructuringElement();
-    
-    res.m_seType = seBall;
-    res.m_Ball.SetRadius(radius);
-    res.m_Ball.CreateStructuringElement();
-    return res;
+    return m_Decomposable;
+  }
+
+  const DecompType & GetLines()
+  {
+    return(m_Lines);
   }
 
   void PrintSelf(std::ostream &os, Indent indent) const;
 
+  template < class ImageType > typename ImageType::Pointer GetImage();
+
+protected:
+
+  void ComputeBufferFromLines();
+
+
 private:
-  typedef enum {seBall, seBox, seAny, sePoly} seType;
-  // flag to define the structuring element type
-  seType m_seType; 
+  bool m_Decomposable;
 
-  // structures to represent the different types of SE
-  typedef BinaryBallStructuringElement<bool, VDimension> BallSEType;
+  DecompType m_Lines;
   
-  // A box structuring element - will get decomposed into VDimension
-  // orthogonal lines
-  typedef Size<VDimension> BoxSEType;
-  
-  // polyhedra support - radial decomposition of circles/spheres 
-  // into lines.
-  // Use offsets to represent lines at the moment - basically consider
-  // it as a vector describing line orientation
-  typedef Offset<VDimension> LineType;
-  typedef std::set<LineType, Functor::OffsetLexicographicCompare<VDimension> > PolySEType;
+  // dispatch between 2D and 3D
+  struct DispatchBase {};
+  template<unsigned int VDimension2>
+  struct Dispatch : DispatchBase {};
 
-  // instances of the possible SEs
-  BallSEType m_Ball;
-  BoxSEType m_Box;
-  PolySEType m_Poly;
+  virtual FlatStructuringElement PolySub(const Dispatch<2> &, 
+					 RadiusType radius, 
+					 unsigned lines) const;
+
+  virtual FlatStructuringElement PolySub(const Dispatch<3> &, 
+					 RadiusType radius, 
+					 unsigned lines) const;
+
+  virtual FlatStructuringElement PolySub(const DispatchBase &, 
+					 RadiusType radius, 
+					 unsigned lines) const;
+
+
+  bool checkParallel(LType NewVec, DecompType Lines);
+
+  typedef struct {
+    LType P1, P2, P3;
+  } FacetType;
+
 };
 } // namespace itk
 
