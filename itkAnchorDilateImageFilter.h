@@ -16,7 +16,7 @@ public:
 
   /** Runtime information support. */
   itkTypeMacro(AnchorDilateImageFilter, 
-               ImageToImageFilter);
+               AnchorErodeDilateImageFilter);
 
   typedef SmartPointer<Self>   Pointer;
   typedef SmartPointer<const Self>  ConstPointer;

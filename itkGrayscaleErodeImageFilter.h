@@ -20,7 +20,11 @@
 #include "itkImageToImageFilter.h"
 #include "itkMovingHistogramErodeImageFilter.h"
 #include "itkBasicErodeImageFilter.h"
+#include "itkAnchorErodeImageFilter.h"
+#include "itkCastImageFilter.h"
 #include "itkConstantBoundaryCondition.h"
+#include "itkFlatStructuringElement.h"
+#include "itkNeighborhood.h"
 
 namespace itk {
 
@@ -58,6 +62,10 @@ public:
                ImageToImageFilter);
   
   /** Image related typedefs. */
+  itkStaticConstMacro(ImageDimension, unsigned int,
+                      TInputImage::ImageDimension);
+                      
+  /** Image related typedefs. */
   typedef TInputImage InputImageType;
   typedef TOutputImage OutputImageType;
   typedef typename TInputImage::RegionType RegionType ;
@@ -69,13 +77,9 @@ public:
 
   typedef MovingHistogramErodeImageFilter< TInputImage, TOutputImage, TKernel > HistogramFilterType;
   typedef BasicErodeImageFilter< TInputImage, TOutputImage, TKernel > BasicFilterType;
-  
-  /** Image related typedefs. */
-  itkStaticConstMacro(ImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
-                      
-  /** Kernel typedef. */
-  typedef TKernel KernelType;
+  typedef FlatStructuringElement< ImageDimension > FlatKernelType;
+  typedef AnchorErodeImageFilter< TInputImage, FlatKernelType > AnchorFilterType;
+  typedef CastImageFilter< TInputImage, TOutputImage > CastFilterType;
   
   /** Typedef for boundary conditions. */
   typedef ImageBoundaryCondition<InputImageType> *ImageBoundaryConditionPointerType;
@@ -83,6 +87,11 @@ public:
   typedef ConstantBoundaryCondition<InputImageType> DefaultBoundaryConditionType;
 
 
+  /** Kernel typedef. */
+  typedef TKernel KernelType;
+//   typedef typename KernelType::Superclass KernelSuperClass;
+//   typedef Neighborhood< typename KernelType::PixelType, ImageDimension > KernelSuperClass;
+  
   /** Set kernel (structuring element). */
   void SetKernel( const KernelType& kernel );
 
@@ -134,7 +143,7 @@ public:
   void ResetBoundaryCondition()
     {
     itkLegacyBody(itk::GrayscaleErodeImageFilter::ResetBoundaryCondition, 2.8);
-    SetBoundary( itk::NumericTraits< PixelType >::max() );
+    SetBoundary( itk::NumericTraits< PixelType >::NonpositiveMin() );
     }
 
 
@@ -157,6 +166,7 @@ private:
   // the filters used internally
   typename HistogramFilterType::Pointer m_HistogramFilter;
   typename BasicFilterType::Pointer m_BasicFilter;
+  typename AnchorFilterType::Pointer m_AnchorFilter;
 
   // and the name of the filter
   const char* m_NameOfBackendFilterClass;
