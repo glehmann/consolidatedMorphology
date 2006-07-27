@@ -20,20 +20,28 @@
 #include "itkImageToImageFilter.h"
 #include "itkMovingHistogramMorphologicalGradientImageFilter.h"
 #include "itkBasicMorphologicalGradientImageFilter.h"
+#include "itkAnchorDilateImageFilter.h"
+#include "itkAnchorErodeImageFilter.h"
+#include "itkCastImageFilter.h"
 #include "itkConstantBoundaryCondition.h"
+#include "itkFlatStructuringElement.h"
+#include "itkNeighborhood.h"
+#include "itkSubtractImageFilter.h"
 
 namespace itk {
 
 /**
  * \class MorphologicalGradientImageFilter
- * \brief Morphological gradients enhance the variation of pixel intensity in a given neighborhood.
+ * \brief gray scale dilation of an image
  *
- * Morphological gradient is described in Chapter 3.8.1 of Pierre Soille's book 
- * "Morphological Image Analysis: Principles and Applications", 
- * Second Edition, Springer, 2003.
+ * MorphologicalGradient an image using grayscale morphology. Dilation takes the
+ * maximum of all the pixels identified by the structuring element.
+ *
+ * The structuring element is assumed to be composed of binary
+ * values (zero or one). Only elements of the structuring element
+ * having values > 0 are candidates for affecting the center pixel.
  * 
- * \author Gaëtan Lehmann. Biologie du Développement et de la Reproduction, INRA de Jouy-en-Josas, France.
- *
+ * \sa MorphologyImageFilter, FunctionMorphologicalGradientImageFilter, BinaryMorphologicalGradientImageFilter
  * \ingroup ImageEnhancement  MathematicalMorphologyImageFilters
  */
 
@@ -56,6 +64,10 @@ public:
                ImageToImageFilter);
   
   /** Image related typedefs. */
+  itkStaticConstMacro(ImageDimension, unsigned int,
+                      TInputImage::ImageDimension);
+                      
+  /** Image related typedefs. */
   typedef TInputImage InputImageType;
   typedef TOutputImage OutputImageType;
   typedef typename TInputImage::RegionType RegionType ;
@@ -67,13 +79,21 @@ public:
 
   typedef MovingHistogramMorphologicalGradientImageFilter< TInputImage, TOutputImage, TKernel > HistogramFilterType;
   typedef BasicMorphologicalGradientImageFilter< TInputImage, TOutputImage, TKernel > BasicFilterType;
+  typedef FlatStructuringElement< ImageDimension > FlatKernelType;
+  typedef AnchorDilateImageFilter< TInputImage, FlatKernelType > AnchorDilateFilterType;
+  typedef AnchorErodeImageFilter< TInputImage, FlatKernelType > AnchorErodeFilterType;
+  typedef SubtractImageFilter< TInputImage, TInputImage, TOutputImage > SubtractFilterType;
   
-  /** Image related typedefs. */
-  itkStaticConstMacro(ImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
-                      
+  /** Typedef for boundary conditions. */
+  typedef ImageBoundaryCondition<InputImageType> *ImageBoundaryConditionPointerType;
+  typedef ImageBoundaryCondition<InputImageType> const *ImageBoundaryConditionConstPointerType;
+  typedef ConstantBoundaryCondition<InputImageType> DefaultBoundaryConditionType;
+
+
   /** Kernel typedef. */
   typedef TKernel KernelType;
+//   typedef typename KernelType::Superclass KernelSuperClass;
+//   typedef Neighborhood< typename KernelType::PixelType, ImageDimension > KernelSuperClass;
   
   /** Set kernel (structuring element). */
   void SetKernel( const KernelType& kernel );
@@ -95,6 +115,37 @@ public:
   /** MorphologicalGradientImageFilter need to set its internal filters as modified */
   virtual void Modified() const;
 
+  /** \deprecated
+  * Allows a user to override the internal boundary condition. Care should be
+  * be taken to ensure that the overriding boundary condition is a persistent
+  * object during the time it is referenced. The overriding condition
+  * can be of a different type than the default type as long as it is
+  * a subclass of ImageBoundaryCondition. */
+  void OverrideBoundaryCondition(const DefaultBoundaryConditionType* i)
+    {
+    itkLegacyBody(itk::MorphologicalGradientImageFilter::OverrideBoundaryCondition, 2.8);
+    SetBoundary( i->GetConstant() );
+    }
+
+  /** \deprecated
+   * Get the current boundary condition.
+   */
+  const DefaultBoundaryConditionType* GetBoundaryCondition()
+    {
+    itkLegacyBody(itk::MorphologicalGradientImageFilter::GetBoundaryCondition, 2.8);
+    return &m_BoundaryCondition;
+    }
+
+  /** \deprecated
+   * Rest the boundary condition to the default
+   */
+  void ResetBoundaryCondition()
+    {
+    itkLegacyBody(itk::MorphologicalGradientImageFilter::ResetBoundaryCondition, 2.8);
+    SetBoundary( itk::NumericTraits< PixelType >::NonpositiveMin() );
+    }
+
+
 protected:
   MorphologicalGradientImageFilter();
   ~MorphologicalGradientImageFilter() {};
@@ -109,13 +160,20 @@ private:
   /** kernel or structuring element to use. */
   KernelType m_Kernel ;
 
+  PixelType m_Boundary;
+
   // the filters used internally
   typename HistogramFilterType::Pointer m_HistogramFilter;
   typename BasicFilterType::Pointer m_BasicFilter;
+  typename AnchorDilateFilterType::Pointer m_AnchorDilateFilter;
+  typename AnchorErodeFilterType::Pointer m_AnchorErodeFilter;
 
   // and the name of the filter
   const char* m_NameOfBackendFilterClass;
 
+  // the boundary condition need to be stored here
+  DefaultBoundaryConditionType m_BoundaryCondition;
+  
 } ; // end of class
 
 } // end namespace itk

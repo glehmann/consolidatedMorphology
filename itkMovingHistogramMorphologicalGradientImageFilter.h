@@ -63,7 +63,7 @@ public:
     }
 
 
-  inline bool useVectorBasedAlgorithm()
+  static inline bool useVectorBasedAlgorithm()
     {
     // bool, short and char are acceptable for vector based algorithm: they do not require
     // too much memory. Other types are not usable with that algorithm
@@ -240,6 +240,11 @@ public:
                       TInputImage::ImageDimension);
                       
 
+  /** Return true if the vector based algorithm is used, and
+   * false if the map based algorithm is used */
+  static bool GetUseVectorBasedAlgorithm()
+    { return Function::MorphologicalGradientHistogram< typename TInputImage::PixelType >::useVectorBasedAlgorithm(); }
+  
 protected:
   MovingHistogramMorphologicalGradientImageFilter() {};
   ~MovingHistogramMorphologicalGradientImageFilter() {};
