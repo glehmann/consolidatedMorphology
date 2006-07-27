@@ -120,8 +120,7 @@ MorphologicalGradientImageFilter< TInputImage, TOutputImage, TKernel>
     // we need to set the kernel on the histogram filter to compare basic and histogram algorithm
     m_HistogramFilter->SetKernel( kernel );
 
-    if( ( ImageDimension == 2 && m_Kernel.Size() < m_HistogramFilter->GetPixelsPerTranslation() * 5.4 )
-        || ( ImageDimension == 3 && m_Kernel.Size() < m_HistogramFilter->GetPixelsPerTranslation() * 4.5 ) )
+    if( m_Kernel.Size() < m_HistogramFilter->GetPixelsPerTranslation() * 4.0 )
       {
       m_BasicFilter->SetKernel( kernel );
       m_NameOfBackendFilterClass = m_BasicFilter->GetNameOfClass();
