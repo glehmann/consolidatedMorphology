@@ -94,10 +94,15 @@ void
 GrayscaleDilateImageFilter< TInputImage, TOutputImage, TKernel>
 ::SetKernel( const KernelType& kernel )
 {
+  const FlatKernelType * flatKernel = NULL;
+  try
+    { flatKernel = dynamic_cast< const FlatKernelType* >( & kernel ); }
+  catch( ... ) {}
 
-  if( kernel.GetDecomposable() )
+
+  if( flatKernel != NULL && flatKernel->GetDecomposable() )
     {
-    m_AnchorFilter->SetKernel( kernel );
+    m_AnchorFilter->SetKernel( *flatKernel );
     m_NameOfBackendFilterClass = m_AnchorFilter->GetNameOfClass();
     }
   else if( m_HistogramFilter->GetUseVectorBasedAlgorithm() )
@@ -150,6 +155,14 @@ GrayscaleDilateImageFilter< TInputImage, TOutputImage, TKernel>
   if( name == NULL )
     { itkExceptionMacro( << "Invalid name of class." ); }
 
+  const FlatKernelType * flatKernel = NULL;
+  try
+    { flatKernel = dynamic_cast< const FlatKernelType* >( & m_Kernel ); }
+  catch( ... ) {}
+
+  std::cout << "flatKernel: " << flatKernel << std::endl;
+
+
   if( strcmp( m_NameOfBackendFilterClass, name ) )
     {
     if( !strcmp( name, m_BasicFilter->GetNameOfClass() ) )
@@ -162,9 +175,9 @@ GrayscaleDilateImageFilter< TInputImage, TOutputImage, TKernel>
       m_HistogramFilter->SetKernel( m_Kernel );
       m_NameOfBackendFilterClass = m_HistogramFilter->GetNameOfClass();
       }
-    else if( !strcmp( name, m_AnchorFilter->GetNameOfClass() ) )
+    else if( flatKernel != NULL && !strcmp( name, m_AnchorFilter->GetNameOfClass() ) )
       {
-      m_AnchorFilter->SetKernel( m_Kernel );
+      m_AnchorFilter->SetKernel( *flatKernel );
       m_NameOfBackendFilterClass = m_AnchorFilter->GetNameOfClass();
       }
     else

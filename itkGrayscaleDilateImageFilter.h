@@ -23,6 +23,8 @@
 #include "itkAnchorDilateImageFilter.h"
 #include "itkCastImageFilter.h"
 #include "itkConstantBoundaryCondition.h"
+#include "itkFlatStructuringElement.h"
+#include "itkNeighborhood.h"
 
 namespace itk {
 
@@ -60,6 +62,10 @@ public:
                ImageToImageFilter);
   
   /** Image related typedefs. */
+  itkStaticConstMacro(ImageDimension, unsigned int,
+                      TInputImage::ImageDimension);
+                      
+  /** Image related typedefs. */
   typedef TInputImage InputImageType;
   typedef TOutputImage OutputImageType;
   typedef typename TInputImage::RegionType RegionType ;
@@ -71,13 +77,10 @@ public:
 
   typedef MovingHistogramDilateImageFilter< TInputImage, TOutputImage, TKernel > HistogramFilterType;
   typedef BasicDilateImageFilter< TInputImage, TOutputImage, TKernel > BasicFilterType;
-  typedef AnchorDilateImageFilter< TInputImage, TKernel > AnchorFilterType;
+  typedef FlatStructuringElement< ImageDimension > FlatKernelType;
+  typedef AnchorDilateImageFilter< TInputImage, FlatKernelType > AnchorFilterType;
   typedef CastImageFilter< TInputImage, TOutputImage > CastFilterType;
   
-  /** Image related typedefs. */
-  itkStaticConstMacro(ImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
-                      
   /** Typedef for boundary conditions. */
   typedef ImageBoundaryCondition<InputImageType> *ImageBoundaryConditionPointerType;
   typedef ImageBoundaryCondition<InputImageType> const *ImageBoundaryConditionConstPointerType;
@@ -86,6 +89,8 @@ public:
 
   /** Kernel typedef. */
   typedef TKernel KernelType;
+//   typedef typename KernelType::Superclass KernelSuperClass;
+//   typedef Neighborhood< typename KernelType::PixelType, ImageDimension > KernelSuperClass;
   
   /** Set kernel (structuring element). */
   void SetKernel( const KernelType& kernel );
