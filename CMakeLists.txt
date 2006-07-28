@@ -101,6 +101,15 @@ SET(CurrentExe "open2D_std_kernel")
 ADD_EXECUTABLE(${CurrentExe} ${CurrentExe}.cxx)
 TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
 
+
+SET(CurrentExe "close2D")
+ADD_EXECUTABLE(${CurrentExe} ${CurrentExe}.cxx)
+TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
+
+SET(CurrentExe "close2D_std_kernel")
+ADD_EXECUTABLE(${CurrentExe} ${CurrentExe}.cxx)
+TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
+
 ENDIF(BUILD_TESTING)
 
 #the following line is an example of how to add a test to your project.
@@ -178,4 +187,22 @@ ADD_TEST(Open2DstdBasicCompare ${IMAGE_COMPARE} open2D-std-basic.png
 ${CMAKE_SOURCE_DIR}/images/open2D-std.png)
 ADD_TEST(Open2DstdHistoCompare ${IMAGE_COMPARE} open2D-std-histo.png
 ${CMAKE_SOURCE_DIR}/images/open2D-std.png)
+
+
+
+ADD_TEST(Close2D close2D ${INPUT_IMAGE} close2D-basic.png
+close2D-histo.png close2D-anchor.png)
+ADD_TEST(Close2DBasicCompare ${IMAGE_COMPARE} close2D-basic.png
+${CMAKE_SOURCE_DIR}/images/close2D.png)
+ADD_TEST(Close2DHistoCompare ${IMAGE_COMPARE} close2D-histo.png
+${CMAKE_SOURCE_DIR}/images/close2D.png)
+ADD_TEST(Close2DAnchorCompare ${IMAGE_COMPARE} close2D-anchor.png
+${CMAKE_SOURCE_DIR}/images/close2D.png)
+
+ADD_TEST(Close2Dstd close2D_std_kernel ${INPUT_IMAGE} close2D-std-basic.png
+close2D-std-histo.png)
+ADD_TEST(Close2DstdBasicCompare ${IMAGE_COMPARE} close2D-std-basic.png
+${CMAKE_SOURCE_DIR}/images/close2D-std.png)
+ADD_TEST(Close2DstdHistoCompare ${IMAGE_COMPARE} close2D-std-histo.png
+${CMAKE_SOURCE_DIR}/images/close2D-std.png)
 
