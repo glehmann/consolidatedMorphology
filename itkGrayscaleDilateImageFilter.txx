@@ -33,7 +33,7 @@ GrayscaleDilateImageFilter<TInputImage, TOutputImage, TKernel>
   m_BasicFilter = BasicFilterType::New();
   m_HistogramFilter = HistogramFilterType::New();
   m_AnchorFilter = AnchorFilterType::New();
-  m_NameOfBackendFilterClass = m_HistogramFilter->GetNameOfClass();
+  m_Algorithm = HISTO;
 
   this->SetBoundary( itk::NumericTraits< PixelType >::NonpositiveMin() );
 }
@@ -103,12 +103,12 @@ GrayscaleDilateImageFilter< TInputImage, TOutputImage, TKernel>
   if( flatKernel != NULL && flatKernel->GetDecomposable() )
     {
     m_AnchorFilter->SetKernel( *flatKernel );
-    m_NameOfBackendFilterClass = m_AnchorFilter->GetNameOfClass();
+    m_Algorithm = ANCHOR;
     }
   else if( m_HistogramFilter->GetUseVectorBasedAlgorithm() )
     {
     // histogram based filter is as least as good as the basic one, so always use it
-    m_NameOfBackendFilterClass = m_HistogramFilter->GetNameOfClass();
+    m_Algorithm = HISTO;
     m_BasicFilter->SetKernel( kernel );
     }
   else 
@@ -124,11 +124,11 @@ GrayscaleDilateImageFilter< TInputImage, TOutputImage, TKernel>
         || ( ImageDimension == 3 && m_Kernel.Size() < m_HistogramFilter->GetPixelsPerTranslation() * 4.5 ) )
       {
       m_BasicFilter->SetKernel( kernel );
-      m_NameOfBackendFilterClass = m_BasicFilter->GetNameOfClass();
+      m_Algorithm = BASIC;
       }
     else
       {
-      m_NameOfBackendFilterClass = m_HistogramFilter->GetNameOfClass();
+      m_Algorithm = HISTO;
       }
     }
 
@@ -150,39 +150,34 @@ GrayscaleDilateImageFilter< TInputImage, TOutputImage, TKernel>
 template< class TInputImage, class TOutputImage, class TKernel>
 void
 GrayscaleDilateImageFilter< TInputImage, TOutputImage, TKernel>
-::SetNameOfBackendFilterClass( const char * name )
+::SetAlgorithm( int algo )
 {
-  if( name == NULL )
-    { itkExceptionMacro( << "Invalid name of class." ); }
-
   const FlatKernelType * flatKernel = NULL;
   try
     { flatKernel = dynamic_cast< const FlatKernelType* >( & m_Kernel ); }
   catch( ... ) {}
 
-  std::cout << "flatKernel: " << flatKernel << std::endl;
-
-
-  if( strcmp( m_NameOfBackendFilterClass, name ) )
+  if( m_Algorithm != algo )
     {
-    if( !strcmp( name, m_BasicFilter->GetNameOfClass() ) )
+
+    if( algo == BASIC )
       {
       m_BasicFilter->SetKernel( m_Kernel );
-      m_NameOfBackendFilterClass = m_BasicFilter->GetNameOfClass();
       }
-    else if( !strcmp( name, m_HistogramFilter->GetNameOfClass() ) )
+    else if( algo == HISTO )
       {
       m_HistogramFilter->SetKernel( m_Kernel );
-      m_NameOfBackendFilterClass = m_HistogramFilter->GetNameOfClass();
       }
-    else if( flatKernel != NULL && !strcmp( name, m_AnchorFilter->GetNameOfClass() ) )
+    else if( flatKernel != NULL && flatKernel->GetDecomposable() && algo == ANCHOR )
       {
       m_AnchorFilter->SetKernel( *flatKernel );
-      m_NameOfBackendFilterClass = m_AnchorFilter->GetNameOfClass();
       }
     else
-      { itkExceptionMacro( << "Invalid name of class." ); }
+      { itkExceptionMacro( << "Invalid algorithm" ); }
+
+    m_Algorithm = algo;
     this->Modified();
+
     }
 }
 
@@ -199,7 +194,7 @@ GrayscaleDilateImageFilter<TInputImage, TOutputImage, TKernel>
   this->AllocateOutputs();
 
   // Delegate to a dilate filter.
-  if( !strcmp( m_NameOfBackendFilterClass, m_BasicFilter->GetNameOfClass() ) )
+  if( m_Algorithm == BASIC )
     {
 //     std::cout << "BasicDilateImageFilter" << std::endl;
     m_BasicFilter->SetInput( this->GetInput() );
@@ -209,7 +204,7 @@ GrayscaleDilateImageFilter<TInputImage, TOutputImage, TKernel>
     m_BasicFilter->Update();
     this->GraftOutput( m_BasicFilter->GetOutput() );
     }
-  else if( !strcmp( m_NameOfBackendFilterClass, m_HistogramFilter->GetNameOfClass() ) )
+  else if( m_Algorithm == HISTO )
     {
 //     std::cout << "MovingHistogramDilateImageFilter" << std::endl;
     m_HistogramFilter->SetInput( this->GetInput() );
@@ -219,7 +214,7 @@ GrayscaleDilateImageFilter<TInputImage, TOutputImage, TKernel>
     m_HistogramFilter->Update();
     this->GraftOutput( m_HistogramFilter->GetOutput() );
     }
-  else if( !strcmp( m_NameOfBackendFilterClass, m_AnchorFilter->GetNameOfClass() ) )
+  else if( m_Algorithm == ANCHOR )
     {
 //     std::cout << "AnchorDilateImageFilter" << std::endl;
     m_AnchorFilter->SetInput( this->GetInput() );
@@ -256,7 +251,7 @@ GrayscaleDilateImageFilter<TInputImage, TOutputImage, TKernel>
 
   os << indent << "Kernel: " << m_Kernel << std::endl;
   os << indent << "Boundary: " <<  static_cast<typename NumericTraits<PixelType>::PrintType>( m_Boundary ) << std::endl;
-  os << indent << "NameOfBackendFilterClass: " << m_NameOfBackendFilterClass << std::endl;
+  os << indent << "Algorithm: " << m_Algorithm << std::endl;
 }
 
 }// end namespace itk

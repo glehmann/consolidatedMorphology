@@ -35,15 +35,15 @@ int main(int, char * argv[])
   WriterType::Pointer writer = WriterType::New();
   writer->SetInput( dilate->GetOutput() );
 
-  dilate->SetNameOfBackendFilterClass( "BasicDilateImageFilter" );
+  dilate->SetAlgorithm( DilateType::BASIC );
   writer->SetFileName( argv[2] );
   writer->Update();
 
-  dilate->SetNameOfBackendFilterClass( "MovingHistogramDilateImageFilter" );
+  dilate->SetAlgorithm( DilateType::HISTO );
   writer->SetFileName( argv[3] );
   writer->Update();
 
- dilate->SetNameOfBackendFilterClass( "AnchorDilateImageFilter" );
+  dilate->SetAlgorithm( DilateType::ANCHOR );
   writer->SetFileName( argv[4] );
   writer->Update();
 

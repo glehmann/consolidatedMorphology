@@ -103,8 +103,8 @@ public:
   itkGetMacro(Boundary, PixelType);
   
   /** Set/Get the backend filter class. */
-  void SetNameOfBackendFilterClass( const char * name );
-  itkGetMacro(NameOfBackendFilterClass, const char*);
+  void SetAlgorithm(int algo );
+  itkGetMacro(Algorithm, int);
   
   /** GrayscaleDilateImageFilter need to make sure they request enough of an
    * input image to account for the structuring element size.  The input
@@ -146,6 +146,11 @@ public:
     SetBoundary( itk::NumericTraits< PixelType >::NonpositiveMin() );
     }
 
+  /** define values used to determine which algorithm to use */
+  static const int BASIC = 0;
+  static const int HISTO = 1;
+  static const int ANCHOR = 2;
+
 
 protected:
   GrayscaleDilateImageFilter();
@@ -169,7 +174,7 @@ private:
   typename AnchorFilterType::Pointer m_AnchorFilter;
 
   // and the name of the filter
-  const char* m_NameOfBackendFilterClass;
+  int m_Algorithm;
 
   // the boundary condition need to be stored here
   DefaultBoundaryConditionType m_BoundaryCondition;

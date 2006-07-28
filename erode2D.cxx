@@ -25,25 +25,25 @@ int main(int, char * argv[])
   SRType kernel = SRType::Box( radius );
   
   typedef itk::GrayscaleErodeImageFilter< IType, IType, SRType > ErodeType;
-  ErodeType::Pointer dilate = ErodeType::New();
-  dilate->SetInput( reader->GetOutput() );
-  dilate->SetKernel( kernel );
+  ErodeType::Pointer erode = ErodeType::New();
+  erode->SetInput( reader->GetOutput() );
+  erode->SetKernel( kernel );
   
-  itk::SimpleFilterWatcher watcher(dilate, "filter");
+  itk::SimpleFilterWatcher watcher(erode, "filter");
 
   typedef itk::ImageFileWriter< IType > WriterType;
   WriterType::Pointer writer = WriterType::New();
-  writer->SetInput( dilate->GetOutput() );
+  writer->SetInput( erode->GetOutput() );
 
-  dilate->SetNameOfBackendFilterClass( "BasicErodeImageFilter" );
+  erode->SetAlgorithm( ErodeType::BASIC );
   writer->SetFileName( argv[2] );
   writer->Update();
 
-  dilate->SetNameOfBackendFilterClass( "MovingHistogramErodeImageFilter" );
+  erode->SetAlgorithm( ErodeType::HISTO );
   writer->SetFileName( argv[3] );
   writer->Update();
 
- dilate->SetNameOfBackendFilterClass( "AnchorErodeImageFilter" );
+  erode->SetAlgorithm( ErodeType::ANCHOR );
   writer->SetFileName( argv[4] );
   writer->Update();
 
