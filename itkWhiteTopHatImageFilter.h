@@ -84,6 +84,19 @@ public:
   itkGetConstReferenceMacro(SafeBorder, bool);
   itkBooleanMacro(SafeBorder);
 
+  /** define values used to determine which algorithm to use */
+  static const int BASIC = 0;
+  static const int HISTO = 1;
+  static const int ANCHOR = 2;
+
+  /** Set/Get the backend filter class. */
+  itkSetMacro(Algorithm, int);
+  itkGetMacro(Algorithm, int);
+  
+  itkSetMacro(ForceAlgorithm, bool);
+  itkGetConstReferenceMacro(ForceAlgorithm, bool);
+  itkBooleanMacro(ForceAlgorithm);
+
 protected:
   WhiteTopHatImageFilter();
   ~WhiteTopHatImageFilter() {};
@@ -105,6 +118,10 @@ private:
   KernelType m_Kernel ;
 
   bool m_SafeBorder;
+
+  int m_Algorithm;
+
+  bool m_ForceAlgorithm;
 
 } ; // end of class
 

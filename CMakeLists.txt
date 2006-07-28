@@ -110,6 +110,15 @@ SET(CurrentExe "close2D_std_kernel")
 ADD_EXECUTABLE(${CurrentExe} ${CurrentExe}.cxx)
 TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
 
+
+SET(CurrentExe "whiteTopHat2D")
+ADD_EXECUTABLE(${CurrentExe} ${CurrentExe}.cxx)
+TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
+
+SET(CurrentExe "whiteTopHat2D_std_kernel")
+ADD_EXECUTABLE(${CurrentExe} ${CurrentExe}.cxx)
+TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
+
 ENDIF(BUILD_TESTING)
 
 #the following line is an example of how to add a test to your project.
@@ -205,4 +214,22 @@ ADD_TEST(Close2DstdBasicCompare ${IMAGE_COMPARE} close2D-std-basic.png
 ${CMAKE_SOURCE_DIR}/images/close2D-std.png)
 ADD_TEST(Close2DstdHistoCompare ${IMAGE_COMPARE} close2D-std-histo.png
 ${CMAKE_SOURCE_DIR}/images/close2D-std.png)
+
+
+
+ADD_TEST(WhiteTopHat2D whiteTopHat2D ${INPUT_IMAGE} whiteTopHat2D-basic.png
+whiteTopHat2D-histo.png whiteTopHat2D-anchor.png)
+ADD_TEST(WhiteTopHat2DBasicCompare ${IMAGE_COMPARE} whiteTopHat2D-basic.png
+${CMAKE_SOURCE_DIR}/images/whiteTopHat2D.png)
+ADD_TEST(WhiteTopHat2DHistoCompare ${IMAGE_COMPARE} whiteTopHat2D-histo.png
+${CMAKE_SOURCE_DIR}/images/whiteTopHat2D.png)
+ADD_TEST(WhiteTopHat2DAnchorCompare ${IMAGE_COMPARE} whiteTopHat2D-anchor.png
+${CMAKE_SOURCE_DIR}/images/whiteTopHat2D.png)
+
+ADD_TEST(WhiteTopHat2Dstd whiteTopHat2D_std_kernel ${INPUT_IMAGE} whiteTopHat2D-std-basic.png
+whiteTopHat2D-std-histo.png)
+ADD_TEST(WhiteTopHat2DstdBasicCompare ${IMAGE_COMPARE} whiteTopHat2D-std-basic.png
+${CMAKE_SOURCE_DIR}/images/whiteTopHat2D-std.png)
+ADD_TEST(WhiteTopHat2DstdHistoCompare ${IMAGE_COMPARE} whiteTopHat2D-std-histo.png
+${CMAKE_SOURCE_DIR}/images/whiteTopHat2D-std.png)
 

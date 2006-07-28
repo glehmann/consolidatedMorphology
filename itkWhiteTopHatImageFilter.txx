@@ -33,6 +33,8 @@ WhiteTopHatImageFilter<TInputImage, TOutputImage, TKernel>
   : m_Kernel()
 {
   m_SafeBorder = true;
+  m_Algorithm = HISTO;
+  m_ForceAlgorithm = false;
 }
 
 template <class TInputImage, class TOutputImage, class TKernel>
@@ -107,6 +109,14 @@ WhiteTopHatImageFilter<TInputImage, TOutputImage, TKernel>
   open->SetInput( this->GetInput() );
   open->SetKernel(this->m_Kernel);
   open->SetSafeBorder( m_SafeBorder );
+  if( m_ForceAlgorithm )
+    {
+    open->SetAlgorithm( m_Algorithm );
+    }
+  else
+    {
+    m_Algorithm = open->GetAlgorithm();
+    }
   
   // Need to subtract the opened image from the input
   typename SubtractImageFilter<TInputImage, TInputImage, TOutputImage>::Pointer
@@ -140,7 +150,9 @@ WhiteTopHatImageFilter<TInputImage, TOutputImage, TKernel>
   Superclass::PrintSelf(os, indent);
 
   os << indent << "Kernel: " << m_Kernel << std::endl;
+  os << indent << "Algorithm: " << m_Algorithm << std::endl;
   os << indent << "SafeBorder: " << m_SafeBorder << std::endl;
+  os << indent << "ForceAlgorithm: " << m_ForceAlgorithm << std::endl;
 }
 
 }// end namespace itk
