@@ -109,7 +109,7 @@ GrayscaleErodeImageFilter< TInputImage, TOutputImage, TKernel>
     {
     // histogram based filter is as least as good as the basic one, so always use it
     m_Algorithm = HISTO;
-    m_BasicFilter->SetKernel( kernel );
+    m_HistogramFilter->SetKernel( kernel );
     }
   else 
     {
