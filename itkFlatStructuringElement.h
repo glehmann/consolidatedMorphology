@@ -62,11 +62,15 @@ public:
   // lines is the number of elements in the decomposition
   static Self Poly(RadiusType radius, unsigned lines);
 
-  const bool GetDecomposable() const
-    { return m_Decomposable; }
+  bool GetDecomposable()
+  {
+    return m_Decomposable;
+  }
 
-  const DecompType & GetLines() const
-    { return m_Lines; }
+  const DecompType & GetLines()
+  {
+    return(m_Lines);
+  }
 
   void PrintSelf(std::ostream &os, Indent indent) const;
 
