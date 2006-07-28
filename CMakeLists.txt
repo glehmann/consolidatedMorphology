@@ -93,11 +93,11 @@ ADD_EXECUTABLE(${CurrentExe} ${CurrentExe}.cxx)
 TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
 
 
-SET(CurrentExe "white2D")
+SET(CurrentExe "open2D")
 ADD_EXECUTABLE(${CurrentExe} ${CurrentExe}.cxx)
 TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
 
-SET(CurrentExe "white2D_std_kernel")
+SET(CurrentExe "open2D_std_kernel")
 ADD_EXECUTABLE(${CurrentExe} ${CurrentExe}.cxx)
 TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
 
@@ -161,4 +161,21 @@ ${CMAKE_SOURCE_DIR}/images/gradient2D-std.png)
 ADD_TEST(Gradient2DstdHistoCompare ${IMAGE_COMPARE} gradient2D-std-histo.png
 ${CMAKE_SOURCE_DIR}/images/gradient2D-std.png)
 
+
+
+ADD_TEST(Open2D open2D ${INPUT_IMAGE} open2D-basic.png
+open2D-histo.png open2D-anchor.png)
+ADD_TEST(Open2DBasicCompare ${IMAGE_COMPARE} open2D-basic.png
+${CMAKE_SOURCE_DIR}/images/open2D.png)
+ADD_TEST(Open2DHistoCompare ${IMAGE_COMPARE} open2D-histo.png
+${CMAKE_SOURCE_DIR}/images/open2D.png)
+ADD_TEST(Open2DAnchorCompare ${IMAGE_COMPARE} open2D-anchor.png
+${CMAKE_SOURCE_DIR}/images/open2D.png)
+
+ADD_TEST(Open2Dstd open2D_std_kernel ${INPUT_IMAGE} open2D-std-basic.png
+open2D-std-histo.png)
+ADD_TEST(Open2DstdBasicCompare ${IMAGE_COMPARE} open2D-std-basic.png
+${CMAKE_SOURCE_DIR}/images/open2D-std.png)
+ADD_TEST(Open2DstdHistoCompare ${IMAGE_COMPARE} open2D-std-histo.png
+${CMAKE_SOURCE_DIR}/images/open2D-std.png)
 
