@@ -145,3 +145,20 @@ ADD_TEST(Erode2DstdHistoCompare ${IMAGE_COMPARE} erode2D-std-histo.png
 ${CMAKE_SOURCE_DIR}/images/erode2D-std.png)
 
 
+ADD_TEST(Gradient2D gradient2D ${INPUT_IMAGE} gradient2D-basic.png
+gradient2D-histo.png gradient2D-anchor.png)
+ADD_TEST(Gradient2DBasicCompare ${IMAGE_COMPARE} gradient2D-basic.png
+${CMAKE_SOURCE_DIR}/images/gradient2D.png)
+ADD_TEST(Gradient2DHistoCompare ${IMAGE_COMPARE} gradient2D-histo.png
+${CMAKE_SOURCE_DIR}/images/gradient2D.png)
+ADD_TEST(Gradient2DAnchorCompare ${IMAGE_COMPARE} gradient2D-anchor.png
+${CMAKE_SOURCE_DIR}/images/gradient2D.png)
+
+ADD_TEST(Gradient2Dstd gradient2D_std_kernel ${INPUT_IMAGE} gradient2D-std-basic.png
+gradient2D-std-histo.png)
+ADD_TEST(Gradient2DstdBasicCompare ${IMAGE_COMPARE} gradient2D-std-basic.png
+${CMAKE_SOURCE_DIR}/images/gradient2D-std.png)
+ADD_TEST(Gradient2DstdHistoCompare ${IMAGE_COMPARE} gradient2D-std-histo.png
+${CMAKE_SOURCE_DIR}/images/gradient2D-std.png)
+
+
