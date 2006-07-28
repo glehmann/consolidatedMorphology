@@ -46,7 +46,10 @@ int main(int, char * argv[])
   writer->Update();
 
   try
-    { dilate->SetAlgorithm( DilateType::ANCHOR ); }
+    {
+    dilate->SetAlgorithm( DilateType::ANCHOR );
+    return EXIT_FAILURE;
+    }
   catch( ... )
     { std::cout << "exception succesfully catched" << std::endl; }
 

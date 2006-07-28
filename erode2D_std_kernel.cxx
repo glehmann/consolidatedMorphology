@@ -46,7 +46,10 @@ int main(int, char * argv[])
   writer->Update();
 
   try
-    { erode->SetAlgorithm( ErodeType::ANCHOR ); }
+    {
+    erode->SetAlgorithm( ErodeType::ANCHOR );
+    return EXIT_FAILURE;
+    }
   catch( ... )
     { std::cout << "exception succesfully catched" << std::endl; }
 

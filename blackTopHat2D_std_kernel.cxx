@@ -30,6 +30,7 @@ int main(int, char * argv[])
   TopHatType::Pointer topHat = TopHatType::New();
   topHat->SetInput( reader->GetOutput() );
   topHat->SetKernel( kernel );
+  topHat->SetForceAlgorithm( true );
   
   itk::SimpleFilterWatcher watcher(topHat, "filter");
 
@@ -46,7 +47,11 @@ int main(int, char * argv[])
   writer->Update();
 
   try
-    { topHat->SetAlgorithm( TopHatType::ANCHOR ); }
+    {
+    topHat->SetAlgorithm( TopHatType::ANCHOR );
+    topHat->Update();
+    return EXIT_FAILURE;
+    }
   catch( ... )
     { std::cout << "exception succesfully catched" << std::endl; }
 

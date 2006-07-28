@@ -46,7 +46,10 @@ int main(int, char * argv[])
   writer->Update();
 
   try
-    { open->SetAlgorithm( MorphologicalOpeningType::ANCHOR ); }
+    {
+    open->SetAlgorithm( MorphologicalOpeningType::ANCHOR );
+    return EXIT_FAILURE;
+    }
   catch( ... )
     { std::cout << "exception succesfully catched" << std::endl; }
 
