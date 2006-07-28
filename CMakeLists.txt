@@ -119,6 +119,15 @@ SET(CurrentExe "whiteTopHat2D_std_kernel")
 ADD_EXECUTABLE(${CurrentExe} ${CurrentExe}.cxx)
 TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
 
+
+SET(CurrentExe "blackTopHat2D")
+ADD_EXECUTABLE(${CurrentExe} ${CurrentExe}.cxx)
+TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
+
+SET(CurrentExe "blackTopHat2D_std_kernel")
+ADD_EXECUTABLE(${CurrentExe} ${CurrentExe}.cxx)
+TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
+
 ENDIF(BUILD_TESTING)
 
 #the following line is an example of how to add a test to your project.
@@ -232,4 +241,22 @@ ADD_TEST(WhiteTopHat2DstdBasicCompare ${IMAGE_COMPARE} whiteTopHat2D-std-basic.p
 ${CMAKE_SOURCE_DIR}/images/whiteTopHat2D-std.png)
 ADD_TEST(WhiteTopHat2DstdHistoCompare ${IMAGE_COMPARE} whiteTopHat2D-std-histo.png
 ${CMAKE_SOURCE_DIR}/images/whiteTopHat2D-std.png)
+
+
+
+ADD_TEST(BlackTopHat2D blackTopHat2D ${INPUT_IMAGE} blackTopHat2D-basic.png
+blackTopHat2D-histo.png blackTopHat2D-anchor.png)
+ADD_TEST(BlackTopHat2DBasicCompare ${IMAGE_COMPARE} blackTopHat2D-basic.png
+${CMAKE_SOURCE_DIR}/images/blackTopHat2D.png)
+ADD_TEST(BlackTopHat2DHistoCompare ${IMAGE_COMPARE} blackTopHat2D-histo.png
+${CMAKE_SOURCE_DIR}/images/blackTopHat2D.png)
+ADD_TEST(BlackTopHat2DAnchorCompare ${IMAGE_COMPARE} blackTopHat2D-anchor.png
+${CMAKE_SOURCE_DIR}/images/blackTopHat2D.png)
+
+ADD_TEST(BlackTopHat2Dstd blackTopHat2D_std_kernel ${INPUT_IMAGE} blackTopHat2D-std-basic.png
+blackTopHat2D-std-histo.png)
+ADD_TEST(BlackTopHat2DstdBasicCompare ${IMAGE_COMPARE} blackTopHat2D-std-basic.png
+${CMAKE_SOURCE_DIR}/images/blackTopHat2D-std.png)
+ADD_TEST(BlackTopHat2DstdHistoCompare ${IMAGE_COMPARE} blackTopHat2D-std-histo.png
+${CMAKE_SOURCE_DIR}/images/blackTopHat2D-std.png)
 
