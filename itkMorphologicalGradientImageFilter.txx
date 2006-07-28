@@ -30,11 +30,12 @@ MorphologicalGradientImageFilter<TInputImage, TOutputImage, TKernel>
 ::MorphologicalGradientImageFilter()
   : m_Kernel()
 {
-  m_BasicFilter = BasicFilterType::New();
+  m_BasicDilateFilter = BasicDilateFilterType::New();
+  m_BasicErodeFilter = BasicErodeFilterType::New();
   m_HistogramFilter = HistogramFilterType::New();
   m_AnchorDilateFilter = AnchorDilateFilterType::New();
   m_AnchorErodeFilter = AnchorErodeFilterType::New();
-  m_NameOfBackendFilterClass = m_HistogramFilter->GetNameOfClass();
+  m_Algorithm = HISTO;
 }
 
 template<class TInputImage, class TOutputImage, class TKernel>
@@ -103,13 +104,13 @@ MorphologicalGradientImageFilter< TInputImage, TOutputImage, TKernel>
     {
     m_AnchorDilateFilter->SetKernel( *flatKernel );
     m_AnchorErodeFilter->SetKernel( *flatKernel );
-    m_NameOfBackendFilterClass = m_AnchorDilateFilter->GetNameOfClass();
+    m_Algorithm = ANCHOR;
     }
   else if( m_HistogramFilter->GetUseVectorBasedAlgorithm() )
     {
     // histogram based filter is as least as good as the basic one, so always use it
-    m_NameOfBackendFilterClass = m_HistogramFilter->GetNameOfClass();
-    m_BasicFilter->SetKernel( kernel );
+    m_Algorithm = HISTO;
+    m_HistogramFilter->SetKernel( kernel );
     }
   else 
     {
@@ -122,55 +123,53 @@ MorphologicalGradientImageFilter< TInputImage, TOutputImage, TKernel>
 
     if( m_Kernel.Size() < m_HistogramFilter->GetPixelsPerTranslation() * 4.0 )
       {
-      m_BasicFilter->SetKernel( kernel );
-      m_NameOfBackendFilterClass = m_BasicFilter->GetNameOfClass();
+      m_BasicDilateFilter->SetKernel( kernel );
+      m_BasicErodeFilter->SetKernel( kernel );
+      m_Algorithm = BASIC;
       }
     else
       {
-      m_NameOfBackendFilterClass = m_HistogramFilter->GetNameOfClass();
+      m_Algorithm = HISTO;
       }
     }
 
   m_Kernel = kernel;
 }
 
+
 template< class TInputImage, class TOutputImage, class TKernel>
 void
 MorphologicalGradientImageFilter< TInputImage, TOutputImage, TKernel>
-::SetNameOfBackendFilterClass( const char * name )
+::SetAlgorithm( int algo )
 {
-  if( name == NULL )
-    { itkExceptionMacro( << "Invalid name of class." ); }
-
   const FlatKernelType * flatKernel = NULL;
   try
     { flatKernel = dynamic_cast< const FlatKernelType* >( & m_Kernel ); }
   catch( ... ) {}
 
-  std::cout << "flatKernel: " << flatKernel << std::endl;
-
-
-  if( strcmp( m_NameOfBackendFilterClass, name ) )
+  if( m_Algorithm != algo )
     {
-    if( !strcmp( name, m_BasicFilter->GetNameOfClass() ) )
+
+    if( algo == BASIC )
       {
-      m_BasicFilter->SetKernel( m_Kernel );
-      m_NameOfBackendFilterClass = m_BasicFilter->GetNameOfClass();
+      m_BasicDilateFilter->SetKernel( m_Kernel );
+      m_BasicErodeFilter->SetKernel( m_Kernel );
       }
-    else if( !strcmp( name, m_HistogramFilter->GetNameOfClass() ) )
+    else if( algo == HISTO )
       {
       m_HistogramFilter->SetKernel( m_Kernel );
-      m_NameOfBackendFilterClass = m_HistogramFilter->GetNameOfClass();
       }
-    else if( flatKernel != NULL && !strcmp( name, m_AnchorDilateFilter->GetNameOfClass() ) )
+    else if( flatKernel != NULL && flatKernel->GetDecomposable() && algo == ANCHOR )
       {
       m_AnchorDilateFilter->SetKernel( *flatKernel );
       m_AnchorErodeFilter->SetKernel( *flatKernel );
-      m_NameOfBackendFilterClass = m_AnchorDilateFilter->GetNameOfClass();
       }
     else
-      { itkExceptionMacro( << "Invalid name of class." ); }
+      { itkExceptionMacro( << "Invalid algorithm" ); }
+
+    m_Algorithm = algo;
     this->Modified();
+
     }
 }
 
@@ -187,17 +186,25 @@ MorphologicalGradientImageFilter<TInputImage, TOutputImage, TKernel>
   this->AllocateOutputs();
 
   // Delegate to a dilate filter.
-  if( !strcmp( m_NameOfBackendFilterClass, m_BasicFilter->GetNameOfClass() ) )
+  if( m_Algorithm == BASIC )
     {
 //     std::cout << "BasicDilateImageFilter" << std::endl;
-    m_BasicFilter->SetInput( this->GetInput() );
-    progress->RegisterInternalFilter( m_BasicFilter, 1.0f );
+    m_BasicDilateFilter->SetInput( this->GetInput() );
+    progress->RegisterInternalFilter( m_BasicDilateFilter, 0.4f );
+
+    m_BasicErodeFilter->SetInput( this->GetInput() );
+    progress->RegisterInternalFilter( m_BasicErodeFilter, 0.4f );
+
+    typename SubtractFilterType::Pointer sub = SubtractFilterType::New();
+    sub->SetInput1( m_BasicDilateFilter->GetOutput() );
+    sub->SetInput2( m_BasicErodeFilter->GetOutput() );
+    progress->RegisterInternalFilter( sub, 0.1f );
     
-    m_BasicFilter->GraftOutput( this->GetOutput() );
-    m_BasicFilter->Update();
-    this->GraftOutput( m_BasicFilter->GetOutput() );
+    sub->GraftOutput( this->GetOutput() );
+    sub->Update();
+    this->GraftOutput( sub->GetOutput() );
     }
-  else if( !strcmp( m_NameOfBackendFilterClass, m_HistogramFilter->GetNameOfClass() ) )
+  else if( m_Algorithm == HISTO )
     {
 //     std::cout << "MovingHistogramDilateImageFilter" << std::endl;
     m_HistogramFilter->SetInput( this->GetInput() );
@@ -207,22 +214,23 @@ MorphologicalGradientImageFilter<TInputImage, TOutputImage, TKernel>
     m_HistogramFilter->Update();
     this->GraftOutput( m_HistogramFilter->GetOutput() );
     }
-  else if( !strcmp( m_NameOfBackendFilterClass, m_AnchorDilateFilter->GetNameOfClass() ) )
+  else if( m_Algorithm == ANCHOR )
     {
 //     std::cout << "AnchorDilateImageFilter" << std::endl;
     m_AnchorDilateFilter->SetInput( this->GetInput() );
-    m_AnchorErodeFilter->SetInput( this->GetInput() );
-    progress->RegisterInternalFilter( m_AnchorDilateFilter, 0.45f );
-    progress->RegisterInternalFilter( m_AnchorErodeFilter, 0.45f );
+    progress->RegisterInternalFilter( m_AnchorDilateFilter, 0.4f );
 
-    typename SubtractFilterType::Pointer subtract = SubtractFilterType::New();
-    subtract->SetInput1( m_AnchorDilateFilter->GetOutput() );
-    subtract->SetInput2( m_AnchorErodeFilter->GetOutput() );
-    progress->RegisterInternalFilter( subtract, 0.1f );
+    m_AnchorErodeFilter->SetInput( this->GetInput() );
+    progress->RegisterInternalFilter( m_AnchorErodeFilter, 0.4f );
+
+    typename SubtractFilterType::Pointer sub = SubtractFilterType::New();
+    sub->SetInput1( m_AnchorDilateFilter->GetOutput() );
+    sub->SetInput2( m_AnchorErodeFilter->GetOutput() );
+    progress->RegisterInternalFilter( sub, 0.1f );
     
-    subtract->GraftOutput( this->GetOutput() );
-    subtract->Update();
-    this->GraftOutput( subtract->GetOutput() );
+    sub->GraftOutput( this->GetOutput() );
+    sub->Update();
+    this->GraftOutput( sub->GetOutput() );
     }
 
 }
@@ -233,7 +241,8 @@ MorphologicalGradientImageFilter<TInputImage, TOutputImage, TKernel>
 ::Modified() const
 {
   Superclass::Modified();
-  m_BasicFilter->Modified();
+  m_BasicDilateFilter->Modified();
+  m_BasicErodeFilter->Modified();
   m_HistogramFilter->Modified();
   m_AnchorDilateFilter->Modified();
   m_AnchorErodeFilter->Modified();
@@ -247,7 +256,7 @@ MorphologicalGradientImageFilter<TInputImage, TOutputImage, TKernel>
   Superclass::PrintSelf(os, indent);
 
   os << indent << "Kernel: " << m_Kernel << std::endl;
-  os << indent << "NameOfBackendFilterClass: " << m_NameOfBackendFilterClass << std::endl;
+  os << indent << "Algorithm: " << m_Algorithm << std::endl;
 }
 
 }// end namespace itk

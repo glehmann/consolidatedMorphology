@@ -25,25 +25,25 @@ int main(int, char * argv[])
   SRType kernel = SRType::Box( radius );
   
   typedef itk::MorphologicalGradientImageFilter< IType, IType, SRType > MorphologicalGradientType;
-  MorphologicalGradientType::Pointer dilate = MorphologicalGradientType::New();
-  dilate->SetInput( reader->GetOutput() );
-  dilate->SetKernel( kernel );
+  MorphologicalGradientType::Pointer gradient = MorphologicalGradientType::New();
+  gradient->SetInput( reader->GetOutput() );
+  gradient->SetKernel( kernel );
   
-  itk::SimpleFilterWatcher watcher(dilate, "filter");
+  itk::SimpleFilterWatcher watcher(gradient, "filter");
 
   typedef itk::ImageFileWriter< IType > WriterType;
   WriterType::Pointer writer = WriterType::New();
-  writer->SetInput( dilate->GetOutput() );
+  writer->SetInput( gradient->GetOutput() );
 
-  dilate->SetNameOfBackendFilterClass( "BasicMorphologicalGradientImageFilter" );
+  gradient->SetAlgorithm( MorphologicalGradientType::BASIC );
   writer->SetFileName( argv[2] );
   writer->Update();
 
-  dilate->SetNameOfBackendFilterClass( "MovingHistogramMorphologicalGradientImageFilter" );
+  gradient->SetAlgorithm( MorphologicalGradientType::HISTO );
   writer->SetFileName( argv[3] );
   writer->Update();
 
- dilate->SetNameOfBackendFilterClass( "AnchorDilateImageFilter" );
+  gradient->SetAlgorithm( MorphologicalGradientType::ANCHOR );
   writer->SetFileName( argv[4] );
   writer->Update();
 

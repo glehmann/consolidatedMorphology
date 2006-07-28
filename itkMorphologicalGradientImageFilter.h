@@ -19,14 +19,14 @@
 
 #include "itkImageToImageFilter.h"
 #include "itkMovingHistogramMorphologicalGradientImageFilter.h"
-#include "itkBasicMorphologicalGradientImageFilter.h"
-#include "itkAnchorDilateImageFilter.h"
+#include "itkBasicDilateImageFilter.h"
+#include "itkBasicErodeImageFilter.h"
 #include "itkAnchorErodeImageFilter.h"
-#include "itkCastImageFilter.h"
+#include "itkAnchorDilateImageFilter.h"
+#include "itkSubtractImageFilter.h"
 #include "itkConstantBoundaryCondition.h"
 #include "itkFlatStructuringElement.h"
 #include "itkNeighborhood.h"
-#include "itkSubtractImageFilter.h"
 
 namespace itk {
 
@@ -34,14 +34,14 @@ namespace itk {
  * \class MorphologicalGradientImageFilter
  * \brief gray scale dilation of an image
  *
- * MorphologicalGradient an image using grayscale morphology. Dilation takes the
+ * Dilate an image using grayscale morphology. Dilation takes the
  * maximum of all the pixels identified by the structuring element.
  *
  * The structuring element is assumed to be composed of binary
  * values (zero or one). Only elements of the structuring element
  * having values > 0 are candidates for affecting the center pixel.
  * 
- * \sa MorphologyImageFilter, FunctionMorphologicalGradientImageFilter, BinaryMorphologicalGradientImageFilter
+ * \sa MorphologyImageFilter, GrayscaleFunctionDilateImageFilter, BinaryDilateImageFilter
  * \ingroup ImageEnhancement  MathematicalMorphologyImageFilters
  */
 
@@ -77,19 +77,14 @@ public:
   typedef typename TInputImage::OffsetType OffsetType ;
   typedef typename Superclass::OutputImageRegionType OutputImageRegionType;
 
-  typedef MovingHistogramMorphologicalGradientImageFilter< TInputImage, TOutputImage, TKernel > HistogramFilterType;
-  typedef BasicMorphologicalGradientImageFilter< TInputImage, TOutputImage, TKernel > BasicFilterType;
   typedef FlatStructuringElement< ImageDimension > FlatKernelType;
+  typedef MovingHistogramMorphologicalGradientImageFilter< TInputImage, TOutputImage, TKernel > HistogramFilterType;
+  typedef BasicDilateImageFilter< TInputImage, TInputImage, TKernel > BasicDilateFilterType;
+  typedef BasicErodeImageFilter< TInputImage, TInputImage, TKernel > BasicErodeFilterType;
   typedef AnchorDilateImageFilter< TInputImage, FlatKernelType > AnchorDilateFilterType;
   typedef AnchorErodeImageFilter< TInputImage, FlatKernelType > AnchorErodeFilterType;
   typedef SubtractImageFilter< TInputImage, TInputImage, TOutputImage > SubtractFilterType;
   
-  /** Typedef for boundary conditions. */
-  typedef ImageBoundaryCondition<InputImageType> *ImageBoundaryConditionPointerType;
-  typedef ImageBoundaryCondition<InputImageType> const *ImageBoundaryConditionConstPointerType;
-  typedef ConstantBoundaryCondition<InputImageType> DefaultBoundaryConditionType;
-
-
   /** Kernel typedef. */
   typedef TKernel KernelType;
 //   typedef typename KernelType::Superclass KernelSuperClass;
@@ -102,8 +97,8 @@ public:
   itkGetConstReferenceMacro(Kernel, KernelType);
   
   /** Set/Get the backend filter class. */
-  void SetNameOfBackendFilterClass( const char * name );
-  itkGetMacro(NameOfBackendFilterClass, const char*);
+  void SetAlgorithm(int algo );
+  itkGetMacro(Algorithm, int);
   
   /** MorphologicalGradientImageFilter need to make sure they request enough of an
    * input image to account for the structuring element size.  The input
@@ -115,35 +110,10 @@ public:
   /** MorphologicalGradientImageFilter need to set its internal filters as modified */
   virtual void Modified() const;
 
-  /** \deprecated
-  * Allows a user to override the internal boundary condition. Care should be
-  * be taken to ensure that the overriding boundary condition is a persistent
-  * object during the time it is referenced. The overriding condition
-  * can be of a different type than the default type as long as it is
-  * a subclass of ImageBoundaryCondition. */
-  void OverrideBoundaryCondition(const DefaultBoundaryConditionType* i)
-    {
-    itkLegacyBody(itk::MorphologicalGradientImageFilter::OverrideBoundaryCondition, 2.8);
-    SetBoundary( i->GetConstant() );
-    }
-
-  /** \deprecated
-   * Get the current boundary condition.
-   */
-  const DefaultBoundaryConditionType* GetBoundaryCondition()
-    {
-    itkLegacyBody(itk::MorphologicalGradientImageFilter::GetBoundaryCondition, 2.8);
-    return &m_BoundaryCondition;
-    }
-
-  /** \deprecated
-   * Rest the boundary condition to the default
-   */
-  void ResetBoundaryCondition()
-    {
-    itkLegacyBody(itk::MorphologicalGradientImageFilter::ResetBoundaryCondition, 2.8);
-    SetBoundary( itk::NumericTraits< PixelType >::NonpositiveMin() );
-    }
+  /** define values used to determine which algorithm to use */
+  static const int BASIC = 0;
+  static const int HISTO = 1;
+  static const int ANCHOR = 2;
 
 
 protected:
@@ -160,20 +130,16 @@ private:
   /** kernel or structuring element to use. */
   KernelType m_Kernel ;
 
-  PixelType m_Boundary;
-
   // the filters used internally
   typename HistogramFilterType::Pointer m_HistogramFilter;
-  typename BasicFilterType::Pointer m_BasicFilter;
+  typename BasicDilateFilterType::Pointer m_BasicDilateFilter;
+  typename BasicErodeFilterType::Pointer m_BasicErodeFilter;
   typename AnchorDilateFilterType::Pointer m_AnchorDilateFilter;
   typename AnchorErodeFilterType::Pointer m_AnchorErodeFilter;
 
   // and the name of the filter
-  const char* m_NameOfBackendFilterClass;
+  int m_Algorithm;
 
-  // the boundary condition need to be stored here
-  DefaultBoundaryConditionType m_BoundaryCondition;
-  
 } ; // end of class
 
 } // end namespace itk
