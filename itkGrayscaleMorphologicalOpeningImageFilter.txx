@@ -198,7 +198,7 @@ GrayscaleMorphologicalOpeningImageFilter<TInputImage, TOutputImage, TKernel>
       typename PadType::Pointer pad = PadType::New();
       pad->SetPadLowerBound( m_Kernel.GetRadius().m_Size );
       pad->SetPadUpperBound( m_Kernel.GetRadius().m_Size );
-      pad->SetConstant( NumericTraits<typename InputImageType::PixelType>::NonpositiveMin() );
+      pad->SetConstant( NumericTraits<typename InputImageType::PixelType>::max() );
       pad->SetInput( this->GetInput() );
       progress->RegisterInternalFilter( pad, 0.1f );
     
@@ -241,7 +241,7 @@ GrayscaleMorphologicalOpeningImageFilter<TInputImage, TOutputImage, TKernel>
       typename PadType::Pointer pad = PadType::New();
       pad->SetPadLowerBound( m_Kernel.GetRadius().m_Size );
       pad->SetPadUpperBound( m_Kernel.GetRadius().m_Size );
-      pad->SetConstant( NumericTraits<typename InputImageType::PixelType>::NonpositiveMin() );
+      pad->SetConstant( NumericTraits<typename InputImageType::PixelType>::max() );
       pad->SetInput( this->GetInput() );
       progress->RegisterInternalFilter( pad, 0.1f );
     
