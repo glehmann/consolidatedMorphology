@@ -278,16 +278,44 @@ GrayscaleMorphologicalOpeningImageFilter<TInputImage, TOutputImage, TKernel>
   else if( m_Algorithm == ANCHOR )
     {
 //     std::cout << "AnchorDilateImageFilter" << std::endl;
-    m_AnchorFilter->SetInput( this->GetInput() );
-    progress->RegisterInternalFilter( m_AnchorFilter, 0.1f );
+    if ( m_SafeBorder )
+      {
+      typedef typename itk::ConstantPadImageFilter<InputImageType, InputImageType> PadType;
+      typename PadType::Pointer pad = PadType::New();
+      pad->SetPadLowerBound( m_Kernel.GetRadius().m_Size );
+      pad->SetPadUpperBound( m_Kernel.GetRadius().m_Size );
+      pad->SetConstant( NumericTraits<typename InputImageType::PixelType>::max() );
+      pad->SetInput( this->GetInput() );
+      progress->RegisterInternalFilter( pad, 0.1f );
+    
+      m_AnchorFilter->SetInput( pad->GetOutput() );
+      progress->RegisterInternalFilter( m_AnchorFilter, 0.8f );
 
-    typedef typename itk::CastImageFilter<TInputImage, TOutputImage> CastType;
-    typename CastType::Pointer cast = CastType::New();
-    cast->SetInput( m_AnchorFilter->GetOutput() );
+      typedef typename itk::CropImageFilter<TInputImage, TOutputImage> CropType;
+      typename CropType::Pointer crop = CropType::New();
+      crop->SetInput( m_AnchorFilter->GetOutput() );
+      crop->SetUpperBoundaryCropSize( m_Kernel.GetRadius() );
+      crop->SetLowerBoundaryCropSize( m_Kernel.GetRadius() );
+      progress->RegisterInternalFilter( crop, 0.1f );
 
-    cast->GraftOutput( this->GetOutput() );
-    cast->Update();
-    this->GraftOutput( cast->GetOutput() );
+      crop->GraftOutput( this->GetOutput() );
+      crop->Update();
+      this->GraftOutput( crop->GetOutput() );
+      }
+    else
+      {
+      m_AnchorFilter->SetInput( this->GetInput() );
+      progress->RegisterInternalFilter( m_AnchorFilter, 0.9f );
+  
+      typedef typename itk::CastImageFilter<TInputImage, TOutputImage> CastType;
+      typename CastType::Pointer cast = CastType::New();
+      cast->SetInput( m_AnchorFilter->GetOutput() );
+      progress->RegisterInternalFilter( cast, 0.1f );
+  
+      cast->GraftOutput( this->GetOutput() );
+      cast->Update();
+      this->GraftOutput( cast->GetOutput() );
+      }
     }
 
 }
