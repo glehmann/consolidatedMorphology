@@ -35,7 +35,7 @@ GrayscaleErodeImageFilter<TInputImage, TOutputImage, TKernel>
   m_AnchorFilter = AnchorFilterType::New();
   m_Algorithm = HISTO;
 
-  this->SetBoundary( itk::NumericTraits< PixelType >::NonpositiveMin() );
+  this->SetBoundary( itk::NumericTraits< PixelType >::max() );
 }
 
 template<class TInputImage, class TOutputImage, class TKernel>
