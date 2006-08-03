@@ -14,7 +14,10 @@ namespace itk {
  * \class AnchorErodeDilateImageFilter
  * \brief class to implement erosions and dilations using anchor
  * methods. This is the base class that must be instantiated with
- * appropriate definitions of greater, less and so on
+ * appropriate definitions of greater, less and so on.
+ * The SetBoundary facility isn't necessary for operation of the
+ * anchor method but is included for compatability with other
+ * morphology classes in itk.
 
 **/
 template<class TImage, class TKernel, 
@@ -74,12 +77,12 @@ protected:
    * to GrayscaleGeodesicErodeImageFilter. */
   void GenerateData();
 
+  // should be set by the meta filter
+  InputImagePixelType m_Boundary;
 
 private:
   AnchorErodeDilateImageFilter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
-  // should be set by the meta filter
-  InputImagePixelType m_Boundary;
 
   TKernel m_Kernel;
   bool m_KernelSet;

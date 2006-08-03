@@ -26,7 +26,10 @@ public:
 
   virtual ~AnchorErodeImageFilter() {}
 protected:
-  AnchorErodeImageFilter(){}
+  AnchorErodeImageFilter()
+  {
+    this->m_Boundary = itk::NumericTraits< typename TImage::PixelType >::max();
+  }
   void PrintSelf(std::ostream& os, Indent indent) const
   {
     os << indent << "Anchor erosion: " << std::endl;

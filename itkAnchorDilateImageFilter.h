@@ -26,7 +26,10 @@ public:
 
   virtual ~AnchorDilateImageFilter() {}
 protected:
-  AnchorDilateImageFilter(){}
+  AnchorDilateImageFilter()
+  {
+    this->m_Boundary = itk::NumericTraits< typename TImage::PixelType >::NonpositiveMin();    
+  }
   void PrintSelf(std::ostream& os, Indent indent) const
   {
     os << indent << "Anchor dilation: " << std::endl;
