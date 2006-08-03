@@ -142,7 +142,7 @@ GrayscaleDilateImageFilter< TInputImage, TOutputImage, TKernel>
 {
   m_Boundary = value;
   m_HistogramFilter->SetBoundary( value );
-  
+  m_AnchorFilter->SetBoundary(value);
   m_BoundaryCondition.SetConstant( value );
   m_BasicFilter->OverrideBoundaryCondition( &m_BoundaryCondition );
 }

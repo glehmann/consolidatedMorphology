@@ -235,9 +235,10 @@ int fillLineBuffer(typename TImage::ConstPointer input,
 #endif
 #if 1
   unsigned size = end - start + 1;
+  // compat
   for (unsigned i = 0; i < size;i++)
     {
-    inbuffer[i] = input->GetPixel(StartIndex + LineOffsets[start + i]);
+    inbuffer[i+1] = input->GetPixel(StartIndex + LineOffsets[start + i]);
     }
 #else
   typedef ImageRegionConstIteratorWithIndex<TImage> ItType;
@@ -346,7 +347,7 @@ void copyLineToImage(const typename TImage::Pointer output,
   for (unsigned i = 0; i <size; i++)
     {
 #if 1
-    output->SetPixel(StartIndex + LineOffsets[start + i], outbuffer[i]);
+    output->SetPixel(StartIndex + LineOffsets[start + i], outbuffer[i+1]);  //compat
 #else
     output->SetPixel(StartIndex + LineOffsets[start + i], 1+outbuffer[i]);
 #endif
@@ -359,6 +360,7 @@ void copyLineToImage(const typename TImage::Pointer output,
 template <class TImage, class TBres, class TAnchor, class TLine>
 void doFace(typename TImage::ConstPointer input,
 	    typename TImage::Pointer output,
+	    typename TImage::PixelType border,
 	    TLine line,
 	    TAnchor &AnchorLine,
 	    const typename TBres::OffsetArray LineOffsets,
@@ -383,8 +385,11 @@ void doFace(typename TImage::ConstPointer input,
 					     AllImage, inbuffer, start, end))
       {
       len = end - start + 1;
+      // compat
+      inbuffer[0]=border;
+      inbuffer[len+1]=border;
 #if 1
-      AnchorLine.doLine(outbuffer, inbuffer, len);
+      AnchorLine.doLine(outbuffer, inbuffer, len + 2);  // compat
       copyLineToImage<TImage, TBres>(output, Ind, LineOffsets, outbuffer, start, end);
 #else
       // test the decomposition

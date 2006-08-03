@@ -74,6 +74,7 @@ void copyLineToImage(const typename TImage::Pointer output,
 template <class TImage, class TBres, class TAnchor, class TLine>
 void doFace(typename TImage::ConstPointer input,
 	    typename TImage::Pointer output,
+	    typename TImage::PixelType border,
 	    TLine line,
 	    TAnchor &AnchorLine,
 	    const typename TBres::OffsetArray LineOffsets,

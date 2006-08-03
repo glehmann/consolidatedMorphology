@@ -61,7 +61,9 @@ public:
     m_KernelSet = true;
   }
 
-
+  /** Set/Get the boundary value. */
+  void SetBoundary( const InputImagePixelType value );
+  itkGetMacro(Boundary, InputImagePixelType);
 
 protected:
   AnchorErodeDilateImageFilter();
@@ -76,6 +78,8 @@ protected:
 private:
   AnchorErodeDilateImageFilter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
+  // should be set by the meta filter
+  InputImagePixelType m_Boundary;
 
   TKernel m_Kernel;
   bool m_KernelSet;

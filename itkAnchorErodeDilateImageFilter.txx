@@ -20,6 +20,14 @@ AnchorErodeDilateImageFilter<TImage, TKernel, TFunction1, TFunction2>
 template <class TImage, class TKernel, class TFunction1, class TFunction2>
 void
 AnchorErodeDilateImageFilter<TImage, TKernel, TFunction1, TFunction2>
+::SetBoundary(const InputImagePixelType value)
+{
+  m_Boundary = value;
+}
+
+template <class TImage, class TKernel, class TFunction1, class TFunction2>
+void
+AnchorErodeDilateImageFilter<TImage, TKernel, TFunction1, TFunction2>
 ::GenerateData()
 {
 
@@ -57,7 +65,9 @@ AnchorErodeDilateImageFilter<TImage, TKernel, TFunction1, TFunction2>
     {
     bufflength += OReg.GetSize()[i];
     }
-  
+  // compat
+  bufflength += 2;
+
 #ifdef ANCHOR_ALGORITHM
   InputImagePixelType * buffer = new InputImagePixelType[bufflength];
   InputImagePixelType * inbuffer = new InputImagePixelType[bufflength];
@@ -87,7 +97,7 @@ AnchorErodeDilateImageFilter<TImage, TKernel, TFunction1, TFunction2>
     InputImageRegionType BigFace = mkEnlargedFace<InputImageType, typename KernelType::LType>(input, OReg, ThisLine);
 #ifdef ANCHOR_ALGORITHM
     AnchorLine.SetSize(SELength);
-    doFace<TImage, BresType, AnchorLineType, typename KernelType::LType>(input, output, ThisLine, AnchorLine, 
+    doFace<TImage, BresType, AnchorLineType, typename KernelType::LType>(input, output, m_Boundary, ThisLine, AnchorLine, 
 									   TheseOffsets, inbuffer, buffer, OReg, BigFace);
 #else
     doFace<TImage, BresType, TFunction1, typename KernelType::LType>(input, output, ThisLine,  
