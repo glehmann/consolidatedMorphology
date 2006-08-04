@@ -278,46 +278,46 @@ int main(int, char * argv[])
       vgradient->Modified();
 
 
-//       botime.Start();
-//       bopen->Update();
-//       botime.Stop();
-//       bopen->Modified();
-// 
-//       hotime.Start();
-//       hopen->Update();
-//       hotime.Stop();
-//       hopen->Modified();
-// 
+      botime.Start();
+      bopen->Update();
+      botime.Stop();
+      bopen->Modified();
+
+      hotime.Start();
+      hopen->Update();
+      hotime.Stop();
+      hopen->Modified();
+
 //       aotime.Start();
 //       aopen->Update();
 //       aotime.Stop();
 //       aopen->Modified();
-// 
-//       votime.Start();
-//       vopen->Update();
-//       votime.Stop();
-//       vopen->Modified();
-// 
-// 
-//       bctime.Start();
-//       bclose->Update();
-//       bctime.Stop();
-//       bclose->Modified();
-// 
-//       hctime.Start();
-//       hclose->Update();
-//       hctime.Stop();
-//       hclose->Modified();
-// 
+
+      votime.Start();
+      vopen->Update();
+      votime.Stop();
+      vopen->Modified();
+
+
+      bctime.Start();
+      bclose->Update();
+      bctime.Stop();
+      bclose->Modified();
+
+      hctime.Start();
+      hclose->Update();
+      hctime.Stop();
+      hclose->Modified();
+
 //       actime.Start();
 //       aclose->Update();
 //       actime.Stop();
 //       aclose->Modified();
-// 
-//       vctime.Start();
-//       vclose->Update();
-//       vctime.Stop();
-//       vclose->Modified();
+
+      vctime.Start();
+      vclose->Update();
+      vctime.Stop();
+      vclose->Modified();
 
       }
       
