@@ -380,6 +380,8 @@ GrayscaleMorphologicalClosingImageFilter<TInputImage, TOutputImage, TKernel>
   m_BasicDilateFilter->Modified();
   m_HistogramErodeFilter->Modified();
   m_HistogramDilateFilter->Modified();
+  m_vHGWDilateFilter->Modified();
+  m_vHGWErodeFilter->Modified();
   m_AnchorFilter->Modified();
 }
 
