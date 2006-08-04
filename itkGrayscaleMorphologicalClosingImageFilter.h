@@ -114,6 +114,7 @@ public:
   static const int BASIC = 0;
   static const int HISTO = 1;
   static const int ANCHOR = 2;
+  static const int VHGW = 3;
 
   /** A safe border is added to input image to avoid borders effects
    * and remove it once the closing is done */

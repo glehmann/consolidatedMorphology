@@ -33,6 +33,7 @@ GrayscaleDilateImageFilter<TInputImage, TOutputImage, TKernel>
   m_BasicFilter = BasicFilterType::New();
   m_HistogramFilter = HistogramFilterType::New();
   m_AnchorFilter = AnchorFilterType::New();
+  m_VHGWFilter = VHGWFilterType::New();
   m_Algorithm = HISTO;
 
   this->SetBoundary( itk::NumericTraits< PixelType >::NonpositiveMin() );
@@ -143,6 +144,7 @@ GrayscaleDilateImageFilter< TInputImage, TOutputImage, TKernel>
   m_Boundary = value;
   m_HistogramFilter->SetBoundary( value );
   m_AnchorFilter->SetBoundary(value);
+  m_VHGWFilter->SetBoundary(value);
   m_BoundaryCondition.SetConstant( value );
   m_BasicFilter->OverrideBoundaryCondition( &m_BoundaryCondition );
 }
@@ -171,6 +173,10 @@ GrayscaleDilateImageFilter< TInputImage, TOutputImage, TKernel>
     else if( flatKernel != NULL && flatKernel->GetDecomposable() && algo == ANCHOR )
       {
       m_AnchorFilter->SetKernel( *flatKernel );
+      }
+    else if( flatKernel != NULL && flatKernel->GetDecomposable() && algo == VHGW )
+      {
+      m_VHGWFilter->SetKernel( *flatKernel );
       }
     else
       { itkExceptionMacro( << "Invalid algorithm" ); }
@@ -228,6 +234,20 @@ GrayscaleDilateImageFilter<TInputImage, TOutputImage, TKernel>
     cast->Update();
     this->GraftOutput( cast->GetOutput() );
     }
+  else if( m_Algorithm == VHGW )
+    {
+//     std::cout << "vHGWDilateImageFilter" << std::endl;
+    m_VHGWFilter->SetInput( this->GetInput() );
+    progress->RegisterInternalFilter( m_VHGWFilter, 0.9f );
+
+    typename CastFilterType::Pointer cast = CastFilterType::New();
+    cast->SetInput( m_VHGWFilter->GetOutput() );
+    progress->RegisterInternalFilter( cast, 0.1f );
+    
+    cast->GraftOutput( this->GetOutput() );
+    cast->Update();
+    this->GraftOutput( cast->GetOutput() );
+    }
 
 }
 
@@ -240,6 +260,7 @@ GrayscaleDilateImageFilter<TInputImage, TOutputImage, TKernel>
   m_BasicFilter->Modified();
   m_HistogramFilter->Modified();
   m_AnchorFilter->Modified();
+  m_VHGWFilter->Modified();
 }
 
 template<class TInputImage, class TOutputImage, class TKernel>

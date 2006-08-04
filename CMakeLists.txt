@@ -139,12 +139,14 @@ ENDIF(BUILD_TESTING)
 # ADD_TEST(Testname ExecutableToRun arg1 arg2 arg3)
 
 ADD_TEST(Dilate2D dilate2D ${INPUT_IMAGE} dilate2D-basic.png
-dilate2D-histo.png dilate2D-anchor.png)
+dilate2D-histo.png dilate2D-anchor.png dilate2D-vhgw.png)
 ADD_TEST(Dilate2DBasicCompare ${IMAGE_COMPARE} dilate2D-basic.png
 ${CMAKE_SOURCE_DIR}/images/dilate2D.png)
 ADD_TEST(Dilate2DHistoCompare ${IMAGE_COMPARE} dilate2D-histo.png
 ${CMAKE_SOURCE_DIR}/images/dilate2D.png)
 ADD_TEST(Dilate2DAnchorCompare ${IMAGE_COMPARE} dilate2D-anchor.png
+${CMAKE_SOURCE_DIR}/images/dilate2D.png)
+ADD_TEST(Dilate2DvHGWCompare ${IMAGE_COMPARE} dilate2D-vhgw.png
 ${CMAKE_SOURCE_DIR}/images/dilate2D.png)
 
 ADD_TEST(Dilate2Dstd dilate2D_std_kernel ${INPUT_IMAGE} dilate2D-std-basic.png
@@ -156,12 +158,14 @@ ${CMAKE_SOURCE_DIR}/images/dilate2D-std.png)
 
 
 ADD_TEST(Erode2D erode2D ${INPUT_IMAGE} erode2D-basic.png
-erode2D-histo.png erode2D-anchor.png)
+erode2D-histo.png erode2D-anchor.png erode2D-vhgw.png)
 ADD_TEST(Erode2DBasicCompare ${IMAGE_COMPARE} erode2D-basic.png
 ${CMAKE_SOURCE_DIR}/images/erode2D.png)
 ADD_TEST(Erode2DHistoCompare ${IMAGE_COMPARE} erode2D-histo.png
 ${CMAKE_SOURCE_DIR}/images/erode2D.png)
 ADD_TEST(Erode2DAnchorCompare ${IMAGE_COMPARE} erode2D-anchor.png
+${CMAKE_SOURCE_DIR}/images/erode2D.png)
+ADD_TEST(Erode2DvHGWCompare ${IMAGE_COMPARE} erode2D-vhgw.png
 ${CMAKE_SOURCE_DIR}/images/erode2D.png)
 
 ADD_TEST(Erode2Dstd erode2D_std_kernel ${INPUT_IMAGE} erode2D-std-basic.png
@@ -191,12 +195,14 @@ ${CMAKE_SOURCE_DIR}/images/gradient2D-std.png)
 
 
 ADD_TEST(Open2D open2D ${INPUT_IMAGE} open2D-basic.png
-open2D-histo.png open2D-anchor.png)
+open2D-histo.png open2D-anchor.png open2D-vhgw.png)
 ADD_TEST(Open2DBasicCompare ${IMAGE_COMPARE} open2D-basic.png
 ${CMAKE_SOURCE_DIR}/images/open2D.png)
 ADD_TEST(Open2DHistoCompare ${IMAGE_COMPARE} open2D-histo.png
 ${CMAKE_SOURCE_DIR}/images/open2D.png)
 ADD_TEST(Open2DAnchorCompare ${IMAGE_COMPARE} open2D-anchor.png
+${CMAKE_SOURCE_DIR}/images/open2D.png)
+ADD_TEST(Open2DvHGWCompare ${IMAGE_COMPARE} open2D-vhgw.png
 ${CMAKE_SOURCE_DIR}/images/open2D.png)
 
 ADD_TEST(Open2Dstd open2D_std_kernel ${INPUT_IMAGE} open2D-std-basic.png

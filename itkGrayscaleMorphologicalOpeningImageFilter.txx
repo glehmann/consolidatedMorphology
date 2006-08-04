@@ -36,6 +36,8 @@ GrayscaleMorphologicalOpeningImageFilter<TInputImage, TOutputImage, TKernel>
   m_BasicErodeFilter = BasicErodeFilterType::New();
   m_HistogramDilateFilter = HistogramDilateFilterType::New();
   m_HistogramErodeFilter = HistogramErodeFilterType::New();
+  m_vHGWDilateFilter = vHGWDilateFilterType::New();
+  m_vHGWErodeFilter = vHGWErodeFilterType::New();
   m_AnchorFilter = AnchorFilterType::New();
   m_Algorithm = HISTO;
 }
@@ -167,6 +169,11 @@ GrayscaleMorphologicalOpeningImageFilter< TInputImage, TOutputImage, TKernel>
       {
       m_AnchorFilter->SetKernel( *flatKernel );
       }
+    else if( flatKernel != NULL && flatKernel->GetDecomposable() && algo == VHGW )
+      {
+       m_vHGWDilateFilter->SetKernel( *flatKernel );
+       m_vHGWErodeFilter->SetKernel( *flatKernel );
+      }
     else
       { itkExceptionMacro( << "Invalid algorithm" ); }
 
@@ -273,6 +280,55 @@ GrayscaleMorphologicalOpeningImageFilter<TInputImage, TOutputImage, TKernel>
       m_HistogramDilateFilter->GraftOutput( this->GetOutput() );
       m_HistogramDilateFilter->Update();
       this->GraftOutput( m_HistogramDilateFilter->GetOutput() );
+      }
+    }
+  else if( m_Algorithm == VHGW )
+    {
+//     std::cout << "vHGWDilateImageFilter" << std::endl;
+    if ( m_SafeBorder )
+      {
+      typedef typename itk::ConstantPadImageFilter<InputImageType, InputImageType> PadType;
+      typename PadType::Pointer pad = PadType::New();
+      pad->SetPadLowerBound( m_Kernel.GetRadius().m_Size );
+      pad->SetPadUpperBound( m_Kernel.GetRadius().m_Size );
+      pad->SetConstant( NumericTraits<typename InputImageType::PixelType>::max() );
+      pad->SetInput( this->GetInput() );
+      progress->RegisterInternalFilter( pad, 0.1f );
+    
+      m_vHGWErodeFilter->SetInput( pad->GetOutput() );
+      progress->RegisterInternalFilter( m_vHGWErodeFilter, 0.4f );
+  
+      m_vHGWDilateFilter->SetInput( m_vHGWErodeFilter->GetOutput() );
+      progress->RegisterInternalFilter( m_vHGWDilateFilter, 0.4f );
+
+      typedef typename itk::CropImageFilter<TInputImage, TOutputImage> CropType;
+      typename CropType::Pointer crop = CropType::New();
+      crop->SetInput( m_vHGWDilateFilter->GetOutput() );
+      crop->SetUpperBoundaryCropSize( m_Kernel.GetRadius() );
+      crop->SetLowerBoundaryCropSize( m_Kernel.GetRadius() );
+      progress->RegisterInternalFilter( crop, 0.1f );
+
+      crop->GraftOutput( this->GetOutput() );
+      crop->Update();
+      this->GraftOutput( crop->GetOutput() );
+      }
+    else
+      {
+      m_vHGWErodeFilter->SetInput( this->GetInput() );
+      progress->RegisterInternalFilter( m_vHGWErodeFilter, 0.5f );
+  
+      m_vHGWDilateFilter->SetInput( m_vHGWErodeFilter->GetOutput() );
+      progress->RegisterInternalFilter( m_vHGWDilateFilter, 0.5f );
+
+      m_vHGWDilateFilter->GraftOutput( this->GetOutput() );
+      typedef typename itk::CastImageFilter<TInputImage, TOutputImage> CastType;
+      typename CastType::Pointer cast = CastType::New();
+      cast->SetInput( m_vHGWDilateFilter->GetOutput() );
+      progress->RegisterInternalFilter( cast, 0.1f );
+  
+      cast->GraftOutput( this->GetOutput() );
+      cast->Update();
+      this->GraftOutput( cast->GetOutput() );
       }
     }
   else if( m_Algorithm == ANCHOR )

@@ -21,6 +21,7 @@
 #include "itkMovingHistogramErodeImageFilter.h"
 #include "itkBasicErodeImageFilter.h"
 #include "itkAnchorErodeImageFilter.h"
+#include "itkvHGWErodeImageFilter.h"
 #include "itkCastImageFilter.h"
 #include "itkConstantBoundaryCondition.h"
 #include "itkFlatStructuringElement.h"
@@ -79,6 +80,7 @@ public:
   typedef BasicErodeImageFilter< TInputImage, TOutputImage, TKernel > BasicFilterType;
   typedef FlatStructuringElement< ImageDimension > FlatKernelType;
   typedef AnchorErodeImageFilter< TInputImage, FlatKernelType > AnchorFilterType;
+  typedef vHGWErodeImageFilter< TInputImage, FlatKernelType > VHGWFilterType;
   typedef CastImageFilter< TInputImage, TOutputImage > CastFilterType;
   
   /** Typedef for boundary conditions. */
@@ -150,6 +152,7 @@ public:
   static const int BASIC = 0;
   static const int HISTO = 1;
   static const int ANCHOR = 2;
+  static const int VHGW = 3;
 
 
 protected:
@@ -172,6 +175,7 @@ private:
   typename HistogramFilterType::Pointer m_HistogramFilter;
   typename BasicFilterType::Pointer m_BasicFilter;
   typename AnchorFilterType::Pointer m_AnchorFilter;
+  typename VHGWFilterType::Pointer m_VHGWFilter;
 
   // and the name of the filter
   int m_Algorithm;
