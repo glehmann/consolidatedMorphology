@@ -57,6 +57,19 @@ int main(int, char * argv[])
   ErodeType::Pointer verode = ErodeType::New();
   verode->SetInput( reader->GetOutput() );
   
+
+  GradientType::Pointer bgradient = GradientType::New();
+  bgradient->SetInput( reader->GetOutput() );
+  
+  GradientType::Pointer hgradient = GradientType::New();
+  hgradient->SetInput( reader->GetOutput() );
+  
+  GradientType::Pointer agradient = GradientType::New();
+  agradient->SetInput( reader->GetOutput() );
+  
+  GradientType::Pointer vgradient = GradientType::New();
+  vgradient->SetInput( reader->GetOutput() );
+
   reader->Update();
   
   std::vector< int > radiusList;
@@ -77,6 +90,10 @@ int main(int, char * argv[])
             << "he" << "\t" 
             << "ae" << "\t" 
             << "ve" << "\t" 
+            << "bg" << "\t" 
+            << "hg" << "\t" 
+            << "ag" << "\t" 
+            << "vg" << "\t" 
             << std::endl;
 
   for( std::vector< int >::iterator it=radiusList.begin(); it !=radiusList.end() ; it++)
@@ -90,6 +107,11 @@ int main(int, char * argv[])
     itk::TimeProbe hetime;
     itk::TimeProbe aetime;
     itk::TimeProbe vetime;
+
+    itk::TimeProbe bgtime;
+    itk::TimeProbe hgtime;
+    itk::TimeProbe agtime;
+    itk::TimeProbe vgtime;
   
     SRType::RadiusType rad;
     rad.Fill( *it );
@@ -112,6 +134,15 @@ int main(int, char * argv[])
     herode->SetAlgorithm( ErodeType::HISTO );
     aerode->SetAlgorithm( ErodeType::ANCHOR );
     verode->SetAlgorithm( ErodeType::VHGW );
+
+    bgradient->SetKernel( kernel );
+    hgradient->SetKernel( kernel );
+    agradient->SetKernel( kernel );
+    vgradient->SetKernel( kernel );
+    bgradient->SetAlgorithm( GradientType::BASIC );
+    hgradient->SetAlgorithm( GradientType::HISTO );
+    agradient->SetAlgorithm( GradientType::ANCHOR );
+    vgradient->SetAlgorithm( GradientType::VHGW );
 
     int nbOfRepeats;
     if( *it <= 10 )
@@ -167,6 +198,27 @@ int main(int, char * argv[])
       vetime.Stop();
       verode->Modified();
 
+
+      bgtime.Start();
+      bgradient->Update();
+      bgtime.Stop();
+      bgradient->Modified();
+
+      hgtime.Start();
+      hgradient->Update();
+      hgtime.Stop();
+      hgradient->Modified();
+
+      agtime.Start();
+      agradient->Update();
+      agtime.Stop();
+      agradient->Modified();
+
+      vgtime.Start();
+      vgradient->Update();
+      vgtime.Stop();
+      vgradient->Modified();
+
       }
       
     std::cout << std::setprecision(3) << *it << "\t" 
@@ -178,6 +230,10 @@ int main(int, char * argv[])
               << hetime.GetMeanTime() << "\t" 
               << aetime.GetMeanTime() << "\t" 
               << vetime.GetMeanTime() << "\t" 
+              << bgtime.GetMeanTime() << "\t" 
+              << hgtime.GetMeanTime() << "\t" 
+              << agtime.GetMeanTime() << "\t" 
+              << vgtime.GetMeanTime() << "\t" 
 //<< erode->GetNameOfBackendFilterClass()
               <<std::endl;
     }
