@@ -1,18 +1,12 @@
 #include "itkImageFileReader.h"
 
-#include "itkMovingHistogramDilateImageFilter.h"
-#include "itkBasicDilateImageFilter.h"
 #include "itkGrayscaleDilateImageFilter.h"
-
-#include "itkMovingHistogramErodeImageFilter.h"
-#include "itkBasicErodeImageFilter.h"
 #include "itkGrayscaleErodeImageFilter.h"
-
-#include "itkMovingHistogramMorphologicalGradientImageFilter.h"
-#include "itkBasicMorphologicalGradientImageFilter.h"
 #include "itkMorphologicalGradientImageFilter.h"
+#include "itkGrayscaleMorphologicalOpeningImageFilter.h"
+#include "itkGrayscaleMorphologicalClosingImageFilter.h"
 
-#include "itkBinaryBallStructuringElement.h"
+#include "itkFlatStructuringElement.h"
 #include "itkTimeProbe.h"
 #include <vector>
 #include "itkMultiThreader.h"
@@ -31,108 +25,184 @@ int main(int, char * argv[])
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName( argv[1] );
   
-  typedef itk::BinaryBallStructuringElement< PType, dim > SRType;
-  
-  typedef itk::MovingHistogramDilateImageFilter< IType, IType, SRType > HDilateType;
-  HDilateType::Pointer hdilate = HDilateType::New();
-  hdilate->SetInput( reader->GetOutput() );
-  
-  typedef itk::BasicDilateImageFilter< IType, IType, SRType > BDilateType;
-  BDilateType::Pointer bdilate = BDilateType::New();
+  typedef itk::FlatStructuringElement< dim > SRType;
+  typedef itk::GrayscaleDilateImageFilter< IType, IType, SRType > DilateType;
+  typedef itk::GrayscaleErodeImageFilter< IType, IType, SRType > ErodeType;
+  typedef itk::MorphologicalGradientImageFilter< IType, IType, SRType > GradientType;
+  typedef itk::GrayscaleMorphologicalOpeningImageFilter< IType, IType, SRType > OpenType;
+  typedef itk::GrayscaleMorphologicalClosingImageFilter< IType, IType, SRType > CloseType;
+
+  DilateType::Pointer bdilate = DilateType::New();
   bdilate->SetInput( reader->GetOutput() );
   
-  typedef itk::GrayscaleDilateImageFilter< IType, IType, SRType > DilateType;
-  DilateType::Pointer dilate = DilateType::New();
-  dilate->SetInput( reader->GetOutput() );
+  DilateType::Pointer hdilate = DilateType::New();
+  hdilate->SetInput( reader->GetOutput() );
+  
+  DilateType::Pointer adilate = DilateType::New();
+  adilate->SetInput( reader->GetOutput() );
+  
+  DilateType::Pointer vdilate = DilateType::New();
+  vdilate->SetInput( reader->GetOutput() );
+  
 
-  
-  typedef itk::MovingHistogramErodeImageFilter< IType, IType, SRType > HErodeType;
-  HErodeType::Pointer herode = HErodeType::New();
-  herode->SetInput( reader->GetOutput() );
-  
-  typedef itk::BasicErodeImageFilter< IType, IType, SRType > BErodeType;
-  BErodeType::Pointer berode = BErodeType::New();
+  ErodeType::Pointer berode = ErodeType::New();
   berode->SetInput( reader->GetOutput() );
   
-  typedef itk::GrayscaleErodeImageFilter< IType, IType, SRType > ErodeType;
-  ErodeType::Pointer erode = ErodeType::New();
-  erode->SetInput( reader->GetOutput() );
+  ErodeType::Pointer herode = ErodeType::New();
+  herode->SetInput( reader->GetOutput() );
+  
+  ErodeType::Pointer aerode = ErodeType::New();
+  aerode->SetInput( reader->GetOutput() );
+  
+  ErodeType::Pointer verode = ErodeType::New();
+  verode->SetInput( reader->GetOutput() );
+  
 
-  
-  typedef itk::MovingHistogramMorphologicalGradientImageFilter< IType, IType, SRType > HMorphologicalGradientType;
-  HMorphologicalGradientType::Pointer hgradient = HMorphologicalGradientType::New();
-  hgradient->SetInput( reader->GetOutput() );
-  
-  typedef itk::MorphologicalGradientImageFilter< IType, IType, SRType > MorphologicalGradientType;
-  MorphologicalGradientType::Pointer gradient = MorphologicalGradientType::New();
-  gradient->SetInput( reader->GetOutput() );
-  
-  typedef itk::BasicMorphologicalGradientImageFilter< IType, IType, SRType > BMorphologicalGradientType;
-  BMorphologicalGradientType::Pointer bgradient = BMorphologicalGradientType::New();
+  GradientType::Pointer bgradient = GradientType::New();
   bgradient->SetInput( reader->GetOutput() );
   
+  GradientType::Pointer hgradient = GradientType::New();
+  hgradient->SetInput( reader->GetOutput() );
+  
+  GradientType::Pointer agradient = GradientType::New();
+  agradient->SetInput( reader->GetOutput() );
+  
+  GradientType::Pointer vgradient = GradientType::New();
+  vgradient->SetInput( reader->GetOutput() );
+  
+
+  OpenType::Pointer bopen = OpenType::New();
+  bopen->SetInput( reader->GetOutput() );
+  
+  OpenType::Pointer hopen = OpenType::New();
+  hopen->SetInput( reader->GetOutput() );
+  
+  OpenType::Pointer aopen = OpenType::New();
+  aopen->SetInput( reader->GetOutput() );
+  
+  OpenType::Pointer vopen = OpenType::New();
+  vopen->SetInput( reader->GetOutput() );
+  
+
+  CloseType::Pointer bclose = CloseType::New();
+  bclose->SetInput( reader->GetOutput() );
+  
+  CloseType::Pointer hclose = CloseType::New();
+  hclose->SetInput( reader->GetOutput() );
+  
+  CloseType::Pointer aclose = CloseType::New();
+  aclose->SetInput( reader->GetOutput() );
+  
+  CloseType::Pointer vclose = CloseType::New();
+  vclose->SetInput( reader->GetOutput() );
+
   reader->Update();
   
   std::vector< int > radiusList;
-  for( int s=0; s<=10; s++)
+  for( int s=1; s<=10; s++)
     { radiusList.push_back( s ); }
   radiusList.push_back( 15 );
   radiusList.push_back( 20 );
   
-  std::cout << std::setprecision(3) << "#radius" << "\t" 
-            << "rep" << "\t" 
-            << "total" << "\t" 
-            << "nb" << "\t" 
-            << "hnb" << "\t" 
+  std::cout << "#radius" << "\t" 
             << "bd" << "\t" 
             << "hd" << "\t" 
-            << "d" << "\t" 
+            << "ad" << "\t" 
+            << "vd" << "\t" 
             << "be" << "\t" 
             << "he" << "\t" 
-            << "e" << "\t" 
+            << "ae" << "\t" 
+            << "ve" << "\t" 
             << "bg" << "\t" 
             << "hg" << "\t" 
-            << "g" << "\t" 
+            << "ag" << "\t" 
+            << "vg" << "\t" 
+            << "bo" << "\t" 
+            << "ho" << "\t" 
+            << "ao" << "\t" 
+            << "vo" << "\t" 
+            << "bc" << "\t" 
+            << "hc" << "\t" 
+            << "ac" << "\t" 
+            << "vc" << "\t" 
             << std::endl;
 
   for( std::vector< int >::iterator it=radiusList.begin(); it !=radiusList.end() ; it++)
     {
-    itk::TimeProbe dtime;
     itk::TimeProbe bdtime;
     itk::TimeProbe hdtime;
+    itk::TimeProbe adtime;
+    itk::TimeProbe vdtime;
 
-    itk::TimeProbe etime;
-    itk::TimeProbe hetime;
     itk::TimeProbe betime;
-  
-    itk::TimeProbe gtime;
+    itk::TimeProbe hetime;
+    itk::TimeProbe aetime;
+    itk::TimeProbe vetime;
+
     itk::TimeProbe bgtime;
     itk::TimeProbe hgtime;
-  
-    SRType kernel;
-    kernel.SetRadius( *it );
-    kernel.CreateStructuringElement();
+    itk::TimeProbe agtime;
+    itk::TimeProbe vgtime;
 
-    // compute the number of activated neighbors in the structuring element
-    unsigned long nbOfNeighbors = 0;
-    for( SRType::Iterator nit=kernel.Begin(); nit!=kernel.End(); nit++ )
-      {
-      if( *nit > 0 )
-        { nbOfNeighbors++; }
-      }
-
+    itk::TimeProbe botime;
+    itk::TimeProbe hotime;
+    itk::TimeProbe aotime;
+    itk::TimeProbe votime;
   
-    dilate->SetKernel( kernel );
+    itk::TimeProbe bctime;
+    itk::TimeProbe hctime;
+    itk::TimeProbe actime;
+    itk::TimeProbe vctime;
+  
+    SRType::RadiusType rad;
+    rad.Fill( *it );
+    SRType kernel = SRType::Box( rad );
+
     bdilate->SetKernel( kernel );
     hdilate->SetKernel( kernel );
-    
-    erode->SetKernel( kernel );
+    adilate->SetKernel( kernel );
+    vdilate->SetKernel( kernel );
+    bdilate->SetAlgorithm( DilateType::BASIC );
+    hdilate->SetAlgorithm( DilateType::HISTO );
+    adilate->SetAlgorithm( DilateType::ANCHOR );
+    vdilate->SetAlgorithm( DilateType::VHGW );
+
     berode->SetKernel( kernel );
     herode->SetKernel( kernel );
-    
-    gradient->SetKernel( kernel );
+    aerode->SetKernel( kernel );
+    verode->SetKernel( kernel );
+    berode->SetAlgorithm( ErodeType::BASIC );
+    herode->SetAlgorithm( ErodeType::HISTO );
+    aerode->SetAlgorithm( ErodeType::ANCHOR );
+    verode->SetAlgorithm( ErodeType::VHGW );
+
     bgradient->SetKernel( kernel );
     hgradient->SetKernel( kernel );
+    agradient->SetKernel( kernel );
+    vgradient->SetKernel( kernel );
+    bgradient->SetAlgorithm( GradientType::BASIC );
+    hgradient->SetAlgorithm( GradientType::HISTO );
+    agradient->SetAlgorithm( GradientType::ANCHOR );
+    vgradient->SetAlgorithm( GradientType::VHGW );
+
+    bopen->SetKernel( kernel );
+    hopen->SetKernel( kernel );
+    aopen->SetKernel( kernel );
+    vopen->SetKernel( kernel );
+    bopen->SetAlgorithm( OpenType::BASIC );
+    hopen->SetAlgorithm( OpenType::HISTO );
+    aopen->SetAlgorithm( OpenType::ANCHOR );
+    vopen->SetAlgorithm( OpenType::VHGW );
+
+    bclose->SetKernel( kernel );
+    hclose->SetKernel( kernel );
+    aclose->SetKernel( kernel );
+    vclose->SetKernel( kernel );
+    bclose->SetAlgorithm( CloseType::BASIC );
+    hclose->SetAlgorithm( CloseType::HISTO );
+    aclose->SetAlgorithm( CloseType::ANCHOR );
+    vclose->SetAlgorithm( CloseType::VHGW );
+
 
     int nbOfRepeats;
     if( *it <= 3 )
@@ -145,61 +215,134 @@ int main(int, char * argv[])
 
     for( int i=0; i<nbOfRepeats; i++ )
       {
-      dtime.Start();
-      dilate->Update();
-      dtime.Stop();
-      dilate->Modified();
       bdtime.Start();
       bdilate->Update();
       bdtime.Stop();
       bdilate->Modified();
+
       hdtime.Start();
       hdilate->Update();
       hdtime.Stop();
       hdilate->Modified();
-      
-      etime.Start();
-      erode->Update();
-      etime.Stop();
-      erode->Modified();
-      hetime.Start();
-      herode->Update();
-      hetime.Stop();
-      herode->Modified();
+
+      adtime.Start();
+      adilate->Update();
+      adtime.Stop();
+      adilate->Modified();
+
+      vdtime.Start();
+      vdilate->Update();
+      vdtime.Stop();
+      vdilate->Modified();
+
+
       betime.Start();
       berode->Update();
       betime.Stop();
       berode->Modified();
-      
-      gtime.Start();
-      gradient->Update();
-      gtime.Stop();
-      gradient->Modified();
+
+      hetime.Start();
+      herode->Update();
+      hetime.Stop();
+      herode->Modified();
+
+      aetime.Start();
+      aerode->Update();
+      aetime.Stop();
+      aerode->Modified();
+
+      vetime.Start();
+      verode->Update();
+      vetime.Stop();
+      verode->Modified();
+
+
       bgtime.Start();
       bgradient->Update();
       bgtime.Stop();
       bgradient->Modified();
+
       hgtime.Start();
       hgradient->Update();
       hgtime.Stop();
       hgradient->Modified();
+
+      agtime.Start();
+      agradient->Update();
+      agtime.Stop();
+      agradient->Modified();
+
+      vgtime.Start();
+      vgradient->Update();
+      vgtime.Stop();
+      vgradient->Modified();
+
+
+//       botime.Start();
+//       bopen->Update();
+//       botime.Stop();
+//       bopen->Modified();
+// 
+//       hotime.Start();
+//       hopen->Update();
+//       hotime.Stop();
+//       hopen->Modified();
+// 
+//       aotime.Start();
+//       aopen->Update();
+//       aotime.Stop();
+//       aopen->Modified();
+// 
+//       votime.Start();
+//       vopen->Update();
+//       votime.Stop();
+//       vopen->Modified();
+// 
+// 
+//       bctime.Start();
+//       bclose->Update();
+//       bctime.Stop();
+//       bclose->Modified();
+// 
+//       hctime.Start();
+//       hclose->Update();
+//       hctime.Stop();
+//       hclose->Modified();
+// 
+//       actime.Start();
+//       aclose->Update();
+//       actime.Stop();
+//       aclose->Modified();
+// 
+//       vctime.Start();
+//       vclose->Update();
+//       vctime.Stop();
+//       vclose->Modified();
+
       }
       
-    std::cout << *it << "\t" 
-              << nbOfRepeats << "\t" 
-              << (*it*2+1)*(*it*2+1)*(*it*2+1) << "\t" 
-              << nbOfNeighbors << "\t"
-              << hdilate->GetPixelsPerTranslation() << "\t" 
+    std::cout << std::setprecision(3) << *it << "\t" 
               << bdtime.GetMeanTime() << "\t" 
               << hdtime.GetMeanTime() << "\t" 
-              << dtime.GetMeanTime() << "\t" 
+              << adtime.GetMeanTime() << "\t" 
+              << vdtime.GetMeanTime() << "\t" 
               << betime.GetMeanTime() << "\t" 
-              << hetime.GetMeanTime()<< "\t" 
-              << etime.GetMeanTime()<< "\t" 
+              << hetime.GetMeanTime() << "\t" 
+              << aetime.GetMeanTime() << "\t" 
+              << vetime.GetMeanTime() << "\t" 
               << bgtime.GetMeanTime() << "\t" 
-              << hgtime.GetMeanTime() << "\t"
-              << gtime.GetMeanTime() << "\t" 
-//<< dilate->GetNameOfBackendFilterClass()
+              << hgtime.GetMeanTime() << "\t" 
+              << agtime.GetMeanTime() << "\t" 
+              << vgtime.GetMeanTime() << "\t" 
+              << botime.GetMeanTime() << "\t" 
+              << hotime.GetMeanTime() << "\t" 
+              << aotime.GetMeanTime() << "\t" 
+              << votime.GetMeanTime() << "\t" 
+              << bctime.GetMeanTime() << "\t" 
+              << hctime.GetMeanTime() << "\t" 
+              << actime.GetMeanTime() << "\t" 
+              << vctime.GetMeanTime() << "\t" 
+//<< erode->GetNameOfBackendFilterClass()
               <<std::endl;
     }
   
