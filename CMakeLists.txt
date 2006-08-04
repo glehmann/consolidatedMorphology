@@ -177,12 +177,14 @@ ${CMAKE_SOURCE_DIR}/images/erode2D-std.png)
 
 
 ADD_TEST(Gradient2D gradient2D ${INPUT_IMAGE} gradient2D-basic.png
-gradient2D-histo.png gradient2D-anchor.png)
+gradient2D-histo.png gradient2D-anchor.png gradient2D-vhgw.png)
 ADD_TEST(Gradient2DBasicCompare ${IMAGE_COMPARE} gradient2D-basic.png
 ${CMAKE_SOURCE_DIR}/images/gradient2D.png)
 ADD_TEST(Gradient2DHistoCompare ${IMAGE_COMPARE} gradient2D-histo.png
 ${CMAKE_SOURCE_DIR}/images/gradient2D.png)
 ADD_TEST(Gradient2DAnchorCompare ${IMAGE_COMPARE} gradient2D-anchor.png
+${CMAKE_SOURCE_DIR}/images/gradient2D.png)
+ADD_TEST(Gradient2DvHGWCompare ${IMAGE_COMPARE} gradient2D-vhgw.png
 ${CMAKE_SOURCE_DIR}/images/gradient2D.png)
 
 ADD_TEST(Gradient2Dstd gradient2D_std_kernel ${INPUT_IMAGE} gradient2D-std-basic.png
@@ -215,12 +217,14 @@ ${CMAKE_SOURCE_DIR}/images/open2D-std.png)
 
 
 ADD_TEST(Close2D close2D ${INPUT_IMAGE} close2D-basic.png
-close2D-histo.png close2D-anchor.png)
+close2D-histo.png close2D-anchor.png close2D-vhgw.png)
 ADD_TEST(Close2DBasicCompare ${IMAGE_COMPARE} close2D-basic.png
 ${CMAKE_SOURCE_DIR}/images/close2D.png)
 ADD_TEST(Close2DHistoCompare ${IMAGE_COMPARE} close2D-histo.png
 ${CMAKE_SOURCE_DIR}/images/close2D.png)
 ADD_TEST(Close2DAnchorCompare ${IMAGE_COMPARE} close2D-anchor.png
+${CMAKE_SOURCE_DIR}/images/close2D.png)
+ADD_TEST(Close2DvHGWCompare ${IMAGE_COMPARE} close2D-vhgw.png
 ${CMAKE_SOURCE_DIR}/images/close2D.png)
 
 ADD_TEST(Close2Dstd close2D_std_kernel ${INPUT_IMAGE} close2D-std-basic.png
@@ -233,12 +237,14 @@ ${CMAKE_SOURCE_DIR}/images/close2D-std.png)
 
 
 ADD_TEST(WhiteTopHat2D whiteTopHat2D ${INPUT_IMAGE} whiteTopHat2D-basic.png
-whiteTopHat2D-histo.png whiteTopHat2D-anchor.png)
+whiteTopHat2D-histo.png whiteTopHat2D-anchor.png whiteTopHat2D-vhgw.png)
 ADD_TEST(WhiteTopHat2DBasicCompare ${IMAGE_COMPARE} whiteTopHat2D-basic.png
 ${CMAKE_SOURCE_DIR}/images/whiteTopHat2D.png)
 ADD_TEST(WhiteTopHat2DHistoCompare ${IMAGE_COMPARE} whiteTopHat2D-histo.png
 ${CMAKE_SOURCE_DIR}/images/whiteTopHat2D.png)
 ADD_TEST(WhiteTopHat2DAnchorCompare ${IMAGE_COMPARE} whiteTopHat2D-anchor.png
+${CMAKE_SOURCE_DIR}/images/whiteTopHat2D.png)
+ADD_TEST(WhiteTopHat2DvHGWCompare ${IMAGE_COMPARE} whiteTopHat2D-vhgw.png
 ${CMAKE_SOURCE_DIR}/images/whiteTopHat2D.png)
 
 ADD_TEST(WhiteTopHat2Dstd whiteTopHat2D_std_kernel ${INPUT_IMAGE} whiteTopHat2D-std-basic.png
@@ -251,12 +257,14 @@ ${CMAKE_SOURCE_DIR}/images/whiteTopHat2D-std.png)
 
 
 ADD_TEST(BlackTopHat2D blackTopHat2D ${INPUT_IMAGE} blackTopHat2D-basic.png
-blackTopHat2D-histo.png blackTopHat2D-anchor.png)
+blackTopHat2D-histo.png blackTopHat2D-anchor.png blackTopHat2D-vhgw.png)
 ADD_TEST(BlackTopHat2DBasicCompare ${IMAGE_COMPARE} blackTopHat2D-basic.png
 ${CMAKE_SOURCE_DIR}/images/blackTopHat2D.png)
 ADD_TEST(BlackTopHat2DHistoCompare ${IMAGE_COMPARE} blackTopHat2D-histo.png
 ${CMAKE_SOURCE_DIR}/images/blackTopHat2D.png)
 ADD_TEST(BlackTopHat2DAnchorCompare ${IMAGE_COMPARE} blackTopHat2D-anchor.png
+${CMAKE_SOURCE_DIR}/images/blackTopHat2D.png)
+ADD_TEST(BlackTopHat2DvHGWCompare ${IMAGE_COMPARE} blackTopHat2D-vhgw.png
 ${CMAKE_SOURCE_DIR}/images/blackTopHat2D.png)
 
 ADD_TEST(BlackTopHat2Dstd blackTopHat2D_std_kernel ${INPUT_IMAGE} blackTopHat2D-std-basic.png

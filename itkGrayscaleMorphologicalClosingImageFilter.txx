@@ -36,6 +36,8 @@ GrayscaleMorphologicalClosingImageFilter<TInputImage, TOutputImage, TKernel>
   m_BasicDilateFilter = BasicDilateFilterType::New();
   m_HistogramErodeFilter = HistogramErodeFilterType::New();
   m_HistogramDilateFilter = HistogramDilateFilterType::New();
+  m_vHGWDilateFilter = vHGWDilateFilterType::New();
+  m_vHGWErodeFilter = vHGWErodeFilterType::New();
   m_AnchorFilter = AnchorFilterType::New();
   m_Algorithm = HISTO;
 }
@@ -167,6 +169,11 @@ GrayscaleMorphologicalClosingImageFilter< TInputImage, TOutputImage, TKernel>
       {
       m_AnchorFilter->SetKernel( *flatKernel );
       }
+    else if( flatKernel != NULL && flatKernel->GetDecomposable() && algo == VHGW )
+      {
+       m_vHGWDilateFilter->SetKernel( *flatKernel );
+       m_vHGWErodeFilter->SetKernel( *flatKernel );
+      }
     else
       { itkExceptionMacro( << "Invalid algorithm" ); }
 
@@ -273,6 +280,49 @@ GrayscaleMorphologicalClosingImageFilter<TInputImage, TOutputImage, TKernel>
       m_HistogramErodeFilter->GraftOutput( this->GetOutput() );
       m_HistogramErodeFilter->Update();
       this->GraftOutput( m_HistogramErodeFilter->GetOutput() );
+      }
+    }
+  else if( m_Algorithm == VHGW )
+    {
+//     std::cout << "MovingvHGWErodeImageFilter" << std::endl;
+    if ( m_SafeBorder )
+      {
+      typedef typename itk::ConstantPadImageFilter<InputImageType, InputImageType> PadType;
+      typename PadType::Pointer pad = PadType::New();
+      pad->SetPadLowerBound( m_Kernel.GetRadius().m_Size );
+      pad->SetPadUpperBound( m_Kernel.GetRadius().m_Size );
+      pad->SetConstant( NumericTraits<typename InputImageType::PixelType>::NonpositiveMin() );
+      pad->SetInput( this->GetInput() );
+      progress->RegisterInternalFilter( pad, 0.1f );
+    
+      m_vHGWDilateFilter->SetInput( pad->GetOutput() );
+      progress->RegisterInternalFilter( m_vHGWDilateFilter, 0.4f );
+  
+      m_vHGWErodeFilter->SetInput( m_vHGWDilateFilter->GetOutput() );
+      progress->RegisterInternalFilter( m_vHGWErodeFilter, 0.4f );
+
+      typedef typename itk::CropImageFilter<TOutputImage, TOutputImage> CropType;
+      typename CropType::Pointer crop = CropType::New();
+      crop->SetInput( m_vHGWErodeFilter->GetOutput() );
+      crop->SetUpperBoundaryCropSize( m_Kernel.GetRadius() );
+      crop->SetLowerBoundaryCropSize( m_Kernel.GetRadius() );
+      progress->RegisterInternalFilter( crop, 0.1f );
+
+      crop->GraftOutput( this->GetOutput() );
+      crop->Update();
+      this->GraftOutput( crop->GetOutput() );
+      }
+    else
+      {
+      m_vHGWDilateFilter->SetInput( this->GetInput() );
+      progress->RegisterInternalFilter( m_vHGWDilateFilter, 0.5f );
+  
+      m_vHGWErodeFilter->SetInput( m_vHGWDilateFilter->GetOutput() );
+      progress->RegisterInternalFilter( m_vHGWErodeFilter, 0.5f );
+
+      m_vHGWErodeFilter->GraftOutput( this->GetOutput() );
+      m_vHGWErodeFilter->Update();
+      this->GraftOutput( m_vHGWErodeFilter->GetOutput() );
       }
     }
   else if( m_Algorithm == ANCHOR )

@@ -47,6 +47,10 @@ int main(int, char * argv[])
   writer->SetFileName( argv[4] );
   writer->Update();
 
+  gradient->SetAlgorithm( MorphologicalGradientType::ANCHOR );
+  writer->SetFileName( argv[5] );
+  writer->Update();
+
 
 /*  IType::Pointer img = kernel.GetImage<IType>();
   writer->SetInput( img );

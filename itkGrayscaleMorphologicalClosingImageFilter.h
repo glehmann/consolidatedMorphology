@@ -23,6 +23,8 @@
 #include "itkBasicErodeImageFilter.h"
 #include "itkBasicDilateImageFilter.h"
 #include "itkAnchorCloseImageFilter.h"
+#include "itkvHGWErodeImageFilter.h"
+#include "itkvHGWDilateImageFilter.h"
 #include "itkCastImageFilter.h"
 #include "itkConstantBoundaryCondition.h"
 #include "itkFlatStructuringElement.h"
@@ -83,6 +85,8 @@ public:
   typedef BasicDilateImageFilter< TInputImage, TInputImage, TKernel > BasicDilateFilterType;
   typedef BasicErodeImageFilter< TInputImage, TOutputImage, TKernel > BasicErodeFilterType;
   typedef AnchorCloseImageFilter< TInputImage, FlatKernelType > AnchorFilterType;
+  typedef vHGWErodeImageFilter< TInputImage, FlatKernelType > vHGWErodeFilterType;
+  typedef vHGWDilateImageFilter< TInputImage, FlatKernelType > vHGWDilateFilterType;
   typedef CastImageFilter< TInputImage, TOutputImage > SubtractFilterType;
   
   /** Kernel typedef. */
@@ -141,6 +145,8 @@ private:
   typename HistogramDilateFilterType::Pointer m_HistogramDilateFilter;
   typename BasicErodeFilterType::Pointer m_BasicErodeFilter;
   typename BasicDilateFilterType::Pointer m_BasicDilateFilter;
+  typename vHGWDilateFilterType::Pointer m_vHGWDilateFilter;
+  typename vHGWErodeFilterType::Pointer m_vHGWErodeFilter;
   typename AnchorFilterType::Pointer m_AnchorFilter;
 
   // and the name of the filter

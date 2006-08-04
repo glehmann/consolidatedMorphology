@@ -35,6 +35,8 @@ MorphologicalGradientImageFilter<TInputImage, TOutputImage, TKernel>
   m_HistogramFilter = HistogramFilterType::New();
   m_AnchorDilateFilter = AnchorDilateFilterType::New();
   m_AnchorErodeFilter = AnchorErodeFilterType::New();
+  m_vHGWDilateFilter = VHGWDilateFilterType::New();
+  m_vHGWErodeFilter = VHGWErodeFilterType::New();
   m_Algorithm = HISTO;
 }
 
@@ -164,6 +166,11 @@ MorphologicalGradientImageFilter< TInputImage, TOutputImage, TKernel>
       m_AnchorDilateFilter->SetKernel( *flatKernel );
       m_AnchorErodeFilter->SetKernel( *flatKernel );
       }
+    else if( flatKernel != NULL && flatKernel->GetDecomposable() && algo == VHGW )
+      {
+      m_vHGWDilateFilter->SetKernel( *flatKernel );
+      m_vHGWErodeFilter->SetKernel( *flatKernel );
+      }
     else
       { itkExceptionMacro( << "Invalid algorithm" ); }
 
@@ -232,6 +239,24 @@ MorphologicalGradientImageFilter<TInputImage, TOutputImage, TKernel>
     sub->Update();
     this->GraftOutput( sub->GetOutput() );
     }
+  else if( m_Algorithm == VHGW )
+    {
+//     std::cout << "vHGWDilateImageFilter" << std::endl;
+    m_vHGWDilateFilter->SetInput( this->GetInput() );
+    progress->RegisterInternalFilter( m_vHGWDilateFilter, 0.4f );
+
+    m_vHGWErodeFilter->SetInput( this->GetInput() );
+    progress->RegisterInternalFilter( m_vHGWErodeFilter, 0.4f );
+
+    typename SubtractFilterType::Pointer sub = SubtractFilterType::New();
+    sub->SetInput1( m_vHGWDilateFilter->GetOutput() );
+    sub->SetInput2( m_vHGWErodeFilter->GetOutput() );
+    progress->RegisterInternalFilter( sub, 0.1f );
+    
+    sub->GraftOutput( this->GetOutput() );
+    sub->Update();
+    this->GraftOutput( sub->GetOutput() );
+    }
 
 }
 
@@ -246,6 +271,8 @@ MorphologicalGradientImageFilter<TInputImage, TOutputImage, TKernel>
   m_HistogramFilter->Modified();
   m_AnchorDilateFilter->Modified();
   m_AnchorErodeFilter->Modified();
+  m_vHGWDilateFilter->Modified();
+  m_vHGWErodeFilter->Modified();
 }
 
 template<class TInputImage, class TOutputImage, class TKernel>
