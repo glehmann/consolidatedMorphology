@@ -69,6 +69,32 @@ int main(int, char * argv[])
   
   GradientType::Pointer vgradient = GradientType::New();
   vgradient->SetInput( reader->GetOutput() );
+  
+
+  OpenType::Pointer bopen = OpenType::New();
+  bopen->SetInput( reader->GetOutput() );
+  
+  OpenType::Pointer hopen = OpenType::New();
+  hopen->SetInput( reader->GetOutput() );
+  
+  OpenType::Pointer aopen = OpenType::New();
+  aopen->SetInput( reader->GetOutput() );
+  
+  OpenType::Pointer vopen = OpenType::New();
+  vopen->SetInput( reader->GetOutput() );
+  
+
+  CloseType::Pointer bclose = CloseType::New();
+  bclose->SetInput( reader->GetOutput() );
+  
+  CloseType::Pointer hclose = CloseType::New();
+  hclose->SetInput( reader->GetOutput() );
+  
+  CloseType::Pointer aclose = CloseType::New();
+  aclose->SetInput( reader->GetOutput() );
+  
+  CloseType::Pointer vclose = CloseType::New();
+  vclose->SetInput( reader->GetOutput() );
 
   reader->Update();
   
@@ -94,6 +120,14 @@ int main(int, char * argv[])
             << "hg" << "\t" 
             << "ag" << "\t" 
             << "vg" << "\t" 
+            << "bo" << "\t" 
+            << "ho" << "\t" 
+            << "ao" << "\t" 
+            << "vo" << "\t" 
+            << "bc" << "\t" 
+            << "hc" << "\t" 
+            << "ac" << "\t" 
+            << "vc" << "\t" 
             << std::endl;
 
   for( std::vector< int >::iterator it=radiusList.begin(); it !=radiusList.end() ; it++)
@@ -112,6 +146,16 @@ int main(int, char * argv[])
     itk::TimeProbe hgtime;
     itk::TimeProbe agtime;
     itk::TimeProbe vgtime;
+
+    itk::TimeProbe botime;
+    itk::TimeProbe hotime;
+    itk::TimeProbe aotime;
+    itk::TimeProbe votime;
+  
+    itk::TimeProbe bctime;
+    itk::TimeProbe hctime;
+    itk::TimeProbe actime;
+    itk::TimeProbe vctime;
   
     SRType::RadiusType rad;
     rad.Fill( *it );
@@ -143,6 +187,24 @@ int main(int, char * argv[])
     hgradient->SetAlgorithm( GradientType::HISTO );
     agradient->SetAlgorithm( GradientType::ANCHOR );
     vgradient->SetAlgorithm( GradientType::VHGW );
+
+    bopen->SetKernel( kernel );
+    hopen->SetKernel( kernel );
+    aopen->SetKernel( kernel );
+    vopen->SetKernel( kernel );
+    bopen->SetAlgorithm( OpenType::BASIC );
+    hopen->SetAlgorithm( OpenType::HISTO );
+    aopen->SetAlgorithm( OpenType::ANCHOR );
+    vopen->SetAlgorithm( OpenType::VHGW );
+
+    bclose->SetKernel( kernel );
+    hclose->SetKernel( kernel );
+    aclose->SetKernel( kernel );
+    vclose->SetKernel( kernel );
+    bclose->SetAlgorithm( CloseType::BASIC );
+    hclose->SetAlgorithm( CloseType::HISTO );
+    aclose->SetAlgorithm( CloseType::ANCHOR );
+    vclose->SetAlgorithm( CloseType::VHGW );
 
     int nbOfRepeats;
     if( *it <= 10 )
@@ -219,6 +281,48 @@ int main(int, char * argv[])
       vgtime.Stop();
       vgradient->Modified();
 
+
+      botime.Start();
+      bopen->Update();
+      botime.Stop();
+      bopen->Modified();
+
+      hotime.Start();
+      hopen->Update();
+      hotime.Stop();
+      hopen->Modified();
+
+      aotime.Start();
+      aopen->Update();
+      aotime.Stop();
+      aopen->Modified();
+
+      votime.Start();
+      vopen->Update();
+      votime.Stop();
+      vopen->Modified();
+
+
+      bctime.Start();
+      bclose->Update();
+      bctime.Stop();
+      bclose->Modified();
+
+      hctime.Start();
+      hclose->Update();
+      hctime.Stop();
+      hclose->Modified();
+
+      actime.Start();
+      aclose->Update();
+      actime.Stop();
+      aclose->Modified();
+
+      vctime.Start();
+      vclose->Update();
+      vctime.Stop();
+      vclose->Modified();
+
       }
       
     std::cout << std::setprecision(3) << *it << "\t" 
@@ -234,6 +338,14 @@ int main(int, char * argv[])
               << hgtime.GetMeanTime() << "\t" 
               << agtime.GetMeanTime() << "\t" 
               << vgtime.GetMeanTime() << "\t" 
+              << botime.GetMeanTime() << "\t" 
+              << hotime.GetMeanTime() << "\t" 
+              << aotime.GetMeanTime() << "\t" 
+              << votime.GetMeanTime() << "\t" 
+              << bctime.GetMeanTime() << "\t" 
+              << hctime.GetMeanTime() << "\t" 
+              << actime.GetMeanTime() << "\t" 
+              << vctime.GetMeanTime() << "\t" 
 //<< erode->GetNameOfBackendFilterClass()
               <<std::endl;
     }
