@@ -44,6 +44,19 @@ int main(int, char * argv[])
   DilateType::Pointer vdilate = DilateType::New();
   vdilate->SetInput( reader->GetOutput() );
   
+
+  ErodeType::Pointer berode = ErodeType::New();
+  berode->SetInput( reader->GetOutput() );
+  
+  ErodeType::Pointer herode = ErodeType::New();
+  herode->SetInput( reader->GetOutput() );
+  
+  ErodeType::Pointer aerode = ErodeType::New();
+  aerode->SetInput( reader->GetOutput() );
+  
+  ErodeType::Pointer verode = ErodeType::New();
+  verode->SetInput( reader->GetOutput() );
+  
   reader->Update();
   
   std::vector< int > radiusList;
@@ -60,6 +73,10 @@ int main(int, char * argv[])
             << "hd" << "\t" 
             << "ad" << "\t" 
             << "vd" << "\t" 
+            << "be" << "\t" 
+            << "he" << "\t" 
+            << "ae" << "\t" 
+            << "ve" << "\t" 
             << std::endl;
 
   for( std::vector< int >::iterator it=radiusList.begin(); it !=radiusList.end() ; it++)
@@ -69,6 +86,10 @@ int main(int, char * argv[])
     itk::TimeProbe adtime;
     itk::TimeProbe vdtime;
 
+    itk::TimeProbe betime;
+    itk::TimeProbe hetime;
+    itk::TimeProbe aetime;
+    itk::TimeProbe vetime;
   
     SRType::RadiusType rad;
     rad.Fill( *it );
@@ -82,6 +103,15 @@ int main(int, char * argv[])
     hdilate->SetAlgorithm( DilateType::HISTO );
     adilate->SetAlgorithm( DilateType::ANCHOR );
     vdilate->SetAlgorithm( DilateType::VHGW );
+
+    berode->SetKernel( kernel );
+    herode->SetKernel( kernel );
+    aerode->SetKernel( kernel );
+    verode->SetKernel( kernel );
+    berode->SetAlgorithm( ErodeType::BASIC );
+    herode->SetAlgorithm( ErodeType::HISTO );
+    aerode->SetAlgorithm( ErodeType::ANCHOR );
+    verode->SetAlgorithm( ErodeType::VHGW );
 
     int nbOfRepeats;
     if( *it <= 10 )
@@ -116,6 +146,27 @@ int main(int, char * argv[])
       vdtime.Stop();
       vdilate->Modified();
 
+
+      betime.Start();
+      berode->Update();
+      betime.Stop();
+      berode->Modified();
+
+      hetime.Start();
+      herode->Update();
+      hetime.Stop();
+      herode->Modified();
+
+      aetime.Start();
+      aerode->Update();
+      aetime.Stop();
+      aerode->Modified();
+
+      vetime.Start();
+      verode->Update();
+      vetime.Stop();
+      verode->Modified();
+
       }
       
     std::cout << std::setprecision(3) << *it << "\t" 
@@ -123,6 +174,10 @@ int main(int, char * argv[])
               << hdtime.GetMeanTime() << "\t" 
               << adtime.GetMeanTime() << "\t" 
               << vdtime.GetMeanTime() << "\t" 
+              << betime.GetMeanTime() << "\t" 
+              << hetime.GetMeanTime() << "\t" 
+              << aetime.GetMeanTime() << "\t" 
+              << vetime.GetMeanTime() << "\t" 
 //<< erode->GetNameOfBackendFilterClass()
               <<std::endl;
     }
