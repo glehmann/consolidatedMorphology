@@ -66,6 +66,10 @@ SET(CurrentExe "testSE")
 ADD_EXECUTABLE(${CurrentExe} ${CurrentExe}.cxx)
 TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
 
+SET(CurrentExe "kernelShape")
+ADD_EXECUTABLE(${CurrentExe} ${CurrentExe}.cxx)
+TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
+
 SET(CurrentExe "dilate2D")
 ADD_EXECUTABLE(${CurrentExe} ${CurrentExe}.cxx)
 TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
@@ -273,4 +277,13 @@ ADD_TEST(BlackTopHat2DstdBasicCompare ${IMAGE_COMPARE} blackTopHat2D-std-basic.p
 ${CMAKE_SOURCE_DIR}/images/blackTopHat2D-std.png)
 ADD_TEST(BlackTopHat2DstdHistoCompare ${IMAGE_COMPARE} blackTopHat2D-std-histo.png
 ${CMAKE_SOURCE_DIR}/images/blackTopHat2D-std.png)
+
+
+FOREACH(r 1 3 6 10 20 50)
+  ADD_TEST(KernelBox2D-${r} kernelShape kernelShape-box-${r}.png ${r} 0)
+  ADD_TEST(KernelBox2D-${r}-Compare ${IMAGE_COMPARE} kernelShape-box-${r}.png ${CMAKE_SOURCE_DIR}/images/kernelShape-box-${r}.png)
+
+  ADD_TEST(KernelBall2D-${r} kernelShape kernelShape-ball-${r}.png ${r} 1)
+  ADD_TEST(KernelBall2D-${r}-Compare ${IMAGE_COMPARE} kernelShape-ball-${r}.png ${CMAKE_SOURCE_DIR}/images/kernelShape-ball-${r}.png)
+ENDFOREACH(r)
 
