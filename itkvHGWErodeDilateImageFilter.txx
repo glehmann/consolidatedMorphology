@@ -74,7 +74,7 @@ vHGWErodeDilateImageFilter<TImage, TKernel, TFunction1>
   BresType BresLine;
   ProgressReporter progress(this, 0, decomposition.size());
 
-  std::cout << decomposition.size() << " lines will be used" << std::endl;
+//   std::cout << decomposition.size() << " lines will be used" << std::endl;
 
   for (unsigned i = 0; i < decomposition.size(); i++)
     {
@@ -85,7 +85,7 @@ vHGWErodeDilateImageFilter<TImage, TKernel, TFunction1>
     if (!(SELength%2))
       ++SELength;
 
-    std::cout << "line: "<< ThisLine << SELength << std::endl;
+//     std::cout << "line: "<< ThisLine << SELength << std::endl;
 
     InputImageRegionType BigFace = mkEnlargedFace<InputImageType, typename KernelType::LType>(input, OReg, ThisLine);
     doFace<TImage, BresType, TFunction1, 
