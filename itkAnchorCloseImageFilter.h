@@ -22,7 +22,11 @@ public:
 
   virtual ~AnchorCloseImageFilter() {}
 protected:
-  AnchorCloseImageFilter(){}
+  AnchorCloseImageFilter()
+  {
+    this->m_Boundary1 = itk::NumericTraits< typename TImage::PixelType >::NonpositiveMin();
+    this->m_Boundary2 = itk::NumericTraits< typename TImage::PixelType >::max();
+  }
   void PrintSelf(std::ostream& os, Indent indent) const
   {
     os << indent << "Anchor closing: " << std::endl;

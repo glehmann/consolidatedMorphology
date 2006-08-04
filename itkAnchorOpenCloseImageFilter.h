@@ -83,7 +83,7 @@ protected:
   /** Single-threaded version of GenerateData.  This filter delegates
    * to GrayscaleGeodesicErodeImageFilter. */
   void GenerateData();
-
+  InputImagePixelType m_Boundary1, m_Boundary2;
 
 private:
   AnchorOpenCloseImageFilter(const Self&); //purposely not implemented
@@ -112,6 +112,7 @@ private:
 
   void doFaceOpen(InputImageConstPointer input,
 		  InputImagePointer output,
+		  typename TImage::PixelType border,
 		  typename KernelType::LType line,
 		  const typename BresType::OffsetArray LineOffsets,
 		  InputImagePixelType * outbuffer,	      

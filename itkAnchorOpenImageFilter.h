@@ -22,7 +22,11 @@ public:
 
   virtual ~AnchorOpenImageFilter() {}
 protected:
-  AnchorOpenImageFilter(){}
+  AnchorOpenImageFilter()
+  {
+    this->m_Boundary1 = itk::NumericTraits< typename TImage::PixelType >::max();
+    this->m_Boundary2 = itk::NumericTraits< typename TImage::PixelType >::NonpositiveMin();
+  }
   void PrintSelf(std::ostream& os, Indent indent) const
   {
     os << indent << "Anchor opening: " << std::endl;

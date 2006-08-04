@@ -45,7 +45,8 @@ AnchorOpenCloseImageFilter<TImage, TKernel, LessThan, GreaterThan, LessEqual, Gr
     {
     bufflength += OReg.GetSize()[i];
     }
-
+  // compat
+  bufflength += 2;
   //unsigned linecount = OReg.GetNumberOfPixels()/bufflength;
 
   InputImagePixelType * inbuffer = new InputImagePixelType[bufflength];
@@ -70,7 +71,7 @@ AnchorOpenCloseImageFilter<TImage, TKernel, LessThan, GreaterThan, LessEqual, Gr
     InputImageRegionType BigFace = mkEnlargedFace<InputImageType, typename KernelType::LType>(input, OReg, ThisLine);
     doFace<TImage, BresType, 
       AnchorLineErodeType, 
-      typename KernelType::LType>(input, output, ThisLine, AnchorLineErode, 
+      typename KernelType::LType>(input, output, m_Boundary1, ThisLine, AnchorLineErode, 
 				  TheseOffsets, inbuffer, outbuffer, OReg, BigFace);
     
 
@@ -93,7 +94,7 @@ AnchorOpenCloseImageFilter<TImage, TKernel, LessThan, GreaterThan, LessEqual, Gr
 
   // Now figure out which faces of the image we should be starting
   // from with this line
-  doFaceOpen(input, output, ThisLine,
+  doFaceOpen(input, output, m_Boundary1, ThisLine,
 	     TheseOffsets, outbuffer, 
 	     OReg, BigFace);
   // equivalent to two passes
@@ -116,7 +117,7 @@ AnchorOpenCloseImageFilter<TImage, TKernel, LessThan, GreaterThan, LessEqual, Gr
     InputImageRegionType BigFace = mkEnlargedFace<InputImageType, typename KernelType::LType>(input, OReg, ThisLine);
     doFace<TImage, BresType, 
       AnchorLineDilateType, 
-      typename KernelType::LType>(input, output, ThisLine, AnchorLineDilate, 
+      typename KernelType::LType>(input, output, m_Boundary2, ThisLine, AnchorLineDilate, 
 				  TheseOffsets, inbuffer, outbuffer, OReg, BigFace);
 
     
@@ -132,6 +133,7 @@ void
 AnchorOpenCloseImageFilter<TImage, TKernel, LessThan, GreaterThan, LessEqual, GreaterEqual>
 ::doFaceOpen(InputImageConstPointer input,
 	     InputImagePointer output,
+	     typename TImage::PixelType border,
 	     typename KernelType::LType line,
 	     typename BresType::OffsetArray LineOffsets,
 	     InputImagePixelType * outbuffer,	      
@@ -155,8 +157,12 @@ AnchorOpenCloseImageFilter<TImage, TKernel, LessThan, GreaterThan, LessEqual, Gr
 								     AllImage, outbuffer, 
 								     start, end))
       {
+      
       len = end - start + 1;
-      AnchorLineOpen.doLine(outbuffer,len);
+      // compat
+      outbuffer[0]=border;
+      outbuffer[len+1]=border;
+      AnchorLineOpen.doLine(outbuffer,len+2);  // compat
       copyLineToImage<TImage, BresType>(output, Ind, LineOffsets, outbuffer, start, end);
       }
     ++it;
