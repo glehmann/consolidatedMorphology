@@ -631,7 +631,15 @@ FlatStructuringElement<VDimension> FlatStructuringElement<VDimension>
       res.m_Lines.push_back(L);
       }
     }
-  res.ComputeBufferFromLines();
+  // this doesn't work if one of the dimensions is zero. Suspect an
+  //"inconsistency" in the way 
+  //res.ComputeBufferFromLines();
+  Iterator kernel_it;
+  for( kernel_it=res.Begin(); kernel_it != res.End(); ++kernel_it )
+    {
+    *kernel_it = true;
+    }
+
   return(res);
 }
 
@@ -804,6 +812,7 @@ ComputeBufferFromLines()
   region.SetSize( size );
   sourceImage->SetRegions( region );
   sourceImage->Allocate();
+
   // sourceImage->Print(std::cout);
 
   // Set the background to be zero

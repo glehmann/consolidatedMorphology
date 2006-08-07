@@ -57,6 +57,8 @@ vHGWErodeDilateImageFilter<TImage, TKernel, TFunction1>
 
   // get the region size
   InputImageRegionType OReg = output->GetRequestedRegion();
+  std::cout << "vhgw " << OReg << std::endl;
+
   // maximum buffer length is sum of dimensions
   unsigned int bufflength = 0;
   for (unsigned i = 0; i<TImage::ImageDimension; i++)
