@@ -15,7 +15,7 @@
 #include "itkFloodFilledSpatialFunctionConditionalIterator.h"
 #include "itkEllipsoidInteriorExteriorSpatialFunction.h" 
 
-#include "itkAnchorDilateImageFilter.h"
+#include "itkvHGWDilateImageFilter.h"
 
 
 namespace itk
@@ -833,7 +833,7 @@ ComputeBufferFromLines()
   sourceImage->SetPixel( center, true );
 
   // dilate the pixel
-  typedef itk::AnchorDilateImageFilter<ImageType, Self> DilateType;
+  typedef itk::vHGWDilateImageFilter<ImageType, Self> DilateType;
   typename DilateType::Pointer dilate = DilateType::New();
   dilate->SetInput( sourceImage );
   dilate->SetKernel( *this );
