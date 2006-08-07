@@ -132,6 +132,8 @@ int computeStartEnd(const typename TImage::IndexType StartIndex,
     if (Tnear - Tfar < 10)
       {
 //      std::cout << "Searching " << Tnear << " " << Tfar << std::endl;
+      assert(ePos >= 0);
+      assert(sPos < LineOffsets.size());
       for (unsigned i = ePos; i<= sPos; i++)
 	{
 	if (AllImage.IsInside(StartIndex + LineOffsets[i]))
@@ -175,6 +177,8 @@ int computeStartEnd(const typename TImage::IndexType StartIndex,
   else
     {
     
+    assert(sPos >= 0);
+    assert(sPos < LineOffsets.size());
     if (AllImage.IsInside(StartIndex + LineOffsets[sPos]))
       {
       for (;;)
@@ -235,6 +239,8 @@ void copyLineToImage(const typename TImage::Pointer output,
   unsigned size = end - start + 1;
   for (unsigned i = 0; i <size; i++)
     {
+    assert(start + i >= 0);
+    assert(start + i < LineOffsets.size());
 #if 1
     output->SetPixel(StartIndex + LineOffsets[start + i], outbuffer[i+1]);  //compat
 #else
@@ -385,6 +391,8 @@ int fillLineBuffer(typename TImage::ConstPointer input,
   // compat
   for (unsigned i = 0; i < size;i++)
     {
+    assert(start + i >= 0);
+    assert(start + i < LineOffsets.size());
     inbuffer[i+1] = input->GetPixel(StartIndex + LineOffsets[start + i]);
     }
 #else
@@ -394,6 +402,8 @@ int fillLineBuffer(typename TImage::ConstPointer input,
   for (unsigned i = 0; i < lastPos;i++)
     {
     inbuffer[i]= it.Get();
+    assert(i >= 0);
+    assert(i < LineOffsets.size());
     typename TImage::IndexType I = StartIndex + LineOffsets[i];
     typename TImage::OffsetType Off = I - it.GetIndex();
     it += Off;
