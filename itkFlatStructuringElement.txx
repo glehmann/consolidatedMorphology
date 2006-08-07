@@ -830,6 +830,13 @@ ComputeBufferFromLines()
     }
   sourceImage->SetPixel( center, true );
 
+  // initialize the kernel with everything to false, to avoid warnings in
+  // valgrind in the SetKernel() method
+  for( Iterator kernel_it=this->Begin(); kernel_it != this->End(); ++kernel_it )
+    {
+    *kernel_it = false;
+    }
+
   // dilate the pixel
   typedef itk::vHGWDilateImageFilter<ImageType, Self> DilateType;
   typename DilateType::Pointer dilate = DilateType::New();
