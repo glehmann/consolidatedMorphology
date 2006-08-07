@@ -665,8 +665,7 @@ FlatStructuringElement<VDimension> FlatStructuringElement<VDimension>
   RadiusType size = radius;
   for( int i=0; i<VDimension; i++ )
     {
-    size[i] *= 2;
-    size[i] += 1;
+    size[i] = 2*size[i] + 1;
     }
   region.SetSize( size );
 
@@ -806,8 +805,7 @@ ComputeBufferFromLines()
   RadiusType size = this->GetRadius();
   for( int i=0; i<VDimension; i++ )
     {
-    size[i] *= 2;
-    size[i] += 1;
+    size[i] = 2*size[i] + 1;
     }
   region.SetSize( size );
   sourceImage->SetRegions( region );
@@ -862,8 +860,7 @@ GetImage()
   RadiusType size = this->GetRadius();
   for( int i=0; i<VDimension; i++ )
     {
-    size[i] *= 2;
-    size[i] += 1;
+    size[i] = 2*size[i] + 1;
     }
   region.SetSize( size );
   image->SetRegions( region );
