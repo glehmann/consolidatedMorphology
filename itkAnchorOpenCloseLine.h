@@ -49,12 +49,14 @@ private:
 		 InputImagePixelType &Extreme,
 		 Histogram &histo,
 		 unsigned &outLeftP,
-		 unsigned &outRightP);
+		 unsigned &outRightP, 
+		 unsigned bufflength);
 
   bool finishLine(InputImagePixelType * buffer,
 		  InputImagePixelType &Extreme,
 		  unsigned &outLeftP,
-		  unsigned &outRightP);
+		  unsigned &outRightP, 
+		  unsigned bufflength);
 
   bool useVectorBasedHistogram()
   {

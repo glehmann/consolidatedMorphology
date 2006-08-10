@@ -55,7 +55,7 @@ private:
 		 int &outRightP,
 		 int &inLeftP,
 		 int &inRightP,
-		 int middle);
+		 int middle, unsigned bufflength);
 
   bool finishLine(InputImagePixelType * buffer,
 		  InputImagePixelType * inbuffer,
@@ -65,7 +65,7 @@ private:
 		  int &outRightP,
 		  int &inLeftP,
 		  int &inRightP,
-		  int middle);
+		  int middle, unsigned bufflength);
 
   bool useVectorBasedHistogram()
   {
