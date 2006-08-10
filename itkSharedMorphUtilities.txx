@@ -146,7 +146,7 @@ int computeStartEnd(const typename TImage::IndexType StartIndex,
       }
     if (intersection)
       {
-//      std::cout << "Found intersection after all" << std::endl;
+//      std::cout << "Found intersection after all :: " << inside << std::endl;
       sPos = ePos = inside;
       assert(ePos + 1 >= 0);
       assert(ePos + 1 < LineOffsets.size());
@@ -181,7 +181,7 @@ int computeStartEnd(const typename TImage::IndexType StartIndex,
     assert(sPos < LineOffsets.size());
     if (AllImage.IsInside(StartIndex + LineOffsets[sPos]))
       {
-      for (;;)
+      for (;sPos>0;)
 	{
         assert(sPos - 1 >= 0);
         assert(sPos - 1 < LineOffsets.size());
@@ -191,7 +191,7 @@ int computeStartEnd(const typename TImage::IndexType StartIndex,
       }
     else
       {
-      for(;;)
+      for(;sPos<LineOffsets.size();)
 	{
         assert(sPos >= 0);
         assert(sPos < LineOffsets.size());
@@ -202,7 +202,7 @@ int computeStartEnd(const typename TImage::IndexType StartIndex,
       }
     if (AllImage.IsInside(StartIndex + LineOffsets[ePos]))
       {
-      for(;;)
+      for(;ePos<LineOffsets.size();)
 	{
         assert(ePos + 1 >= 0);
         assert(ePos + 1 < LineOffsets.size());
@@ -212,7 +212,7 @@ int computeStartEnd(const typename TImage::IndexType StartIndex,
       }
     else
       {
-      for (;;)
+      for (;ePos>0;)
 	{
 	--ePos;
         assert(ePos >= 0);
