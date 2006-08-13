@@ -9,7 +9,11 @@ namespace itk {
  * \class AnchorErodeDilateLine
  * \brief class to implement erosions and dilations using anchor
  * methods. This is the base class that must be instantiated with
- * appropriate definitions of greater, less and so on
+ * appropriate definitions of greater, less and so on. There is 
+ * special code for cases where the structuring element is bigger than
+ * the image size that aren't particularly anchor related, but use the
+ * same data structures. Hopefully these sections occupy a very minor
+ * proportion of the time.
 
 **/
 template<class TInputPix, class TFunction1, class TFunction2>

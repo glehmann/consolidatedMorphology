@@ -60,6 +60,60 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
   int inLeftP = 0, inRightP = (int)bufflength - 1;
   InputImagePixelType Extreme;
   m_Histo->Reset();
+  if (bufflength <= m_Size)
+    {
+    // basically a standard histogram method
+    // Left border, first half of structuring element
+    Extreme = inbuffer[inLeftP];
+    m_Histo->AddPixel(Extreme);
+    for (int i = 0; (i < middle); i++)
+      {
+      ++inLeftP;
+      assert(inLeftP >= 0);
+      assert(inLeftP < bufflength);
+      m_Histo->AddPixel(inbuffer[inLeftP]);
+      if (m_TF1(inbuffer[inLeftP], Extreme))
+	{
+	Extreme = inbuffer[inLeftP];
+	}
+      }
+    assert(outLeftP >= 0);
+    assert(outLeftP < bufflength);
+    buffer[outLeftP] = Extreme;
+  
+    // Second half of SE
+    for (int i = 0; i < (int)m_Size - middle - 1; i++)
+      {
+      ++inLeftP;
+      ++outLeftP;
+      if (inLeftP < bufflength) 
+	{
+	assert(inLeftP >= 0);
+	assert(inLeftP < bufflength);
+	m_Histo->AddPixel(inbuffer[inLeftP]);
+	if (m_TF1(inbuffer[inLeftP], Extreme))
+	  {
+	  Extreme = inbuffer[inLeftP];
+	  }
+	}
+      assert(outLeftP >= 0);
+      assert(outLeftP < bufflength);
+      buffer[outLeftP] = Extreme;
+      }
+    // now finish
+    outLeftP++;
+    int left = 0;
+    for (;outLeftP < bufflength;outLeftP++, left++)
+      {
+      m_Histo->RemovePixel(inbuffer[left]);
+      Extreme = m_Histo->GetValue();
+      assert(outLeftP >= 0);
+      assert(outLeftP < bufflength);
+      buffer[outLeftP] = Extreme;
+      }
+    
+    return;
+    }
 
   // Left border, first half of structuring element
   Extreme = inbuffer[inLeftP];
@@ -143,7 +197,7 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
   int sentinel;
   
   assert(currentP >= 0);
-  assert(currentP < bufflength);
+  assert(inRightP <= bufflength);
   while ((currentP < inRightP) && m_TF2(inbuffer[currentP], Extreme))
     {
     assert(currentP >= 0);

@@ -35,7 +35,7 @@ AnchorOpenCloseLine<TInputPix, THistogramCompare, TFunction1, TFunction2>
   // closing, and then copy the result to the output. Hopefully this
   // will improve cache performance when working along non raster
   // directions.
-  if (bufflength <= m_Size)
+  if (bufflength <= m_Size/2)
     {
     // No point doing anything fancy - just look for the extreme value
     // This is important for angled structuring elements
@@ -72,6 +72,33 @@ AnchorOpenCloseLine<TInputPix, THistogramCompare, TFunction1, TFunction2>
   while (startLine(buffer, Extreme, *m_Histo, outLeftP, outRightP, bufflength)){}
   
   finishLine(buffer, Extreme, outLeftP, outRightP, bufflength);
+  // this section if to make the edge behaviour the same as the more
+  // traditional approaches. It isn't part of the core anchor method.
+  // Note that the index calculations include some extra factors that
+  // relate to the padding at either end to allow users to set
+  // borders.
+  // compat
+  // fix left border
+  Extreme = buffer[m_Size/2 + 1];
+  for (int i=m_Size/2;i>=0;i--)
+    {
+    if (m_TF1(Extreme, buffer[i]))
+      {
+      Extreme=buffer[i];
+      }
+    buffer[i]=Extreme;
+    }
+  // fix right border 
+  Extreme = buffer[bufflength - m_Size/2 - 2];
+  for (int i=bufflength - m_Size/2 - 1;i<bufflength;i++)
+    {
+    if (m_TF1(Extreme, buffer[i]))
+      {
+      Extreme=buffer[i];
+      }
+    buffer[i]=Extreme;
+    }
+  
 }
 
 template<class TInputPix, class THistogramCompare, class TFunction1, class TFunction2>
