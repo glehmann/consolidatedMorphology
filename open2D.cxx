@@ -21,7 +21,7 @@ int main(int, char * argv[])
   
   typedef itk::FlatStructuringElement<dim> SRType;
   SRType::RadiusType radius;
-  radius.Fill( 7 );
+  radius.Fill( 4 );
 //  radius[1]=0;
   SRType kernel = SRType::Box( radius );
   

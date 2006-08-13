@@ -40,6 +40,7 @@ GrayscaleMorphologicalClosingImageFilter<TInputImage, TOutputImage, TKernel>
   m_vHGWErodeFilter = vHGWErodeFilterType::New();
   m_AnchorFilter = AnchorFilterType::New();
   m_Algorithm = HISTO;
+  m_SafeBorder = true;
 }
 
 template<class TInputImage, class TOutputImage, class TKernel>

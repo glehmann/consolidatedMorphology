@@ -82,6 +82,7 @@ AnchorOpenCloseLine<TInputPix, THistogramCompare, TFunction1, TFunction2>
   Extreme = buffer[m_Size/2 + 1];
   for (int i=m_Size/2;i>=0;i--)
     {
+    assert(i >= 0);
     if (m_TF1(Extreme, buffer[i]))
       {
       Extreme=buffer[i];
@@ -92,6 +93,7 @@ AnchorOpenCloseLine<TInputPix, THistogramCompare, TFunction1, TFunction2>
   Extreme = buffer[bufflength - m_Size/2 - 2];
   for (int i=bufflength - m_Size/2 - 1;i<bufflength;i++)
     {
+    assert(i < bufflength);
     if (m_TF1(Extreme, buffer[i]))
       {
       Extreme=buffer[i];

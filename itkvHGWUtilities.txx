@@ -51,18 +51,9 @@ int fillLineBuffer(typename TImage::ConstPointer input,
     ++i;
     for (unsigned k = 1; k < KernLen; k++)
       {
-//      std::cout << "f2: i = " << i << std::endl;
       typename TImage::PixelType V = input->GetPixel(StartIndex + LineOffsets[start + i]);
       pixbuffer[i] = V;
       fExtBuffer[i] = m_TF(V, fExtBuffer[i-1]);
-//       if (m_TF(V, fExtBuffer[i-1]))
-// 	{
-// 	fExtBuffer[i] = V;
-// 	}
-//       else
-// 	{
-// 	fExtBuffer[i] = fExtBuffer[i-1];
-// 	}
       ++i;
       }
     }
@@ -79,20 +70,8 @@ int fillLineBuffer(typename TImage::ConstPointer input,
     typename TImage::PixelType V = input->GetPixel(StartIndex + LineOffsets[start + i]);
     pixbuffer[i] = V;
     fExtBuffer[i] = m_TF(V, fExtBuffer[i-1]);
-//     if (m_TF(V, fExtBuffer[i-1]))
-//       {
-//       fExtBuffer[i] = V;
-//       }
-//     else
-//       {
-//       fExtBuffer[i] = fExtBuffer[i-1];
-//       }
     ++i;
     }
-//   for (unsigned h = 0; h < size; h++)
-//     {
-//     std::cout << (int)pixbuffer[h] << " " << (int)fExtBuffer[h] << std::endl;
-//     }
   return(1);
 }
 
@@ -267,11 +246,15 @@ void fillForwardExt(PixelType *pixbuffer, PixelType *fExtBuffer,
   TFunction m_TF;
   for (unsigned j = 0; j<blocks;j++)
     {
+    assert(i >= 0);
+    assert(i < len);
     PixelType Ext = pixbuffer[i];
     fExtBuffer[i]=Ext;
     ++i;
     for (unsigned k = 1; k < KernLen; k++)
       {
+      assert((i-1)>=0);
+      assert(i<len);
       PixelType V = pixbuffer[i];
       fExtBuffer[i] = m_TF(V, fExtBuffer[i-1]);
       ++i;
@@ -280,12 +263,16 @@ void fillForwardExt(PixelType *pixbuffer, PixelType *fExtBuffer,
   // finish the rest
   if (i != size - 1)
     {
+    assert(i>=0);
+    assert(i<len);
     PixelType V = pixbuffer[i];
     fExtBuffer[i] = V;
     i++;
     }
   while (i < size)
     {
+    assert((i-1)>=0);
+    assert(i<len);
     PixelType V = pixbuffer[i];
     fExtBuffer[i] = m_TF(V, fExtBuffer[i-1]);
     ++i;
@@ -302,10 +289,14 @@ void fillReverseExt(PixelType *pixbuffer, PixelType *rExtBuffer,
   TFunction m_TF;
   if ((i > (blocks * (int)KernLen - 1)))
     {
+    assert(i>=0);
+    assert(i<len);
     rExtBuffer[i] = pixbuffer[i];
     --i;
     while (i >= (int)(blocks * KernLen))
       {
+      assert(i>=0);
+      assert((i+1)<len);
       PixelType V = pixbuffer[i];
       rExtBuffer[i] = m_TF(V, rExtBuffer[i+1]);
       --i;
@@ -313,11 +304,15 @@ void fillReverseExt(PixelType *pixbuffer, PixelType *rExtBuffer,
     }
   for (unsigned j = 0; j<blocks;j++)
     {
+    assert(i>=0);
+    assert(i<len);
     PixelType Ext = pixbuffer[i];
     rExtBuffer[i]=Ext;
     --i;
     for (unsigned k = 1; k < KernLen; k++)
       {
+      assert(i>=0);
+      assert((i+1)<len);
       PixelType V = pixbuffer[i];
       rExtBuffer[i] = m_TF(V, rExtBuffer[i+1]);
       --i;
@@ -367,6 +362,8 @@ void doFace(typename TImage::ConstPointer input,
 	{
 	for (unsigned j = 0;j < size;j++)
 	  {
+	  assert(j>=0);
+	  assert(j<size);
 	  pixbuffer[j] = fExtBuffer[size-1];
 	  }
 	}
@@ -390,11 +387,20 @@ void doFace(typename TImage::ConstPointer input,
 	// line beginning
 	for (unsigned j = 0;j < KernLen/2;j++)
 	  {
+	  assert(j>=0);
+	  assert((j+ KernLen/2)<size);
 	  pixbuffer[j] = fExtBuffer[j + KernLen/2];
 	  }
 	for (unsigned j = KernLen/2, k=KernLen/2 + KernLen/2, l = KernLen/2 - KernLen/2;
 	     j < size - KernLen/2; j++, k++, l++)
 	  {
+	  assert(k>=0);
+	  assert(k<size);
+	  assert(l>=0);
+	  assert(l<size);
+	  assert(j>=0);
+	  assert(j<size);
+
 	  typename TImage::PixelType V1 = fExtBuffer[k];
 	  typename TImage::PixelType V2 = rExtBuffer[l];
 	  pixbuffer[j] = m_TF(V1, V2);
@@ -403,10 +409,15 @@ void doFace(typename TImage::ConstPointer input,
 	// extreme array
 	for (unsigned j = size - 2; (j > 0) && (j >= (size - KernLen - 1)); j--)
 	  {
+	  assert(j>=0);
+	  assert((j+1)<size);
 	  rExtBuffer[j] = m_TF(rExtBuffer[j+1], rExtBuffer[j]);
 	  }
 	for (unsigned j = size - KernLen/2; j < size;j++)
 	  {
+	  assert((j-KernLen/2)>=0);
+	  assert((j-KernLen/2)<size);
+	  assert((j)<size);
 	  pixbuffer[j]=rExtBuffer[j-KernLen/2];
 	  }
 	}
