@@ -261,7 +261,7 @@ void fillForwardExt(PixelType *pixbuffer, PixelType *fExtBuffer,
       }
     }
   // finish the rest
-  if (i != size - 1)
+  if ((i != size - 1) && (i < size))
     {
     assert(i>=0);
     assert(i<len);

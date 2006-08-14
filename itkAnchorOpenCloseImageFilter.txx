@@ -5,7 +5,7 @@
 #include "itkNeighborhoodAlgorithm.h"
 #include "itkImageRegionConstIteratorWithIndex.h"
 #include "itkAnchorUtilities.h"
-
+#include <itkImageRegionIterator.h>
 namespace itk {
 
 template <class TImage, class TKernel, class LessThan, class GreaterThan, class LessEqual, class GreaterEqual>
@@ -36,9 +36,19 @@ AnchorOpenCloseImageFilter<TImage, TKernel, LessThan, GreaterThan, LessEqual, Gr
   this->AllocateOutputs();
   InputImagePointer output = this->GetOutput();
   InputImageConstPointer input = this->GetInput();
+
   
   // get the region size
   InputImageRegionType OReg = output->GetRequestedRegion();
+#if 0
+  // for testing purposes - set output to 0
+  ImageRegionIterator<InputImageType> it(output, OReg);
+  for(it.GoToBegin(); !it.IsAtEnd(); ++it)
+    {
+    it.Set(0);
+    }
+#endif
+
   // maximum buffer length is sum of dimensions
   unsigned int bufflength = 0;
   for (unsigned i = 0; i<TImage::ImageDimension; i++)

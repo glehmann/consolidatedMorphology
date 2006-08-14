@@ -56,7 +56,7 @@ AnchorErodeDilateImageFilter<TImage, TKernel, TFunction1, TFunction2>
   this->AllocateOutputs();
   InputImagePointer output = this->GetOutput();
   InputImageConstPointer input = this->GetInput();
-
+  
   // get the region size
   InputImageRegionType OReg = output->GetRequestedRegion();
   // maximum buffer length is sum of dimensions
@@ -69,20 +69,12 @@ AnchorErodeDilateImageFilter<TImage, TKernel, TFunction1, TFunction2>
   // compat
   bufflength += 2;
 
-#ifdef ANCHOR_ALGORITHM
   InputImagePixelType * buffer = new InputImagePixelType[bufflength];
   InputImagePixelType * inbuffer = new InputImagePixelType[bufflength];
-#else
-  InputImagePixelType * buffer = new InputImagePixelType[bufflength];
-  InputImagePixelType * forward = new InputImagePixelType[bufflength];
-  InputImagePixelType * reverse = new InputImagePixelType[bufflength];
-#endif
   // iterate over all the structuring elements
   typename KernelType::DecompType decomposition = m_Kernel.GetLines();
   BresType BresLine;
   ProgressReporter progress(this, 0, decomposition.size());
-
-//   std::cout << decomposition.size() << " lines will be used" << std::endl;
 
   for (unsigned i = 0; i < decomposition.size(); i++)
     {
@@ -93,34 +85,19 @@ AnchorErodeDilateImageFilter<TImage, TKernel, TFunction1, TFunction2>
     if (!(SELength%2))
       ++SELength;
 
-//     std::cout << "line: "<< ThisLine << SELength << std::endl;
-
     InputImageRegionType BigFace = mkEnlargedFace<InputImageType, typename KernelType::LType>(input, OReg, ThisLine);
-#ifdef ANCHOR_ALGORITHM
+
     AnchorLine.SetSize(SELength);
     doFace<TImage, BresType, AnchorLineType, typename KernelType::LType>(input, output, m_Boundary, ThisLine, AnchorLine, 
 									   TheseOffsets, inbuffer, buffer, OReg, BigFace);
-#else
-    doFace<TImage, BresType, TFunction1, typename KernelType::LType>(input, output, ThisLine,  
-								     TheseOffsets, SELength,
-								     buffer, forward, 
-								     reverse, OReg, BigFace);
-    
-#endif
     // after the first pass the input will be taken from the output
     input = this->GetOutput();
     progress.CompletedPixel();
     }
 
 
-#ifdef ANCHOR_ALGORITHM
   delete [] buffer;
   delete [] inbuffer;
-#else
-  delete [] buffer;
-  delete [] forward;
-  delete [] reverse;
-#endif
 }
 
 

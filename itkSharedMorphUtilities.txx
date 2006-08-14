@@ -244,7 +244,8 @@ void copyLineToImage(const typename TImage::Pointer output,
 #if 1
     output->SetPixel(StartIndex + LineOffsets[start + i], outbuffer[i+1]);  //compat
 #else
-    output->SetPixel(StartIndex + LineOffsets[start + i], 1+outbuffer[i]);
+    typename TImage::IndexType I = StartIndex + LineOffsets[start + i];
+    output->SetPixel(I, 1 + output->GetPixel(I));
 #endif
     }
 //  std::cout << "Copy out " << StartIndex << StartIndex + LineOffsets[len-1] << std::endl;
@@ -395,7 +396,7 @@ int fillLineBuffer(typename TImage::ConstPointer input,
     assert(start + i < LineOffsets.size());
     inbuffer[i+1] = input->GetPixel(StartIndex + LineOffsets[start + i]);
     }
-  std::cout << StartIndex + LineOffsets[start] << StartIndex + LineOffsets[start + size - 1] << std::endl;
+//  std::cout << StartIndex + LineOffsets[start] << StartIndex + LineOffsets[start + size - 1] << std::endl;
 #else
   typedef ImageRegionConstIteratorWithIndex<TImage> ItType;
   ItType it(input, AllImage);
