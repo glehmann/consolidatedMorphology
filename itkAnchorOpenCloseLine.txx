@@ -87,6 +87,7 @@ AnchorOpenCloseLine<TInputPix, THistogramCompare, TFunction1, TFunction2>
       {
       Extreme=buffer[i];
       }
+//    std::cout << i << " " << (int)Extreme << " " << (int)buffer[i] << std::endl;
     buffer[i]=Extreme;
     }
   // fix right border 
@@ -98,6 +99,7 @@ AnchorOpenCloseLine<TInputPix, THistogramCompare, TFunction1, TFunction2>
       {
       Extreme=buffer[i];
       }
+//    std::cout << (int)Extreme << " " << (int)buffer[i] << std::endl;
     buffer[i]=Extreme;
     }
   

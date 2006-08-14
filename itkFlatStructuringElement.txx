@@ -637,7 +637,6 @@ FlatStructuringElement<VDimension> FlatStructuringElement<VDimension>
 //   Iterator kernel_it;
 //   for( kernel_it=res.Begin(); kernel_it != res.End(); ++kernel_it )
 //     {
-//     std::cout << *kernel_it << std::endl;
 //     *kernel_it= true;
 //     }
 
