@@ -162,11 +162,21 @@ public:
 
   void RemovePixel(const TInputPixel &p)
   {
+    assert(p - NumericTraits< TInputPixel >::NonpositiveMin() >= 0);
+    assert(p - NumericTraits< TInputPixel >::NonpositiveMin() < m_Vec.size());
     m_Vec[ p - NumericTraits< TInputPixel >::NonpositiveMin()  ]--; 
+    assert(static_cast<int>(m_CurrentValue -                                                                                                                      
+			    NumericTraits< TInputPixel >::NonpositiveMin() ) >= 0);
+    assert(static_cast<int>(m_CurrentValue -                                                                                                                      
+			    NumericTraits< TInputPixel >::NonpositiveMin() ) < m_Vec.size());
     while( m_Vec[static_cast<int>(m_CurrentValue - 
 				  NumericTraits< TInputPixel >::NonpositiveMin() )] == 0 )
       {
       m_CurrentValue += m_Direction;
+      assert(static_cast<int>(m_CurrentValue -                                                                                                                      
+			    NumericTraits< TInputPixel >::NonpositiveMin() ) >= 0);
+      assert(static_cast<int>(m_CurrentValue -                                                                                                                      
+			    NumericTraits< TInputPixel >::NonpositiveMin() ) < m_Vec.size());
       }
   }
  
