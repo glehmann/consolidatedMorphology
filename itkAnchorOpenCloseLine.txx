@@ -145,12 +145,17 @@ AnchorOpenCloseLine<TInputPix, THistogramCompare, TFunction1, TFunction2>
     if (m_TF2(buffer[currentP], Extreme))
       {
       endP = currentP;
+#if 1
       for (unsigned PP = outLeftP + 1; PP < endP; ++PP)
 	{
 	assert(PP >= 0);
 	assert(PP < bufflength);
 	buffer[PP] = Extreme;
 	}
+#else
+      outLeftP++;
+      while(outLeftP < endP){buffer[outLeftP]=Extreme;outLeftP++;}
+#endif
       outLeftP = currentP;
       return (true);
       }
@@ -164,12 +169,18 @@ AnchorOpenCloseLine<TInputPix, THistogramCompare, TFunction1, TFunction2>
   if (m_TF2(buffer[currentP], Extreme))
     {
     endP = currentP;
+#if 1
     for (unsigned PP = outLeftP + 1; PP < endP; ++PP)
       {
       assert(PP >= 0);
       assert(PP < bufflength);
       buffer[PP] = Extreme;
       }
+#else
+    outLeftP++;
+    while (outLeftP < endP) { buffer[outLeftP]=Extreme; outLeftP++; }
+
+#endif
     outLeftP = currentP;
     return(true);
     }
@@ -178,7 +189,7 @@ AnchorOpenCloseLine<TInputPix, THistogramCompare, TFunction1, TFunction2>
     // Now we need a histogram
     // Initialise it
     histo.Reset();
-    ++outLeftP;
+    outLeftP++;
     for (unsigned aux = outLeftP; aux <= currentP; ++aux)
       {
       assert(aux >= 0);
@@ -206,12 +217,18 @@ AnchorOpenCloseLine<TInputPix, THistogramCompare, TFunction1, TFunction2>
       {
       // Found a new extrem
       endP = currentP;
+#if 1
       for (unsigned PP = outLeftP + 1; PP < endP; PP++)
 	{
 	assert(PP >= 0);
 	assert(PP < bufflength);
 	buffer[PP]=Extreme;
 	}
+#else
+      outLeftP++;
+      while (outLeftP < endP) { buffer[outLeftP]=Extreme; outLeftP++; }
+
+#endif
       outLeftP = currentP;
       return(true);
       }

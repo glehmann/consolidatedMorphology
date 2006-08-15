@@ -633,12 +633,12 @@ FlatStructuringElement<VDimension> FlatStructuringElement<VDimension>
     }
   // this doesn't work if one of the dimensions is zero. Suspect an
   //"inconsistency" in the way 
-  res.ComputeBufferFromLines();
-//   Iterator kernel_it;
-//   for( kernel_it=res.Begin(); kernel_it != res.End(); ++kernel_it )
-//     {
-//     *kernel_it= true;
-//     }
+//  res.ComputeBufferFromLines();
+   Iterator kernel_it;
+   for( kernel_it=res.Begin(); kernel_it != res.End(); ++kernel_it )
+     {
+     *kernel_it= true;
+     }
 
   return(res);
 }

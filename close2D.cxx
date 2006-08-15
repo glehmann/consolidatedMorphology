@@ -22,7 +22,7 @@ int main(int, char * argv[])
   typedef itk::FlatStructuringElement<dim> SRType;
   SRType::RadiusType radius;
   radius.Fill( 4 );
-//   radius[1]=0;
+  //radius[1]=0;
   SRType kernel = SRType::Box( radius );
   
   typedef itk::GrayscaleMorphologicalClosingImageFilter< IType, IType, SRType > MorphologicalClosingType;

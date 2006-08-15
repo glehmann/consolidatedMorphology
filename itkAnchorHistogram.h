@@ -115,7 +115,8 @@ private:
   unsigned int m_CurrentValue;
   TInputPixel m_InitVal;
   int m_Direction;
-
+  int m_Entries;
+//  int m_Additions, m_Removals;
 public:
   MorphologyHistogramVec() 
   {
@@ -133,22 +134,26 @@ public:
       m_CurrentValue = m_InitVal = NumericTraits< TInputPixel >::max();
       m_Direction = 1;
       }
-
+    m_Entries = 0;
+//    m_Additions=m_Removals=0;
   }
   ~MorphologyHistogramVec(){}
 
   void Reset(){
     std::fill(&(m_Vec[0]), &(m_Vec[m_Size-1]),0);
     m_CurrentValue = m_InitVal;
+    m_Entries = 0;
   }
   
   void AddBoundary()
   {
     AddPixel(this->m_Boundary);
+    ++m_Entries;
   }
 
   void RemoveBoundary(){
     RemovePixel(this->m_Boundary);
+    --m_Entries;
   }
   
   void AddPixel(const TInputPixel &p)
@@ -158,30 +163,37 @@ public:
       {
       m_CurrentValue = p;
       }
+    ++m_Entries;
   }
 
   void RemovePixel(const TInputPixel &p)
   {
     assert(p - NumericTraits< TInputPixel >::NonpositiveMin() >= 0);
     assert(p - NumericTraits< TInputPixel >::NonpositiveMin() < m_Vec.size());
+    assert(m_Entries >= 1);
     m_Vec[ p - NumericTraits< TInputPixel >::NonpositiveMin()  ]--; 
+    --m_Entries;
     assert(static_cast<int>(m_CurrentValue -                                                                                                                      
 			    NumericTraits< TInputPixel >::NonpositiveMin() ) >= 0);
     assert(static_cast<int>(m_CurrentValue -                                                                                                                      
 			    NumericTraits< TInputPixel >::NonpositiveMin() ) < m_Vec.size());
-    while( m_Vec[static_cast<int>(m_CurrentValue - 
-				  NumericTraits< TInputPixel >::NonpositiveMin() )] == 0 )
+    if (m_Entries > 0)
       {
-      m_CurrentValue += m_Direction;
-      assert(static_cast<int>(m_CurrentValue -                                                                                                                      
-			    NumericTraits< TInputPixel >::NonpositiveMin() ) >= 0);
-      assert(static_cast<int>(m_CurrentValue -                                                                                                                      
-			    NumericTraits< TInputPixel >::NonpositiveMin() ) < m_Vec.size());
+      while( m_Vec[static_cast<int>(m_CurrentValue - 
+				    NumericTraits< TInputPixel >::NonpositiveMin() )] == 0 )
+	{
+	m_CurrentValue += m_Direction;
+	assert(static_cast<int>(m_CurrentValue -                                                                                                                      
+				NumericTraits< TInputPixel >::NonpositiveMin() ) >= 0);
+	assert(static_cast<int>(m_CurrentValue -                                                                                                                      
+				NumericTraits< TInputPixel >::NonpositiveMin() ) < m_Vec.size());
+	}
       }
   }
  
   TInputPixel GetValue()
   { 
+    assert(m_Entries > 0);
     return(m_CurrentValue);
   }
 
