@@ -2,7 +2,7 @@
 PROJECT(consolidatedMorphology)
 
 # set the name of the input image used to run the test
-SET(INPUT_IMAGE ${CMAKE_SOURCE_DIR}/images/cthead1.png)
+SET(INPUT_IMAGE ${CMAKE_SOURCE_DIR}/images/CellsFluorescence2.png)
 
 #include some macros from another file...
 INCLUDE(IJMacros.txt)
