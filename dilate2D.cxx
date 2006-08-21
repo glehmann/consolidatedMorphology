@@ -12,6 +12,7 @@ int main(int, char * argv[])
 {
   const int dim = 2;
   typedef unsigned char PType;
+  //typedef float PType;
   typedef itk::Image< PType, dim >    IType;
   
   // read the input image

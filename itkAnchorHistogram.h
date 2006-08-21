@@ -112,7 +112,8 @@ private:
   VecType m_Vec;
   unsigned int m_Size;
   TCompare m_Compare;
-  unsigned int m_CurrentValue;
+  //unsigned int m_CurrentValue;
+  TInputPixel m_CurrentValue;
   TInputPixel m_InitVal;
   int m_Direction;
   int m_Entries;
@@ -158,7 +159,7 @@ public:
   
   void AddPixel(const TInputPixel &p)
   {
-    m_Vec[ p - NumericTraits< TInputPixel >::NonpositiveMin()  ]++; 
+    m_Vec[ (long unsigned int)(p - NumericTraits< TInputPixel >::NonpositiveMin())  ]++; 
     if (m_Compare(p, m_CurrentValue))
       {
       m_CurrentValue = p;
@@ -171,7 +172,7 @@ public:
     assert(p - NumericTraits< TInputPixel >::NonpositiveMin() >= 0);
     assert(p - NumericTraits< TInputPixel >::NonpositiveMin() < m_Vec.size());
     assert(m_Entries >= 1);
-    m_Vec[ p - NumericTraits< TInputPixel >::NonpositiveMin()  ]--; 
+    m_Vec[ (long unsigned int)(p - NumericTraits< TInputPixel >::NonpositiveMin())  ]--; 
     --m_Entries;
     assert(static_cast<int>(m_CurrentValue -                                                                                                                      
 			    NumericTraits< TInputPixel >::NonpositiveMin() ) >= 0);
