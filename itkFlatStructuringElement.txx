@@ -860,7 +860,7 @@ template<unsigned int VDimension>
 template< class ImageType >
 typename ImageType::Pointer
 FlatStructuringElement<VDimension>::
-GetImage()
+GetImage(typename ImageType::PixelType foreground, typename ImageType::PixelType background)
 {
   typename ImageType::Pointer image = ImageType::New();
   typename ImageType::RegionType region;
@@ -882,11 +882,11 @@ GetImage()
     {
     if( *kernel_it )
       {
-      oit.Set( itk::NumericTraits< typename ImageType::PixelType >::max() );
+      oit.Set( foreground );
       }
     else
       {
-      oit.Set( itk::NumericTraits< typename ImageType::PixelType >::Zero );
+      oit.Set( background );
       }
     }
 

@@ -74,7 +74,13 @@ public:
 
   void PrintSelf(std::ostream &os, Indent indent) const;
 
-  template < class ImageType > typename ImageType::Pointer GetImage();
+  /** return an itk::Image from the structuring element. Background defaults to
+   * NumericTraits< PixelType >::Zero and foreground to
+   * NumericTraits< PixelType >::max()
+   */
+  template < class ImageType > typename ImageType::Pointer
+    GetImage( typename ImageType::PixelType foreground=NumericTraits< typename ImageType::PixelType >::Zero,
+      typename ImageType::PixelType background=NumericTraits< typename ImageType::PixelType >::max() );
 
 protected:
 
