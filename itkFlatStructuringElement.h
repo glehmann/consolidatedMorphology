@@ -83,8 +83,8 @@ public:
    * NumericTraits< PixelType >::max()
    */
   template < class ImageType > typename ImageType::Pointer
-    GetImage( typename ImageType::PixelType foreground=NumericTraits< typename ImageType::PixelType >::Zero,
-      typename ImageType::PixelType background=NumericTraits< typename ImageType::PixelType >::max() );
+    GetImage( typename ImageType::PixelType foreground=NumericTraits< typename ImageType::PixelType >::max(),
+      typename ImageType::PixelType background=NumericTraits< typename ImageType::PixelType >::Zero );
 
   /** return an itk::Image< unsigned char, VDimension > from the structuring element
    * This method is there to be used from wrappers. From C++, you should prefer
