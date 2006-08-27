@@ -82,6 +82,19 @@ public:
     GetImage( typename ImageType::PixelType foreground=NumericTraits< typename ImageType::PixelType >::Zero,
       typename ImageType::PixelType background=NumericTraits< typename ImageType::PixelType >::max() );
 
+  /** return an itk::Image< unsigned char, VDimension > from the structuring element
+   * This method is there to be used from wrappers. From C++, you should prefer
+   * the GetImage() method.
+   */
+   typename Image< unsigned char, VDimension >::Pointer GetImageUC( unsigned char foreground, unsigned char background );
+   
+  /** return an itk::Image< unsigned char, VDimension > from the structuring element
+   * This method is there to be used from wrappers. From C++, you should prefer
+   * the GetImage() method.
+   */
+   typename Image< unsigned char, VDimension >::Pointer GetImageUC();
+   
+   
 protected:
 
   void ComputeBufferFromLines();

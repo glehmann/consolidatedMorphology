@@ -895,6 +895,23 @@ GetImage(typename ImageType::PixelType foreground, typename ImageType::PixelType
 }
 
 
+template<unsigned int VDimension>
+typename Image<unsigned char, VDimension>::Pointer
+FlatStructuringElement<VDimension>::
+GetImageUC( unsigned char foreground, unsigned char background)
+{
+  return GetImage< Image<unsigned char, VDimension> >( foreground, background );
+}
+
+
+template<unsigned int VDimension>
+typename Image<unsigned char, VDimension>::Pointer
+FlatStructuringElement<VDimension>::
+GetImageUC()
+{
+  return GetImage< Image<unsigned char, VDimension> >();
+}
+
 
 }
 
