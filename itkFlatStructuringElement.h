@@ -66,6 +66,11 @@ public:
   static Self FromImage( const typename ImageType::Pointer image,
       typename ImageType::PixelType foreground=NumericTraits< typename ImageType::PixelType >::max() );
 
+  static Self FromImageUC( const typename Image<unsigned char, VDimension>::Pointer image,
+      unsigned char foreground );
+
+  static Self FromImageUC( const typename Image<unsigned char, VDimension>::Pointer image );
+
   bool GetDecomposable() const
   {
     return m_Decomposable;

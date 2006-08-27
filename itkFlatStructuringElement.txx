@@ -776,6 +776,24 @@ FromImage(const typename ImageType::Pointer image, typename ImageType::PixelType
 }
 
 
+template< unsigned int VDimension >
+FlatStructuringElement<VDimension>
+FlatStructuringElement<VDimension>::
+FromImageUC(const typename Image<unsigned char, VDimension>::Pointer image, unsigned char foreground)
+{
+  return FromImage< Image<unsigned char, VDimension> >( image, foreground );
+}
+
+
+template< unsigned int VDimension >
+FlatStructuringElement<VDimension>
+FlatStructuringElement<VDimension>::
+FromImageUC(const typename Image<unsigned char, VDimension>::Pointer image)
+{
+  return FromImage< Image<unsigned char, VDimension> >( image );
+}
+
+
 template<unsigned int VDimension>
 bool
 FlatStructuringElement<VDimension>::
