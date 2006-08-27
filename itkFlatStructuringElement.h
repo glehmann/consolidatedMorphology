@@ -61,6 +61,10 @@ public:
   
   // lines is the number of elements in the decomposition
   static Self Poly(RadiusType radius, unsigned lines);
+  
+  template < class ImageType >
+  static Self FromImage( const typename ImageType::Pointer image,
+      typename ImageType::PixelType foreground=NumericTraits< typename ImageType::PixelType >::max() );
 
   bool GetDecomposable() const
   {

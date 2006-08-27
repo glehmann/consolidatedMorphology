@@ -749,6 +749,34 @@ FlatStructuringElement<VDimension> FlatStructuringElement<VDimension>
 
 
 template<unsigned int VDimension>
+template< class ImageType >
+FlatStructuringElement<VDimension>
+FlatStructuringElement<VDimension>::
+FromImage(const typename ImageType::Pointer image, typename ImageType::PixelType foreground)
+{
+  image->Update();
+  RadiusType size = image->GetLargestPossibleRegion().GetSize();
+  for( int i=0; i<VDimension; i++ )
+    {
+    // TODO: throw an exception if size is not odd
+    size[i] = size[i] / 2;
+    }
+  FlatStructuringElement res = FlatStructuringElement();
+  res.SetRadius( size );
+  res.m_Decomposable = false;
+
+  ImageRegionConstIterator<ImageType> iit( image, image->GetLargestPossibleRegion() );
+  Iterator kernel_it;
+  for( iit.GoToBegin(), kernel_it=res.Begin(); !iit.IsAtEnd(); ++iit,++kernel_it )
+    {
+      *kernel_it = ( iit.Get() == foreground );
+    }
+
+  return res;
+}
+
+
+template<unsigned int VDimension>
 bool
 FlatStructuringElement<VDimension>::
 checkParallel(LType NewVec, DecompType Lines)
