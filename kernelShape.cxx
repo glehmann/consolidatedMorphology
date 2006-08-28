@@ -33,6 +33,13 @@ int main(int argn, char * argv[])
     K = SEType::Ball(Rad);
   else if( type == 2 )
     K = SEType::Poly(Rad, atoi(argv[4]));
+  else if( type == 3 )
+    {
+    typedef itk::ImageFileReader< IType > ReaderType;
+    ReaderType::Pointer reader = ReaderType::New();
+    reader->SetFileName( argv[4] );
+    K = SEType::FromImage<IType>( reader->GetOutput() );
+    }
   else
     exit(1);
 

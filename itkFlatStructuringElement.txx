@@ -756,20 +756,20 @@ FromImage(const typename ImageType::Pointer image, typename ImageType::PixelType
 {
   image->Update();
   RadiusType size = image->GetLargestPossibleRegion().GetSize();
+  Index< VDimension > centerIdx;
   for( int i=0; i<VDimension; i++ )
     {
     // TODO: throw an exception if size is not odd
     size[i] = size[i] / 2;
+    centerIdx[i] = size[i];
     }
   FlatStructuringElement res = FlatStructuringElement();
   res.SetRadius( size );
   res.m_Decomposable = false;
 
-  ImageRegionConstIterator<ImageType> iit( image, image->GetLargestPossibleRegion() );
-  Iterator kernel_it;
-  for( iit.GoToBegin(), kernel_it=res.Begin(); !iit.IsAtEnd(); ++iit,++kernel_it )
+  for(int i=0; i<res.Size(); i++ )
     {
-      *kernel_it = ( iit.Get() == foreground );
+    res[i] = image->GetPixel( centerIdx + res.GetOffset( i ) );
     }
 
   return res;
@@ -911,8 +911,10 @@ GetImage(typename ImageType::PixelType foreground, typename ImageType::PixelType
   typename ImageType::Pointer image = ImageType::New();
   typename ImageType::RegionType region;
   RadiusType size = this->GetRadius();
+  Index< VDimension > centerIdx;
   for( int i=0; i<VDimension; i++ )
     {
+    centerIdx[i] = size[i];
     size[i] = 2*size[i] + 1;
     }
   region.SetSize( size );
@@ -922,17 +924,15 @@ GetImage(typename ImageType::PixelType foreground, typename ImageType::PixelType
   // std::cout << this->GetRadius() << std::endl;
   // image->Print( std::cout );
 
-  ImageRegionIterator<ImageType> oit( image, region );
-  Iterator kernel_it;
-  for( oit.GoToBegin(), kernel_it=this->Begin(); !oit.IsAtEnd(); ++oit,++kernel_it )
+  for(int i=0; i<this->Size(); i++ )
     {
-    if( *kernel_it )
+    if( this->GetElement( i ) )
       {
-      oit.Set( foreground );
+      image->SetPixel( centerIdx+this->GetOffset( i ), foreground );
       }
     else
       {
-      oit.Set( background );
+      image->SetPixel( centerIdx+this->GetOffset( i ), background );
       }
     }
 
