@@ -914,6 +914,7 @@ GetImage(typename ImageType::PixelType foreground, typename ImageType::PixelType
   typename ImageType::Pointer image = ImageType::New();
   typename ImageType::RegionType region;
   RadiusType size = this->GetRadius();
+  Index< VDimension > centerIdx;
   for( int i=0; i<VDimension; i++ )
     {
     centerIdx[i] = size[i];
