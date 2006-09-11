@@ -12,7 +12,7 @@ class MorphologyHistogram
 {
 public:
   MorphologyHistogram() {}
-  ~MorphologyHistogram(){}
+  virtual ~MorphologyHistogram(){}
 
   virtual void Reset(){}
   
@@ -24,7 +24,10 @@ public:
 
   virtual void RemovePixel(const TInputPixel &p){}
  
-  virtual TInputPixel GetValue(){}
+  virtual TInputPixel GetValue()
+  {
+    return(m_Boundary);  // a dummy return
+  }
 
   void SetBoundary( const TInputPixel & val )
   {
@@ -170,14 +173,14 @@ public:
   void RemovePixel(const TInputPixel &p)
   {
     assert(p - NumericTraits< TInputPixel >::NonpositiveMin() >= 0);
-    assert(p - NumericTraits< TInputPixel >::NonpositiveMin() < m_Vec.size());
+    assert((p - NumericTraits< TInputPixel >::NonpositiveMin()) < (int)m_Vec.size());
     assert(m_Entries >= 1);
     m_Vec[ (long unsigned int)(p - NumericTraits< TInputPixel >::NonpositiveMin())  ]--; 
     --m_Entries;
     assert(static_cast<int>(m_CurrentValue -                                                                                                                      
 			    NumericTraits< TInputPixel >::NonpositiveMin() ) >= 0);
     assert(static_cast<int>(m_CurrentValue -                                                                                                                      
-			    NumericTraits< TInputPixel >::NonpositiveMin() ) < m_Vec.size());
+			    NumericTraits< TInputPixel >::NonpositiveMin() ) < (int)m_Vec.size());
     if (m_Entries > 0)
       {
       while( m_Vec[static_cast<int>(m_CurrentValue - 
@@ -187,7 +190,7 @@ public:
 	assert(static_cast<int>(m_CurrentValue -                                                                                                                      
 				NumericTraits< TInputPixel >::NonpositiveMin() ) >= 0);
 	assert(static_cast<int>(m_CurrentValue -                                                                                                                      
-				NumericTraits< TInputPixel >::NonpositiveMin() ) < m_Vec.size());
+				NumericTraits< TInputPixel >::NonpositiveMin() ) < (int)m_Vec.size());
 	}
       }
   }

@@ -61,7 +61,7 @@ private:
 		 int &inRightP,
 		 int middle, unsigned bufflength);
 
-  bool finishLine(InputImagePixelType * buffer,
+  void finishLine(InputImagePixelType * buffer,
 		  InputImagePixelType * inbuffer,
 		  InputImagePixelType &Extreme,
 		  Histogram &histo,

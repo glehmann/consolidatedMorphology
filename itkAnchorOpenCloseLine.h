@@ -52,7 +52,7 @@ private:
 		 unsigned &outRightP, 
 		 unsigned bufflength);
 
-  bool finishLine(InputImagePixelType * buffer,
+  void finishLine(InputImagePixelType * buffer,
 		  InputImagePixelType &Extreme,
 		  unsigned &outLeftP,
 		  unsigned &outRightP, 

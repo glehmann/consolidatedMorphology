@@ -92,9 +92,9 @@ AnchorOpenCloseLine<TInputPix, THistogramCompare, TFunction1, TFunction2>
     }
   // fix right border 
   Extreme = buffer[bufflength - m_Size/2 - 2];
-  for (int i=bufflength - m_Size/2 - 1;i<bufflength;i++)
+  for (int i=(int)bufflength - m_Size/2 - 1;i<(int)bufflength;i++)
     {
-    assert(i < bufflength);
+    assert(i < (int)bufflength);
     if (m_TF1(Extreme, buffer[i]))
       {
       Extreme=buffer[i];
@@ -268,7 +268,7 @@ AnchorOpenCloseLine<TInputPix, THistogramCompare, TFunction1, TFunction2>
 }
 
 template<class TInputPix, class THistogramCompare, class TFunction1, class TFunction2>
-bool
+void
 AnchorOpenCloseLine<TInputPix,  THistogramCompare, TFunction1, TFunction2>
 ::finishLine(InputImagePixelType * buffer,
 	     InputImagePixelType &Extreme,

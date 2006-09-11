@@ -509,7 +509,7 @@ FlatStructuringElement<VDimension> FlatStructuringElement<VDimension>
     // create triangular facet approximation to a sphere - begin with
     // unit sphere
     // total number of facets is 8 * (4^iterations)
-    int facets = 8 * (int)pow(4, iterations);
+    unsigned int facets = 8 * (int)pow(4, iterations);
     float sqrt2 = sqrt(2.0);
     // std::cout << facets << " facets" << std::endl;
     typedef std::vector<FacetType> FacetArrayType;
@@ -544,7 +544,7 @@ FlatStructuringElement<VDimension> FlatStructuringElement<VDimension>
     FacetArray[7] = F7;
     int pos = 8;
     // now subdivide the octahedron
-    for (unsigned it = 0; it<iterations; it++)
+    for (unsigned it = 0; it<(unsigned)iterations; it++)
       {
       // Bisect edges and move to sphere
       unsigned ntold = pos;
@@ -610,7 +610,10 @@ template<unsigned int VDimension>
 FlatStructuringElement<VDimension> FlatStructuringElement<VDimension>
 ::PolySub(const DispatchBase &, RadiusType radius, unsigned lines) const
 {
-  //itkWarningMacro("Don't know how to deal with this many dimensions");
+  FlatStructuringElement res = FlatStructuringElement();
+  res.m_Decomposable = true;
+  std::cout << "Don't know how to deal with this many dimensions" << std::endl;
+  return(res);
 }
 
 template<unsigned int VDimension>
@@ -663,7 +666,7 @@ FlatStructuringElement<VDimension> FlatStructuringElement<VDimension>
   typename ImageType::Pointer sourceImage = ImageType::New();
   typename ImageType::RegionType region;
   RadiusType size = radius;
-  for( int i=0; i<VDimension; i++ )
+  for( int i=0; i<(int)VDimension; i++ )
     {
     size[i] = 2*size[i] + 1;
     }
@@ -849,7 +852,7 @@ ComputeBufferFromLines()
   typename ImageType::Pointer sourceImage = ImageType::New();
   typename ImageType::RegionType region;
   RadiusType size = this->GetRadius();
-  for( int i=0; i<VDimension; i++ )
+  for( int i=0; i<(int)VDimension; i++ )
     {
     size[i] = 2*size[i] + 1;
     }
@@ -870,7 +873,7 @@ ComputeBufferFromLines()
 
   // set the center pixel to 1
   typename ImageType::IndexType center;
-  for( int i=0; i<VDimension; i++)
+  for( int i=0; i<(int)VDimension; i++)
     {
     center[i] = this->GetRadius()[i];
     }
@@ -911,7 +914,6 @@ GetImage(typename ImageType::PixelType foreground, typename ImageType::PixelType
   typename ImageType::Pointer image = ImageType::New();
   typename ImageType::RegionType region;
   RadiusType size = this->GetRadius();
-  Index< VDimension > centerIdx;
   for( int i=0; i<VDimension; i++ )
     {
     centerIdx[i] = size[i];

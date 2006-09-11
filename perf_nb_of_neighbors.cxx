@@ -55,7 +55,7 @@ int main(int, char * argv[])
     itk::TimeProbe hdtime;
 
     kernel.SetRadius( radius );
-    unsigned long nbOfNeighbors = 0;
+    long nbOfNeighbors = 0;
     for( SRType::Iterator kit=kernel.Begin(); kit!=kernel.End(); kit++ )
       {
       if( nbOfNeighbors <= s )

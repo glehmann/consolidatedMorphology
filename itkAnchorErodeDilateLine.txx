@@ -70,7 +70,7 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
       {
       ++inLeftP;
       assert(inLeftP >= 0);
-      assert(inLeftP < bufflength);
+      assert(inLeftP < (int)bufflength);
       m_Histo->AddPixel(inbuffer[inLeftP]);
       if (m_TF1(inbuffer[inLeftP], Extreme))
 	{
@@ -78,7 +78,7 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
 	}
       }
     assert(outLeftP >= 0);
-    assert(outLeftP < bufflength);
+    assert(outLeftP < (int)bufflength);
     buffer[outLeftP] = Extreme;
   
     // Second half of SE
@@ -86,10 +86,10 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
       {
       ++inLeftP;
       ++outLeftP;
-      if (inLeftP < bufflength) 
+      if (inLeftP < (int)bufflength) 
 	{
 	assert(inLeftP >= 0);
-	assert(inLeftP < bufflength);
+	assert(inLeftP < (int)bufflength);
 	m_Histo->AddPixel(inbuffer[inLeftP]);
 	if (m_TF1(inbuffer[inLeftP], Extreme))
 	  {
@@ -97,18 +97,18 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
 	  }
 	}
       assert(outLeftP >= 0);
-      assert(outLeftP < bufflength);
+      assert(outLeftP < (int)bufflength);
       buffer[outLeftP] = Extreme;
       }
     // now finish
     outLeftP++;
     int left = 0;
-    for (;outLeftP < bufflength;outLeftP++, left++)
+    for (;outLeftP < (int)bufflength;outLeftP++, left++)
       {
       m_Histo->RemovePixel(inbuffer[left]);
       Extreme = m_Histo->GetValue();
       assert(outLeftP >= 0);
-      assert(outLeftP < bufflength);
+      assert(outLeftP < (int)bufflength);
       buffer[outLeftP] = Extreme;
       }
     
@@ -122,7 +122,7 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
     {
     ++inLeftP;
     assert(inLeftP >= 0);
-    assert(inLeftP < bufflength);
+    assert(inLeftP < (int)bufflength);
     m_Histo->AddPixel(inbuffer[inLeftP]);
     if (m_TF1(inbuffer[inLeftP], Extreme))
       {
@@ -130,7 +130,7 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
       }
     }
   assert(outLeftP >= 0);
-  assert(outLeftP < bufflength);
+  assert(outLeftP < (int)bufflength);
   buffer[outLeftP] = Extreme;
   
   // Second half of SE
@@ -139,37 +139,37 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
     ++inLeftP;
     ++outLeftP;
     assert(inLeftP >= 0);
-    assert(inLeftP < bufflength);
+    assert(inLeftP < (int)bufflength);
     m_Histo->AddPixel(inbuffer[inLeftP]);
     if (m_TF1(inbuffer[inLeftP], Extreme))
       {
       Extreme = inbuffer[inLeftP];
       }
     assert(outLeftP >= 0);
-    assert(outLeftP < bufflength);
+    assert(outLeftP < (int)bufflength);
     buffer[outLeftP] = Extreme;
     }
   // Use the histogram until we find a new minimum 
   assert(inLeftP >= 0);
-  assert((inLeftP+1) < bufflength);
+  assert((inLeftP+1) < (int)bufflength);
   while ((inLeftP < inRightP) && m_TF2(Extreme, inbuffer[inLeftP + 1]))
     {
     ++inLeftP;
     ++outLeftP;
     assert((inLeftP - (int)m_Size) >= 0);
-    assert((inLeftP - (int)m_Size) < bufflength);
+    assert((inLeftP - (int)m_Size) < (int)bufflength);
 
     m_Histo->RemovePixel(inbuffer[inLeftP - (int)m_Size]);
     assert(inLeftP >= 0);
-    assert(inLeftP < bufflength);
+    assert(inLeftP < (int)bufflength);
     m_Histo->AddPixel(inbuffer[inLeftP]);
     Extreme = m_Histo->GetValue();
     assert(outLeftP >= 0);
-    assert(outLeftP < bufflength);
+    assert(outLeftP < (int)bufflength);
     buffer[outLeftP] = Extreme;
     }
   assert(outLeftP > 0);
-  assert(outLeftP < bufflength);
+  assert(outLeftP < (int)bufflength);
   Extreme = buffer[outLeftP];
 
   while (startLine(buffer, inbuffer, Extreme, *m_Histo, outLeftP, outRightP, inLeftP, inRightP, middle, bufflength)){}
@@ -197,15 +197,15 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
   int sentinel;
   
   assert(currentP >= 0);
-  assert(inRightP <= bufflength);
+  assert(inRightP <= (int)bufflength);
   while ((currentP < inRightP) && m_TF2(inbuffer[currentP], Extreme))
     {
     assert(currentP >= 0);
-    assert(currentP < bufflength);
+    assert(currentP < (int)bufflength);
     Extreme = inbuffer[currentP];
     ++outLeftP;
     assert(outLeftP >= 0);
-    assert(outLeftP < bufflength);
+    assert(outLeftP < (int)bufflength);
     buffer[outLeftP] = Extreme;
     ++currentP;
     }
@@ -219,7 +219,7 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
     }
   ++outLeftP;
   assert(outLeftP >= 0);
-  assert(outLeftP < bufflength);
+  assert(outLeftP < (int)bufflength);
   buffer[outLeftP] = Extreme;
 
   // ran m_Size pixels ahead
@@ -227,13 +227,13 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
   while (currentP < sentinel)
     {
     assert(currentP >= 0);
-    assert(currentP < bufflength);
+    assert(currentP < (int)bufflength);
     if (m_TF2(inbuffer[currentP], Extreme))
       {
       Extreme = inbuffer[currentP];
       ++outLeftP;
       assert(outLeftP >= 0);
-      assert(outLeftP < bufflength);
+      assert(outLeftP < (int)bufflength);
       buffer[outLeftP] = Extreme;
       inLeftP = currentP;
       return (true);
@@ -241,20 +241,20 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
     ++currentP;
     ++outLeftP;
     assert(outLeftP >= 0);
-    assert(outLeftP < bufflength);
+    assert(outLeftP < (int)bufflength);
     buffer[outLeftP] = Extreme;
     }
   // We didn't find a smaller (for erosion) value in the segment of
   // reach of inLeftP. currentP is the first position outside the
   // reach of inLeftP
   assert(currentP >= 0);
-  assert(currentP < bufflength);
+  assert(currentP < (int)bufflength);
   if (m_TF2(inbuffer[currentP], Extreme))
     {
     Extreme = inbuffer[currentP];
     ++outLeftP;
     assert(outLeftP >= 0);
-    assert(outLeftP < bufflength);
+    assert(outLeftP < (int)bufflength);
     buffer[outLeftP] = Extreme;
     inLeftP = currentP;
     return (true);
@@ -269,12 +269,12 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
     for (int aux = inLeftP; aux <= currentP; ++aux)
       {
       assert(aux >= 0);
-      assert(aux < bufflength);
+      assert(aux < (int)bufflength);
       histo.AddPixel(inbuffer[aux]);
       }
     Extreme = histo.GetValue();
     assert(outLeftP >= 0);
-    assert(outLeftP < bufflength);
+    assert(outLeftP < (int)bufflength);
     buffer[outLeftP] = Extreme;
     }
 
@@ -282,14 +282,14 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
     {
     ++currentP;
     assert(currentP >= 0);
-    assert(currentP < bufflength);
+    assert(currentP < (int)bufflength);
     if (m_TF2(inbuffer[currentP], Extreme))
       {
       // Found a new extrem
       Extreme = inbuffer[currentP];
       ++outLeftP;
       assert(outLeftP >= 0);
-      assert(outLeftP < bufflength);
+      assert(outLeftP < (int)bufflength);
       buffer[outLeftP] = Extreme;
       inLeftP = currentP;
       return(true);
@@ -298,17 +298,17 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
       {
       // update histogram
       assert(currentP >= 0);
-      assert(currentP < bufflength);
+      assert(currentP < (int)bufflength);
       histo.AddPixel(inbuffer[currentP]);
       assert(inLeftP >= 0);
-      assert(inLeftP < bufflength);
+      assert(inLeftP < (int)bufflength);
       histo.RemovePixel(inbuffer[inLeftP]);
       // find extreme
       Extreme = histo.GetValue();
       ++inLeftP;
       ++outLeftP;
       assert(outLeftP >= 0);
-      assert(outLeftP < bufflength);
+      assert(outLeftP < (int)bufflength);
       buffer[outLeftP] = Extreme;
       }
     }
@@ -316,7 +316,7 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
 }
 
 template<class TInputPix, class TFunction1, class TFunction2>
-bool
+void
 AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
 ::finishLine(InputImagePixelType * buffer,
 	     InputImagePixelType * inbuffer,
@@ -332,7 +332,7 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
   // First half of the structuring element
   histo.Reset();
   assert(inRightP >= 0);
-  assert(inRightP < bufflength);
+  assert(inRightP < (int)bufflength);
   Extreme = inbuffer[inRightP];
   histo.AddPixel(Extreme);
 
@@ -340,7 +340,7 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
     {
     --inRightP; 
     assert(inRightP >= 0);
-    assert(inRightP < bufflength);
+    assert(inRightP < (int)bufflength);
     histo.AddPixel(inbuffer[inRightP]);
     if (m_TF1(inbuffer[inRightP], Extreme))
       {
@@ -348,7 +348,7 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
       }
     }
   assert(outRightP >= 0);
-  assert(outRightP < bufflength);
+  assert(outRightP < (int)bufflength);
   buffer[outRightP] = Extreme;
   // second half of SE
   for (int i = 0; (i<(int)m_Size - middle - 1) && (outLeftP < outRightP); i++)
@@ -356,14 +356,14 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
     --inRightP;
     --outRightP;
     assert(inRightP >= 0);
-    assert(inRightP < bufflength);
+    assert(inRightP < (int)bufflength);
     histo.AddPixel(inbuffer[inRightP]);
     if (m_TF1(inbuffer[inRightP], Extreme))
       {
       Extreme = inbuffer[inRightP];
       }
     assert(outRightP >= 0);
-    assert(outRightP < bufflength);
+    assert(outRightP < (int)bufflength);
     buffer[outRightP] = Extreme;
     }
 
@@ -372,9 +372,9 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
     --inRightP;
     --outRightP;
     assert((inRightP + (int)m_Size)>= 0);
-    assert((inRightP + (int)m_Size)< bufflength);
+    assert((inRightP + (int)m_Size)< (int)bufflength);
     assert(inRightP >= 0);
-    assert(inRightP < bufflength);
+    assert(inRightP < (int)bufflength);
     histo.RemovePixel(inbuffer[inRightP + (int)m_Size]);
     histo.AddPixel(inbuffer[inRightP]);
     if (m_TF1(inbuffer[inRightP], Extreme))
@@ -383,7 +383,7 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
       }
     Extreme = histo.GetValue();
     assert(outRightP >= 0);
-    assert(outRightP < bufflength);
+    assert(outRightP < (int)bufflength);
     buffer[outRightP] = Extreme;
     }
   

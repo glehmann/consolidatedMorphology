@@ -357,7 +357,7 @@ void doFace(typename TImage::ConstPointer input,
       fillForwardExt<typename TImage::PixelType, TFunction>(pixbuffer, fExtBuffer, KernLen, len+2);
       fillReverseExt<typename TImage::PixelType, TFunction>(pixbuffer, rExtBuffer, KernLen, len+2);
       // now compute result
-      int size = len+2;
+      unsigned int size = len+2;
       if (size <= KernLen/2)
 	{
 	for (unsigned j = 0;j < size;j++)
