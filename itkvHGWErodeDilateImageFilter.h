@@ -65,6 +65,7 @@ public:
   void SetBoundary( const InputImagePixelType value );
   itkGetMacro(Boundary, InputImagePixelType);
 
+
 protected:
   vHGWErodeDilateImageFilter();
   ~vHGWErodeDilateImageFilter() {};
@@ -72,7 +73,10 @@ protected:
 
   /** Single-threaded version of GenerateData.  This filter delegates
    * to GrayscaleGeodesicErodeImageFilter. */
-  void GenerateData();
+  //void GenerateData();
+    /** Multi-thread version GenerateData. */
+  void  ThreadedGenerateData (const InputImageRegionType& outputRegionForThread,
+                              int threadId) ;
 
   /** GrayscaleMorphologicalOpeningImageFilter need to make sure they request enough of an
    * input image to account for the structuring element size.  The input

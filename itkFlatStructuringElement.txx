@@ -760,7 +760,7 @@ FromImage(const typename ImageType::Pointer image, typename ImageType::PixelType
   image->Update();
   RadiusType size = image->GetLargestPossibleRegion().GetSize();
   Index< VDimension > centerIdx;
-  for( int i=0; i<VDimension; i++ )
+  for( int i=0; i<(int)VDimension; i++ )
     {
     // TODO: throw an exception if size is not odd
     size[i] = size[i] / 2;
@@ -770,7 +770,7 @@ FromImage(const typename ImageType::Pointer image, typename ImageType::PixelType
   res.SetRadius( size );
   res.m_Decomposable = false;
 
-  for(int i=0; i<res.Size(); i++ )
+  for(int i=0; i<(int)res.Size(); i++ )
     {
     res[i] = image->GetPixel( centerIdx + res.GetOffset( i ) );
     }
@@ -915,7 +915,7 @@ GetImage(typename ImageType::PixelType foreground, typename ImageType::PixelType
   typename ImageType::RegionType region;
   RadiusType size = this->GetRadius();
   Index< VDimension > centerIdx;
-  for( int i=0; i<VDimension; i++ )
+  for( int i=0; i<(int)VDimension; i++ )
     {
     centerIdx[i] = size[i];
     size[i] = 2*size[i] + 1;
@@ -927,7 +927,7 @@ GetImage(typename ImageType::PixelType foreground, typename ImageType::PixelType
   // std::cout << this->GetRadius() << std::endl;
   // image->Print( std::cout );
 
-  for(int i=0; i<this->Size(); i++ )
+  for(int i=0; i<(int)(this->Size()); i++ )
     {
     if( this->GetElement( i ) )
       {
