@@ -57,7 +57,9 @@ vHGWErodeDilateImageFilter<TImage, TKernel, TFunction1>
   //InputImagePointer output = this->GetOutput();
   InputImageConstPointer input = this->GetInput();
 
-  InputImageRegionType IReg = input->GetRequestedRegion();
+  InputImageRegionType IReg = outputRegionForThread;
+  IReg.PadByRadius( m_Kernel.GetRadius() );
+  IReg.Crop( this->GetInput()->GetRequestedRegion() );
 
   // experimental part
   // allocate an internal buffer
