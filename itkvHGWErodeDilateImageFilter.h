@@ -71,10 +71,7 @@ protected:
   ~vHGWErodeDilateImageFilter() {};
   void PrintSelf(std::ostream& os, Indent indent) const;
 
-  /** Single-threaded version of GenerateData.  This filter delegates
-   * to GrayscaleGeodesicErodeImageFilter. */
-  //void GenerateData();
-    /** Multi-thread version GenerateData. */
+  /** Multi-thread version GenerateData. */
   void  ThreadedGenerateData (const InputImageRegionType& outputRegionForThread,
                               int threadId) ;
 

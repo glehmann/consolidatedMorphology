@@ -30,18 +30,17 @@ void
 vHGWErodeDilateImageFilter<TImage, TKernel, TFunction1>
 ::ThreadedGenerateData (const InputImageRegionType& outputRegionForThread,
 			int threadId)
-//::GenerateData()
 {
 
   // check that we are using a decomposable kernel
   if (!m_Kernel.GetDecomposable())
     {
-    itkWarningMacro("vHGW morphology only works with decomposable structuring elements");
+    itkExceptionMacro("vHGW morphology only works with decomposable structuring elements");
     return;
     }
   if (!m_KernelSet)
     {
-    itkWarningMacro("No kernel set - quitting");
+    itkExceptionMacro("No kernel set");
     return;
     }
   // TFunction1 will be < for erosions
@@ -52,34 +51,29 @@ vHGWErodeDilateImageFilter<TImage, TKernel, TFunction1>
   // will improve cache performance when working along non raster
   // directions.
 
-  // Allocate the output
-  //this->AllocateOutputs();
-  //InputImagePointer output = this->GetOutput();
+  ProgressReporter progress(this, threadId, m_Kernel.GetLines().size() + 1);
+
   InputImageConstPointer input = this->GetInput();
 
   InputImageRegionType IReg = outputRegionForThread;
   IReg.PadByRadius( m_Kernel.GetRadius() );
   IReg.Crop( this->GetInput()->GetRequestedRegion() );
 
-  // experimental part
-  // allocate an internal buffer
+   // allocate an internal buffer
   typename InputImageType::Pointer internalbuffer = InputImageType::New();
   internalbuffer->SetRegions(IReg);
   internalbuffer->Allocate();
   InputImagePointer output = internalbuffer;
 
   // get the region size
-  //InputImageRegionType OReg = output->GetRequestedRegion();
   InputImageRegionType OReg = outputRegionForThread;
-//   std::cout << "vhgw oreg" << OReg << std::endl;
-//   std::cout << "vhgw ireg" << IReg << std::endl;
-//   std::cout << "vhgw internal" << internalbuffer->GetLargestPossibleRegion() << std::endl;
   // maximum buffer length is sum of dimensions
   unsigned int bufflength = 0;
   for (unsigned i = 0; i<TImage::ImageDimension; i++)
     {
     bufflength += IReg.GetSize()[i];
     }
+
   // compat
   bufflength += 2;
 
@@ -89,10 +83,6 @@ vHGWErodeDilateImageFilter<TImage, TKernel, TFunction1>
   // iterate over all the structuring elements
   typename KernelType::DecompType decomposition = m_Kernel.GetLines();
   BresType BresLine;
-  //ProgressReporter progress(this, 0, decomposition.size());
-  ProgressReporter progress(this, threadId, decomposition.size());
-
-//   std::cout << decomposition.size() << " lines will be used" << std::endl;
 
   for (unsigned i = 0; i < decomposition.size(); i++)
     {
@@ -103,8 +93,6 @@ vHGWErodeDilateImageFilter<TImage, TKernel, TFunction1>
     if (!(SELength%2))
       ++SELength;
 
-//     std::cout << "line: "<< ThisLine << SELength << std::endl;
-
     InputImageRegionType BigFace = mkEnlargedFace<InputImageType, typename KernelType::LType>(input, IReg, ThisLine);
     doFace<TImage, BresType, TFunction1, 
       typename KernelType::LType>(input, output, m_Boundary, ThisLine,  
@@ -113,14 +101,11 @@ vHGWErodeDilateImageFilter<TImage, TKernel, TFunction1>
 				  reverse, IReg, BigFace);
     
     // after the first pass the input will be taken from the output
-      // experimental part
-    //input = this->GetOutput();
     input = internalbuffer;
     progress.CompletedPixel();
     }
 
-  // experimental
-  // copy internal buffer to output - is there any point using a crop filter??
+  // copy internal buffer to output
   typedef typename itk::ImageRegionIterator<InputImageType> IterType;
   IterType oit(this->GetOutput(), OReg);
   IterType iit(internalbuffer, OReg);
@@ -128,6 +113,8 @@ vHGWErodeDilateImageFilter<TImage, TKernel, TFunction1>
     {
     oit.Set(iit.Get());
     }
+  progress.CompletedPixel();
+
   delete [] buffer;
   delete [] forward;
   delete [] reverse;
