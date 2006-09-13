@@ -13,6 +13,7 @@ AnchorOpenCloseImageFilter<TImage, TKernel, LessThan, GreaterThan, LessEqual, Gr
 ::AnchorOpenCloseImageFilter()
 {
   m_KernelSet = false;
+  this->SetNumberOfThreads( 2 );
 }
 
 template <class TImage, class TKernel, class LessThan, class GreaterThan, class LessEqual, class GreaterEqual>

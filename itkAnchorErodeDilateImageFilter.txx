@@ -15,6 +15,7 @@ AnchorErodeDilateImageFilter<TImage, TKernel, TFunction1, TFunction2>
 ::AnchorErodeDilateImageFilter()
 {
   m_KernelSet = false;
+  this->SetNumberOfThreads( 2 );
 }
 
 template <class TImage, class TKernel, class TFunction1, class TFunction2>
