@@ -71,9 +71,9 @@ protected:
   ~AnchorErodeDilateImageFilter() {};
   void PrintSelf(std::ostream& os, Indent indent) const;
 
-  /** Single-threaded version of GenerateData.  This filter delegates
-   * to GrayscaleGeodesicErodeImageFilter. */
-  void GenerateData();
+  /** Multi-thread version GenerateData. */
+  void  ThreadedGenerateData (const InputImageRegionType& outputRegionForThread,
+                              int threadId) ;
 
   /** GrayscaleMorphologicalOpeningImageFilter need to make sure they request enough of an
    * input image to account for the structuring element size.  The input

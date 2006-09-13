@@ -18,54 +18,62 @@ AnchorOpenCloseImageFilter<TImage, TKernel, LessThan, GreaterThan, LessEqual, Gr
 template <class TImage, class TKernel, class LessThan, class GreaterThan, class LessEqual, class GreaterEqual>
 void
 AnchorOpenCloseImageFilter<TImage, TKernel, LessThan, GreaterThan, LessEqual, GreaterEqual>
-::GenerateData()
+::ThreadedGenerateData (const InputImageRegionType& outputRegionForThread,
+			int threadId)
 {
 
   // check that we are using a decomposable kernel
   if (!m_Kernel.GetDecomposable())
     {
     itkExceptionMacro("Anchor morphology only works with decomposable structuring elements");
+    return;
     }
   if (!m_KernelSet)
     {
-    itkExceptionMacro("No kernel set");
+    itkExceptionMacro("No kernel set - quitting");
+    return;
     }
+  // TFunction1 will be < for erosions
+  // TFunction2 will be <=
 
-  
-  // Allocate the output
-  this->AllocateOutputs();
-  InputImagePointer output = this->GetOutput();
+
+  // the initial version will adopt the methodology of loading a line
+  // at a time into a buffer vector, carrying out the opening or
+  // closing, and then copy the result to the output. Hopefully this
+  // will improve cache performance when working along non raster
+  // directions.
+
+  ProgressReporter progress(this, threadId, m_Kernel.GetLines().size()*2 + 1);
+
   InputImageConstPointer input = this->GetInput();
 
-  
-  // get the region size
-  InputImageRegionType OReg = output->GetRequestedRegion();
-#if 0
-  // for testing purposes - set output to 0
-  ImageRegionIterator<InputImageType> it(output, OReg);
-  for(it.GoToBegin(); !it.IsAtEnd(); ++it)
-    {
-    it.Set(0);
-    }
-#endif
+  InputImageRegionType IReg = outputRegionForThread;
+  IReg.PadByRadius( m_Kernel.GetRadius() );
+  IReg.Crop( this->GetInput()->GetRequestedRegion() );
 
+   // allocate an internal buffer
+  typename InputImageType::Pointer internalbuffer = InputImageType::New();
+  internalbuffer->SetRegions(IReg);
+  internalbuffer->Allocate();
+  InputImagePointer output = internalbuffer;
+
+  // get the region size
+  InputImageRegionType OReg = outputRegionForThread;
   // maximum buffer length is sum of dimensions
   unsigned int bufflength = 0;
   for (unsigned i = 0; i<TImage::ImageDimension; i++)
     {
-    bufflength += OReg.GetSize()[i];
+    bufflength += IReg.GetSize()[i];
     }
+
   // compat
   bufflength += 2;
-  //unsigned linecount = OReg.GetNumberOfPixels()/bufflength;
 
+  InputImagePixelType * buffer = new InputImagePixelType[bufflength];
   InputImagePixelType * inbuffer = new InputImagePixelType[bufflength];
-  InputImagePixelType * outbuffer = new InputImagePixelType[bufflength];
-
   // iterate over all the structuring elements
   typename KernelType::DecompType decomposition = m_Kernel.GetLines();
   BresType BresLine;
-  ProgressReporter progress(this, 0, decomposition.size()*2);
 
   // first stage -- all of the erosions if we are doing an opening
   for (unsigned i = 0; i < decomposition.size() - 1; i++)
@@ -82,11 +90,11 @@ AnchorOpenCloseImageFilter<TImage, TKernel, LessThan, GreaterThan, LessEqual, Gr
     doFace<TImage, BresType, 
       AnchorLineErodeType, 
       typename KernelType::LType>(input, output, m_Boundary1, ThisLine, AnchorLineErode, 
-				  TheseOffsets, inbuffer, outbuffer, OReg, BigFace);
+				  TheseOffsets, inbuffer, buffer, OReg, BigFace);
     
 
     // after the first pass the input will be taken from the output
-    input = this->GetOutput();
+    input = internalbuffer;
     progress.CompletedPixel();
     }
   // now do the opening in the middle of the chain
@@ -105,7 +113,7 @@ AnchorOpenCloseImageFilter<TImage, TKernel, LessThan, GreaterThan, LessEqual, Gr
   // Now figure out which faces of the image we should be starting
   // from with this line
   doFaceOpen(input, output, m_Boundary1, ThisLine,
-	     TheseOffsets, outbuffer, 
+	     TheseOffsets, buffer, 
 	     OReg, BigFace);
   // equivalent to two passes
   progress.CompletedPixel();
@@ -128,14 +136,24 @@ AnchorOpenCloseImageFilter<TImage, TKernel, LessThan, GreaterThan, LessEqual, Gr
     doFace<TImage, BresType, 
       AnchorLineDilateType, 
       typename KernelType::LType>(input, output, m_Boundary2, ThisLine, AnchorLineDilate, 
-				  TheseOffsets, inbuffer, outbuffer, OReg, BigFace);
+				  TheseOffsets, inbuffer, buffer, OReg, BigFace);
 
     
     progress.CompletedPixel();
     }
 
+  // copy internal buffer to output
+  typedef typename itk::ImageRegionIterator<InputImageType> IterType;
+  IterType oit(this->GetOutput(), OReg);
+  IterType iit(internalbuffer, OReg);
+  for (oit.GoToBegin(), iit.GoToBegin(); !oit.IsAtEnd(); ++oit, ++iit)
+    {
+    oit.Set(iit.Get());
+    }
+  progress.CompletedPixel();
+
+  delete [] buffer;
   delete [] inbuffer;
-  delete [] outbuffer;
 }
 
 template<class TImage, class TKernel, class LessThan, class GreaterThan, class LessEqual, class GreaterEqual>

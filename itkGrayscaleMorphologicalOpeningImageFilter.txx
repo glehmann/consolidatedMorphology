@@ -301,7 +301,6 @@ GrayscaleMorphologicalOpeningImageFilter<TInputImage, TOutputImage, TKernel>
   
       m_vHGWDilateFilter->SetInput( m_vHGWErodeFilter->GetOutput() );
       progress->RegisterInternalFilter( m_vHGWDilateFilter, 0.4f );
-      m_vHGWDilateFilter->Update();
 
       typedef typename itk::CropImageFilter<TInputImage, TOutputImage> CropType;
       typename CropType::Pointer crop = CropType::New();
@@ -348,7 +347,6 @@ GrayscaleMorphologicalOpeningImageFilter<TInputImage, TOutputImage, TKernel>
     
       m_AnchorFilter->SetInput( pad->GetOutput() );
       progress->RegisterInternalFilter( m_AnchorFilter, 0.8f );
-      m_AnchorFilter->Update();
 
       typedef typename itk::CropImageFilter<TInputImage, TOutputImage> CropType;
       typename CropType::Pointer crop = CropType::New();

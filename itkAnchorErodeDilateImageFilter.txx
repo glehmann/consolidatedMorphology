@@ -28,18 +28,19 @@ AnchorErodeDilateImageFilter<TImage, TKernel, TFunction1, TFunction2>
 template <class TImage, class TKernel, class TFunction1, class TFunction2>
 void
 AnchorErodeDilateImageFilter<TImage, TKernel, TFunction1, TFunction2>
-::GenerateData()
+::ThreadedGenerateData (const InputImageRegionType& outputRegionForThread,
+			int threadId)
 {
 
   // check that we are using a decomposable kernel
   if (!m_Kernel.GetDecomposable())
     {
-    itkWarningMacro("Anchor morphology only works with decomposable structuring elements");
+    itkExceptionMacro("Anchor morphology only works with decomposable structuring elements");
     return;
     }
   if (!m_KernelSet)
     {
-    itkWarningMacro("No kernel set - quitting");
+    itkExceptionMacro("No kernel set - quitting");
     return;
     }
   // TFunction1 will be < for erosions
@@ -52,20 +53,29 @@ AnchorErodeDilateImageFilter<TImage, TKernel, TFunction1, TFunction2>
   // will improve cache performance when working along non raster
   // directions.
 
-  // Allocate the output
-  this->AllocateOutputs();
-  InputImagePointer output = this->GetOutput();
+  ProgressReporter progress(this, threadId, m_Kernel.GetLines().size() + 1);
+
   InputImageConstPointer input = this->GetInput();
-  
+
+  InputImageRegionType IReg = outputRegionForThread;
+  IReg.PadByRadius( m_Kernel.GetRadius() );
+  IReg.Crop( this->GetInput()->GetRequestedRegion() );
+
+   // allocate an internal buffer
+  typename InputImageType::Pointer internalbuffer = InputImageType::New();
+  internalbuffer->SetRegions(IReg);
+  internalbuffer->Allocate();
+  InputImagePointer output = internalbuffer;
+
   // get the region size
-  InputImageRegionType OReg = output->GetRequestedRegion();
+  InputImageRegionType OReg = outputRegionForThread;
   // maximum buffer length is sum of dimensions
-//   std::cout << OReg << std::endl;
   unsigned int bufflength = 0;
   for (unsigned i = 0; i<TImage::ImageDimension; i++)
     {
-    bufflength += OReg.GetSize()[i];
+    bufflength += IReg.GetSize()[i];
     }
+
   // compat
   bufflength += 2;
 
@@ -74,7 +84,6 @@ AnchorErodeDilateImageFilter<TImage, TKernel, TFunction1, TFunction2>
   // iterate over all the structuring elements
   typename KernelType::DecompType decomposition = m_Kernel.GetLines();
   BresType BresLine;
-  ProgressReporter progress(this, 0, decomposition.size());
 
   for (unsigned i = 0; i < decomposition.size(); i++)
     {
@@ -85,16 +94,26 @@ AnchorErodeDilateImageFilter<TImage, TKernel, TFunction1, TFunction2>
     if (!(SELength%2))
       ++SELength;
 
-    InputImageRegionType BigFace = mkEnlargedFace<InputImageType, typename KernelType::LType>(input, OReg, ThisLine);
+    InputImageRegionType BigFace = mkEnlargedFace<InputImageType, typename KernelType::LType>(input, IReg, ThisLine);
 
     AnchorLine.SetSize(SELength);
     doFace<TImage, BresType, AnchorLineType, typename KernelType::LType>(input, output, m_Boundary, ThisLine, AnchorLine, 
-									   TheseOffsets, inbuffer, buffer, OReg, BigFace);
+									   TheseOffsets, inbuffer, buffer, IReg, BigFace);
     // after the first pass the input will be taken from the output
-    input = this->GetOutput();
+    input = internalbuffer;
     progress.CompletedPixel();
     }
 
+
+  // copy internal buffer to output
+  typedef typename itk::ImageRegionIterator<InputImageType> IterType;
+  IterType oit(this->GetOutput(), OReg);
+  IterType iit(internalbuffer, OReg);
+  for (oit.GoToBegin(), iit.GoToBegin(); !oit.IsAtEnd(); ++oit, ++iit)
+    {
+    oit.Set(iit.Get());
+    }
+  progress.CompletedPixel();
 
   delete [] buffer;
   delete [] inbuffer;
