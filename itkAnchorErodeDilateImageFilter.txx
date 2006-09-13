@@ -60,7 +60,7 @@ AnchorErodeDilateImageFilter<TImage, TKernel, TFunction1, TFunction2>
   // get the region size
   InputImageRegionType OReg = output->GetRequestedRegion();
   // maximum buffer length is sum of dimensions
-  std::cout << OReg << std::endl;
+//   std::cout << OReg << std::endl;
   unsigned int bufflength = 0;
   for (unsigned i = 0; i<TImage::ImageDimension; i++)
     {
