@@ -2,9 +2,6 @@
 #include "itkImageFileWriter.h"
 #include "itkMorphologicalGradientImageFilter.h"
 #include "itkFlatStructuringElement.h"
-#include "itkTimeProbe.h"
-#include <vector>
-#include "itkCommand.h"
 #include "itkSimpleFilterWatcher.h"
 
 

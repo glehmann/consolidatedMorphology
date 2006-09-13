@@ -2,9 +2,6 @@
 #include "itkImageFileWriter.h"
 #include "itkGrayscaleErodeImageFilter.h"
 #include "itkFlatStructuringElement.h"
-#include "itkTimeProbe.h"
-#include <vector>
-#include "itkCommand.h"
 #include "itkSimpleFilterWatcher.h"
 
 
