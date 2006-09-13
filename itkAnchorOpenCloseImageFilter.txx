@@ -86,11 +86,11 @@ AnchorOpenCloseImageFilter<TImage, TKernel, LessThan, GreaterThan, LessEqual, Gr
       ++SELength;
     AnchorLineErode.SetSize(SELength);
 
-    InputImageRegionType BigFace = mkEnlargedFace<InputImageType, typename KernelType::LType>(input, OReg, ThisLine);
+    InputImageRegionType BigFace = mkEnlargedFace<InputImageType, typename KernelType::LType>(input, IReg, ThisLine);
     doFace<TImage, BresType, 
       AnchorLineErodeType, 
       typename KernelType::LType>(input, output, m_Boundary1, ThisLine, AnchorLineErode, 
-				  TheseOffsets, inbuffer, buffer, OReg, BigFace);
+				  TheseOffsets, inbuffer, buffer, IReg, BigFace);
     
 
     // after the first pass the input will be taken from the output
@@ -108,13 +108,13 @@ AnchorOpenCloseImageFilter<TImage, TKernel, LessThan, GreaterThan, LessEqual, Gr
     ++SELength;
 
   AnchorLineOpen.SetSize(SELength);
-  InputImageRegionType BigFace = mkEnlargedFace<InputImageType, typename KernelType::LType>(input, OReg, ThisLine);
+  InputImageRegionType BigFace = mkEnlargedFace<InputImageType, typename KernelType::LType>(input, IReg, ThisLine);
 
   // Now figure out which faces of the image we should be starting
   // from with this line
   doFaceOpen(input, output, m_Boundary1, ThisLine,
 	     TheseOffsets, buffer, 
-	     OReg, BigFace);
+	     IReg, BigFace);
   // equivalent to two passes
   progress.CompletedPixel();
   progress.CompletedPixel();  
@@ -132,11 +132,11 @@ AnchorOpenCloseImageFilter<TImage, TKernel, LessThan, GreaterThan, LessEqual, Gr
   
     AnchorLineDilate.SetSize(SELength);
 
-    InputImageRegionType BigFace = mkEnlargedFace<InputImageType, typename KernelType::LType>(input, OReg, ThisLine);
+    InputImageRegionType BigFace = mkEnlargedFace<InputImageType, typename KernelType::LType>(input, IReg, ThisLine);
     doFace<TImage, BresType, 
       AnchorLineDilateType, 
       typename KernelType::LType>(input, output, m_Boundary2, ThisLine, AnchorLineDilate, 
-				  TheseOffsets, inbuffer, buffer, OReg, BigFace);
+				  TheseOffsets, inbuffer, buffer, IReg, BigFace);
 
     
     progress.CompletedPixel();
