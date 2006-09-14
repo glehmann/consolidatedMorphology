@@ -55,6 +55,9 @@ AnchorOpenCloseImageFilter<TImage, TKernel, LessThan, GreaterThan, LessEqual, Gr
 
   InputImageRegionType IReg = outputRegionForThread;
   IReg.PadByRadius( m_Kernel.GetRadius() );
+  // Pad 2 times to avoid border effect
+  // TODO: remove the second one - it should not be there
+  IReg.PadByRadius( m_Kernel.GetRadius() );
   IReg.Crop( this->GetInput()->GetRequestedRegion() );
 
    // allocate an internal buffer
