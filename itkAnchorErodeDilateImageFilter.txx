@@ -47,6 +47,7 @@ AnchorErodeDilateImageFilter<TImage, TKernel, TFunction1, TFunction2>
   // TFunction1 will be < for erosions
   // TFunction2 will be <=
 
+  AnchorLineType AnchorLine;
 
   // the initial version will adopt the methodology of loading a line
   // at a time into a buffer vector, carrying out the opening or

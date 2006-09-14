@@ -96,8 +96,6 @@ private:
   // the class that operates on lines
   typedef AnchorErodeDilateLine<InputImagePixelType, TFunction1, TFunction2> AnchorLineType;
 
-  AnchorLineType AnchorLine;
-
 } ; // end of class
 
 

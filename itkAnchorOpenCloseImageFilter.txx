@@ -44,6 +44,11 @@ AnchorOpenCloseImageFilter<TImage, TKernel, LessThan, GreaterThan, LessEqual, Gr
   // will improve cache performance when working along non raster
   // directions.
 
+  AnchorLineErodeType AnchorLineErode;
+  AnchorLineDilateType AnchorLineDilate;
+
+  AnchorLineOpenType AnchorLineOpen;
+
   ProgressReporter progress(this, threadId, m_Kernel.GetLines().size()*2 + 1);
 
   InputImageConstPointer input = this->GetInput();
@@ -113,7 +118,7 @@ AnchorOpenCloseImageFilter<TImage, TKernel, LessThan, GreaterThan, LessEqual, Gr
 
   // Now figure out which faces of the image we should be starting
   // from with this line
-  doFaceOpen(input, output, m_Boundary1, ThisLine,
+  doFaceOpen(input, output, m_Boundary1, ThisLine, AnchorLineOpen,
 	     TheseOffsets, buffer, 
 	     IReg, BigFace);
   // equivalent to two passes
@@ -164,6 +169,7 @@ AnchorOpenCloseImageFilter<TImage, TKernel, LessThan, GreaterThan, LessEqual, Gr
 	     InputImagePointer output,
 	     typename TImage::PixelType border,
 	     typename KernelType::LType line,
+	     AnchorLineOpenType &AnchorLineOpen,
 	     typename BresType::OffsetArray LineOffsets,
 	     InputImagePixelType * outbuffer,	      
 	     const InputImageRegionType AllImage, 

@@ -108,20 +108,16 @@ private:
 //  typedef AnchorOpenCloseLine<InputImagePixelType, THistogramCompare, TFunction1, TFunction2> AnchorLineOpenType;
   typedef AnchorOpenCloseLine<InputImagePixelType, LessThan, GreaterEqual, LessEqual> AnchorLineOpenType;
 
-  AnchorLineOpenType AnchorLineOpen;
-
   typedef AnchorErodeDilateLine<InputImagePixelType, LessThan, LessEqual> AnchorLineErodeType;
   
   // the class that does the dilation
   typedef AnchorErodeDilateLine<InputImagePixelType, GreaterThan, GreaterEqual> AnchorLineDilateType;
 
-  AnchorLineErodeType AnchorLineErode;
-  AnchorLineDilateType AnchorLineDilate;
-
   void doFaceOpen(InputImageConstPointer input,
 		  InputImagePointer output,
 		  typename TImage::PixelType border,
 		  typename KernelType::LType line,
+		  AnchorLineOpenType &AnchorLineOpen,
 		  const typename BresType::OffsetArray LineOffsets,
 		  InputImagePixelType * outbuffer,	      
 		  const InputImageRegionType AllImage, 
