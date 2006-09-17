@@ -33,16 +33,18 @@ colorlinks,linkcolor={blue},citecolor={blue},urlcolor={blue},
 
 % The title should be descriptive enough for people to be able to find
 % the relevant document. 
-\title{}
+\title{Consolidated morphology}
 
 % Increment the release number whenever significant changes are made.
 % The author and/or editor can define 'significant' however they like.
-\release{0.00}
+% \release{0.00}
 
 % At minimum, give your name and an email address.  You can include a
 % snail-mail address if you like.
-\author{}
-\authoraddress{}
+\author{Ga\"etan Lehmann{$^1$} {\small{and}} Richard Beare{$^2$}}
+\authoraddress{{$^1$}INRA, UMR 1198; ENVA; CNRS, FRE 2857, Biologie du D\'eveloppement et
+Reproduction, Jouy en Josas, F-78350, France\\
+{$^2$}Department of Medicine, Monash University, Australia}
 
 \begin{document}
 \maketitle
@@ -56,9 +58,118 @@ colorlinks,linkcolor={blue},citecolor={blue},urlcolor={blue},
 \noindent
 % The abstract should be a paragraph or two long, and describe the
 % scope of the document.
+Grayscale dilation and erosion are basic transformations of mathematical
+morphology. Used together or with other transformations, they are very useful
+tools for image analysis. However, they can be very time consuming, especially
+with 3D images, and with large structuring elements. Several algorithms have
+been created to decrease the computation time, some of them with some limitations
+of shape of structuring element. We have implemented several algorithms, studied
+their performance in different conditions, and shown that all of them are more 
+efficients than the others in certain conditions.
+
+We finally introduce a new structuring element class and a some meta filter designed to
+select the best algorithm depending on the image and the structuring element, and
+to smoothely integrate the different algorithms available in the toolkit.
+
+{\em This article is an early version made to describe the FlatStructuringElement class.
+The other parts will come later. Be aware that other classes than FlatStructuringElement
+are still in development and may produce incorrect results.}
 \end{abstract}
 
 \tableofcontents
+
+\section{Introduction}
+
+Several classes can currently be used as structuring element in ITK: \doxygen{Neighborhood}
+and some subclass of \doxygen{Neighborhood}. There is several problems with that:
+\begin{itemize}
+  \item Some class like \doxygen{BinaryBallStructuringElement}
+contains some code to generate a structuring element of particular shape
+(a ball in that case), but the required call to the method \verb$CreateStructuringElement()$
+make it particulary confusing for the beginner
+  \item \verb$TPixel$, the first template parameter
+of the \doxygen{Neighborhood} class and its subclass is meaning less in that case. It
+can be safely set to a different type than the pixel type of the image, and store
+only a binary information: inside the neighborhood or outside the neighborhood.
+  \item ITK doesn't offer convenient code to visualize the structuring element,
+or generate a structuring element from an image
+\end{itemize}
+
+The \doxygen{FlatStructuringElement} class provided with this article aims to solve those
+problems, and, with the meta filters, to make the integration of the van Herk
+/ Gil Werman and Anchor algorithms as transparent as possible.
+
+\section{Algorithms}
+
+ \subsection{Basic algorithm}
+
+ \subsection{Moving histogram algorithm}
+
+ \subsection{van Herk / Gil Werman algorithm}
+
+ \subsection{Anchor algorithm}
+
+\section{Performance}
+
+%  \subsection{Structuring element size}
+% 
+%  \subsection{Image size}
+
+\section{Implementation}
+
+ \subsection{Basic algorithm}
+
+ \subsection{Moving histogram algorithm}
+
+ \subsection{van Herk / Gil Werman algorithm}
+
+ \subsection{Anchor algorithm}
+
+ \subsection{FlatStructuringElement}
+
+The FlatStructuringElement is implemented as a subclass of \doxygen{Neighborhood}, in order to
+keep backward compatibility. However, only the \verb$VDimension$ template parameter has
+been kept. The meaning less \verb$TPixel$ of the \doxygen{Neighborhood} class is set to
+\verb$bool$ and hidden to the user.
+
+\doxygen{FlatStructuringElement} provides several static methods. Each of them let the user
+produce a stucturing element with a given shape:
+\begin{itemize}
+  \item \verb$Ball()$ generate a ball structuring element. It takes the radius of the structuring
+element as parameter.
+  \item \verb$Box()$ produce a box structuring element. It takes the radius of the structuring
+element as parameter.
+  \item \verb$FromImage()$ produce a structuring element from an image. The image is passed
+as parameter to the method. A optional parameter can also be passed: the pixel value
+to be considered as the foreground value in the image. This value defaults to
+\verb$NumericTraits< PixelType >::max()$.
+\end{itemize}
+
+The number of available shapes is currently limited. However, the most useful
+ones are there, and the ability to generate a structuring element from an
+image should let the user easily create the ones he may need.
+Also, the infrastructure is there and other methods to generate others shape
+can be easily added.
+
+The \verb$GetImage()$ method in \doxygen{FlatStructuringElement} class let the user generate
+an image from its structuring element, and thus easily visualize its real
+shape. \verb$GetImage()$ is templated over the image type to produce. By default,
+the pixels outside the structuring element are set to \verb$NumericTraits< PixelType >::Zero$,
+and the pixels inside the structuring element to \verb$NumericTraits< PixelType >::max()$.
+
+The method \verb$GetImage()$ and \verb$FromImage()$ are templated methods. This particularity
+make them not available when wrapped in \verb$Python$, \verb$Tcl$ or \verb$Java$. For this usage,
+\verb$GetImageUC()$ and \verb$FromImageUC()$ has been created. They provide the same fonctionality
+that \verb$GetImage()$ and \verb$FromImage()$, but are limited to the pixel type \verb$unsigned char$, so
+they can be not templated. This methods are only there to be used with wrappers
+and shouldn't be used in \verb$C++$.
+
+ \subsection{Meta filters}
+
+
+\section{Usage}
+
+\section{Conclusion}
 
 
 % \url{http://www.itk.org}
@@ -80,11 +191,11 @@ colorlinks,linkcolor={blue},citecolor={blue},urlcolor={blue},
 
 % \ref{cthead1}
 
-\begin{figure}[htbp]
-\centering
-\includegraphics{cthead1}
-\caption{The input image.\label{cthead1}}
-\end{figure}
+% \begin{figure}[htbp]
+% \centering
+% \includegraphics{cthead1}
+% \caption{The input image.\label{cthead1}}
+% \end{figure}
 
 
 \appendix
