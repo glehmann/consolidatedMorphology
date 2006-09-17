@@ -246,9 +246,9 @@ FOREACH(r 1 3 6 10 20 50)
   ADD_TEST(KernelBall2D-${r} kernelShape kernelShape-ball-${r}.png ${r} 1)
   ADD_TEST(KernelBall2D-${r}-Compare ${IMAGE_COMPARE} kernelShape-ball-${r}.png ${CMAKE_SOURCE_DIR}/images/kernelShape-ball-${r}.png)
 
-  FOREACH(l 2 4 6)
-    ADD_TEST(KernelPoly2D-${r}-${l} kernelShape kernelShape-poly-${r}-${l}.png ${r} 2 ${l})
-    ADD_TEST(KernelPoly2D-${r}-${l}-Compare ${IMAGE_COMPARE} kernelShape-poly-${r}-${l}.png ${CMAKE_SOURCE_DIR}/images/kernelShape-poly-${r}-${l}.png)
-  ENDFOREACH(l)
+#   FOREACH(l 2 4 6)
+#     ADD_TEST(KernelPoly2D-${r}-${l} kernelShape kernelShape-poly-${r}-${l}.png ${r} 2 ${l})
+#     ADD_TEST(KernelPoly2D-${r}-${l}-Compare ${IMAGE_COMPARE} kernelShape-poly-${r}-${l}.png ${CMAKE_SOURCE_DIR}/images/kernelShape-poly-${r}-${l}.png)
+#   ENDFOREACH(l)
 ENDFOREACH(r)
 
