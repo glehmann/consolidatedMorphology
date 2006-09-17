@@ -252,3 +252,5 @@ FOREACH(r 1 3 6 10 20 50)
 #   ENDFOREACH(l)
 ENDFOREACH(r)
 
+ADD_TEST(KernelFromImage2D kernelShape kernelShape-fromImage.png ${r} dummy 3 ${CMAKE_SOURCE_DIR}/images/StrelFromImage.png)
+ADD_TEST(KernelFromImage2DCompare ${IMAGE_COMPARE} kernelShape-fromImage.png  ${CMAKE_SOURCE_DIR}/images/StrelFromImage.png)

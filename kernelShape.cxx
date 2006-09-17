@@ -9,10 +9,11 @@ int main(int argn, char * argv[])
 
   if( argn < 4 )
     {
-    std::cerr << "usage: kernelShape fileName radius type [lines]" << std::endl;
+    std::cerr << "usage: kernelShape fileName radius type [lines|img]" << std::endl;
     std::cerr << "  type: 0 -> Box" << std::endl;
     std::cerr << "        1 -> Ball" << std::endl;
     std::cerr << "        2 -> Poly" << std::endl;
+    std::cerr << "        3 -> FromImage" << std::endl;
     return 0;
     }
 
@@ -41,7 +42,7 @@ int main(int argn, char * argv[])
     K = SEType::FromImage<IType>( reader->GetOutput() );
     }
   else
-    exit(1);
+    return 1;
 
   IType::Pointer kernelImage = K.GetImage<IType>();
 
