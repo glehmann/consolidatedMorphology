@@ -302,7 +302,7 @@ void fillReverseExt(PixelType *pixbuffer, PixelType *rExtBuffer,
       --i;
       }	
     }
-  for (unsigned j = 0; j<blocks;j++)
+  for (unsigned j = 0; j<(unsigned)blocks;j++)
     {
     assert(i>=0);
     assert(i<len);
