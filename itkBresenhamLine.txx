@@ -45,7 +45,7 @@ typename BresenhamLine<VDimension>::OffsetArray BresenhamLine<VDimension>
     }
   // Find the dominant direction
   IndexValueType maxDistance = 0;
-  unsigned int maxDistanceDimension;
+  unsigned int maxDistanceDimension = 0;
   for (unsigned i = 0; i<VDimension;i++)
     {
     IndexValueType distance = abs(LastIndex[i]);

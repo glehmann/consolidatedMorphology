@@ -33,7 +33,7 @@ bool needToDoFace(const TRegion AllImage,
   typename TRegion::SizeType FSz = face.GetSize();
   typename TRegion::IndexType FSt = face.GetIndex();
 
-  unsigned smallDim;
+  unsigned smallDim = 0;
   for (unsigned i = 0; i < AllImage.GetImageDimension(); i++)
     {
     if (FSz[i] == 1)
@@ -75,7 +75,7 @@ int computeStartEnd(const typename TImage::IndexType StartIndex,
   float Tnear  = NumericTraits<float>::NonpositiveMin();
   float domdir  = NumericTraits<float>::NonpositiveMin();
   int sPos, ePos;
-  unsigned perpdir;
+  unsigned perpdir = 0;
   for (unsigned i = 0; i< TImage::RegionType::ImageDimension; i++)
     {
     if (fabs(line[i]) > domdir)
@@ -271,7 +271,7 @@ FaceCalculatorType;
   typename TInputImage::RegionType RelevantRegion;
   bool foundFace = false;
   float MaxComp = NumericTraits<float>::NonpositiveMin();
-  unsigned DomDir;
+  unsigned DomDir = 0;
   ++fit;
 //  std::cout << "------------" << std::endl;
   // figure out the dominant direction of the line
@@ -288,7 +288,7 @@ FaceCalculatorType;
     // check whether this face is suitable for parallel sweeping - i.e
     // whether the line is within 45 degrees of the perpendicular
     // Figure out the perpendicular using the region size
-    unsigned FaceDir;
+    unsigned FaceDir = 0;
     for (unsigned i = 0;i< TInputImage::RegionType::ImageDimension;i++) 
       {
       if (fit->GetSize()[i] == 1) FaceDir = i;
@@ -310,7 +310,7 @@ FaceCalculatorType;
     // enlarge the region so that sweeping the line across it will
     // cause all pixels to be visited.
     // find the dimension not within the face
-    unsigned NonFaceDim;
+    unsigned NonFaceDim = 0;
     
     for (unsigned i = 0; i < TInputImage::RegionType::ImageDimension;i++) 
       {
