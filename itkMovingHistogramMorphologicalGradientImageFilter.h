@@ -34,6 +34,17 @@ public:
     }
   ~MorphologicalGradientHistogram(){}
 
+  MorphologicalGradientHistogram * Clone()
+    {
+    MorphologicalGradientHistogram * result = new MorphologicalGradientHistogram();
+    result->m_Map = this->m_Map;
+    result->m_Vector = this->m_Vector;
+    result->m_Min = this->m_Min;
+    result->m_Max = this->m_Max;
+    result->m_Count = this->m_Count;
+    return result;
+    }
+
   inline void AddBoundary() {}
 
   inline void RemoveBoundary() {}

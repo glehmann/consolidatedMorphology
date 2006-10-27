@@ -34,12 +34,12 @@ MovingHistogramMorphologyImageFilter<TInputImage, TOutputImage, TKernel, THistog
 
 
 template<class TInputImage, class TOutputImage, class TKernel, class THistogram>
-THistogram
+THistogram *
 MovingHistogramMorphologyImageFilter<TInputImage, TOutputImage, TKernel, THistogram>
 ::NewHistogram()
 {
-  THistogram histogram;
-  histogram.SetBoundary( m_Boundary );
+  THistogram * histogram = Superclass::NewHistogram();
+  histogram->SetBoundary( m_Boundary );
   return histogram;
 }
 

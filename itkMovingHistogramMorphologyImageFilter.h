@@ -36,7 +36,17 @@ public:
     }
   ~MorphologyHistogram(){}
 
-
+  MorphologyHistogram * Clone()
+    {
+    MorphologyHistogram * result = new MorphologyHistogram();
+    result->m_Map = this->m_Map;
+    result->m_Vector = this->m_Vector;
+    result->m_CurrentValue = this->m_CurrentValue;
+    result->m_Compare = this->m_Compare;
+    result->m_Direction = this->m_Direction;
+    result->m_Boundary = this->m_Boundary;
+    return result;
+    }
 
   // define the method required by the functor and dispatch to the specialized methods
 
@@ -285,7 +295,7 @@ protected:
 //                               int threadId) ;
 
   /** needed to pass the boundary value to the histogram object */
-  virtual THistogram NewHistogram();
+  virtual THistogram * NewHistogram();
 
   PixelType m_Boundary;
 
