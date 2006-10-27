@@ -6,6 +6,10 @@
 #include "itkGrayscaleMorphologicalOpeningImageFilter.h"
 #include "itkGrayscaleMorphologicalClosingImageFilter.h"
 
+#include "itkSeparableImageFilter.h"
+#include "itkMovingHistogramDilateImageFilter.h"
+#include "itkMovingHistogramErodeImageFilter.h"
+
 #include "itkFlatStructuringElement.h"
 #include "itkTimeProbe.h"
 #include <vector>
@@ -32,6 +36,12 @@ int main(int, char * argv[])
   typedef itk::GrayscaleMorphologicalOpeningImageFilter< IType, IType, SRType > OpenType;
   typedef itk::GrayscaleMorphologicalClosingImageFilter< IType, IType, SRType > CloseType;
 
+  typedef itk::MovingHistogramDilateImageFilter< IType, IType, SRType > MHDilateType;
+  typedef itk::SeparableImageFilter< IType, IType, MHDilateType, SRType > SMHDilateType;
+
+  typedef itk::MovingHistogramErodeImageFilter< IType, IType, SRType > MHErodeType;
+  typedef itk::SeparableImageFilter< IType, IType, MHErodeType, SRType > SMHErodeType;
+
   DilateType::Pointer bdilate = DilateType::New();
   bdilate->SetInput( reader->GetOutput() );
   
@@ -43,6 +53,9 @@ int main(int, char * argv[])
   
   DilateType::Pointer vdilate = DilateType::New();
   vdilate->SetInput( reader->GetOutput() );
+  
+  SMHDilateType::Pointer smhdilate = SMHDilateType::New();
+  smhdilate->SetInput( reader->GetOutput() );
   
 
   ErodeType::Pointer berode = ErodeType::New();
@@ -56,6 +69,9 @@ int main(int, char * argv[])
   
   ErodeType::Pointer verode = ErodeType::New();
   verode->SetInput( reader->GetOutput() );
+  
+  SMHErodeType::Pointer smherode = SMHErodeType::New();
+  smherode->SetInput( reader->GetOutput() );
   
 
   GradientType::Pointer bgradient = GradientType::New();
@@ -110,10 +126,12 @@ int main(int, char * argv[])
   std::cout << "#radius" << "\t" 
             << "bd" << "\t" 
             << "hd" << "\t" 
+            << "smhd" << "\t" 
             << "ad" << "\t" 
             << "vd" << "\t" 
             << "be" << "\t" 
             << "he" << "\t" 
+            << "smhe" << "\t" 
             << "ae" << "\t" 
             << "ve" << "\t" 
             << "bg" << "\t" 
@@ -136,11 +154,13 @@ int main(int, char * argv[])
     itk::TimeProbe hdtime;
     itk::TimeProbe adtime;
     itk::TimeProbe vdtime;
+    itk::TimeProbe smhdtime;
 
     itk::TimeProbe betime;
     itk::TimeProbe hetime;
     itk::TimeProbe aetime;
     itk::TimeProbe vetime;
+    itk::TimeProbe smhetime;
 
     itk::TimeProbe bgtime;
     itk::TimeProbe hgtime;
@@ -169,6 +189,7 @@ int main(int, char * argv[])
     hdilate->SetAlgorithm( DilateType::HISTO );
     adilate->SetAlgorithm( DilateType::ANCHOR );
     vdilate->SetAlgorithm( DilateType::VHGW );
+    smhdilate->SetRadius( rad );
 
     berode->SetKernel( kernel );
     herode->SetKernel( kernel );
@@ -178,6 +199,7 @@ int main(int, char * argv[])
     herode->SetAlgorithm( ErodeType::HISTO );
     aerode->SetAlgorithm( ErodeType::ANCHOR );
     verode->SetAlgorithm( ErodeType::VHGW );
+    smherode->SetRadius( rad );
 
     bgradient->SetKernel( kernel );
     hgradient->SetKernel( kernel );
@@ -229,6 +251,11 @@ int main(int, char * argv[])
       hdtime.Stop();
       hdilate->Modified();
 
+      smhdtime.Start();
+      smhdilate->Update();
+      smhdtime.Stop();
+      smhdilate->Modified();
+
       adtime.Start();
       adilate->Update();
       adtime.Stop();
@@ -249,6 +276,11 @@ int main(int, char * argv[])
       herode->Update();
       hetime.Stop();
       herode->Modified();
+
+      smhetime.Start();
+      smherode->Update();
+      smhetime.Stop();
+      smherode->Modified();
 
       aetime.Start();
       aerode->Update();
@@ -328,10 +360,12 @@ int main(int, char * argv[])
     std::cout << std::setprecision(3) << *it << "\t" 
               << bdtime.GetMeanTime() << "\t" 
               << hdtime.GetMeanTime() << "\t" 
+              << smhdtime.GetMeanTime() << "\t" 
               << adtime.GetMeanTime() << "\t" 
               << vdtime.GetMeanTime() << "\t" 
               << betime.GetMeanTime() << "\t" 
               << hetime.GetMeanTime() << "\t" 
+              << smhetime.GetMeanTime() << "\t" 
               << aetime.GetMeanTime() << "\t" 
               << vetime.GetMeanTime() << "\t" 
               << bgtime.GetMeanTime() << "\t" 
