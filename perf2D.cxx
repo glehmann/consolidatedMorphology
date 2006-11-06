@@ -1,14 +1,17 @@
 #include "itkImageFileReader.h"
 
 #include "itkGrayscaleDilateImageFilter.h"
-#include "itkGrayscaleErodeImageFilter.h"
+// #include "itkGrayscaleErodeImageFilter.h"
 #include "itkMorphologicalGradientImageFilter.h"
 #include "itkGrayscaleMorphologicalOpeningImageFilter.h"
-#include "itkGrayscaleMorphologicalClosingImageFilter.h"
+// #include "itkGrayscaleMorphologicalClosingImageFilter.h"
 
 #include "itkSeparableImageFilter.h"
 #include "itkMovingHistogramDilateImageFilter.h"
-#include "itkMovingHistogramErodeImageFilter.h"
+// #include "itkMovingHistogramErodeImageFilter.h"
+
+#include "itkIterativeImageFilter.h"
+#include "itkBasicDilateImageFilter.h"
 
 #include "itkFlatStructuringElement.h"
 #include "itkTimeProbe.h"
@@ -31,16 +34,19 @@ int main(int, char * argv[])
   
   typedef itk::FlatStructuringElement< dim > SRType;
   typedef itk::GrayscaleDilateImageFilter< IType, IType, SRType > DilateType;
-  typedef itk::GrayscaleErodeImageFilter< IType, IType, SRType > ErodeType;
+//   typedef itk::GrayscaleErodeImageFilter< IType, IType, SRType > ErodeType;
   typedef itk::MorphologicalGradientImageFilter< IType, IType, SRType > GradientType;
   typedef itk::GrayscaleMorphologicalOpeningImageFilter< IType, IType, SRType > OpenType;
-  typedef itk::GrayscaleMorphologicalClosingImageFilter< IType, IType, SRType > CloseType;
+//   typedef itk::GrayscaleMorphologicalClosingImageFilter< IType, IType, SRType > CloseType;
 
   typedef itk::MovingHistogramDilateImageFilter< IType, IType, SRType > MHDilateType;
   typedef itk::SeparableImageFilter< IType, IType, MHDilateType, SRType > SMHDilateType;
 
-  typedef itk::MovingHistogramErodeImageFilter< IType, IType, SRType > MHErodeType;
-  typedef itk::SeparableImageFilter< IType, IType, MHErodeType, SRType > SMHErodeType;
+//   typedef itk::MovingHistogramErodeImageFilter< IType, IType, SRType > MHErodeType;
+//   typedef itk::SeparableImageFilter< IType, IType, MHErodeType, SRType > SMHErodeType;
+
+  typedef itk::BasicDilateImageFilter< IType, IType, SRType > BDilateType;
+  typedef itk::IterativeImageFilter< IType, IType > IterativeType;
 
   DilateType::Pointer bdilate = DilateType::New();
   bdilate->SetInput( reader->GetOutput() );
@@ -57,8 +63,16 @@ int main(int, char * argv[])
   SMHDilateType::Pointer smhdilate = SMHDilateType::New();
   smhdilate->SetInput( reader->GetOutput() );
   
+  BDilateType::Pointer basic_dilate = BDilateType::New();
+  SRType::RadiusType basic_radius;
+  basic_radius.Fill( 1 );
+  SRType basic_kernel = SRType::Box( basic_radius );
+  basic_dilate->SetKernel( basic_kernel );
+  IterativeType::Pointer ibdilate = IterativeType::New();
+  ibdilate->SetFilter( basic_dilate );
+  ibdilate->SetInput( reader->GetOutput() );
 
-  ErodeType::Pointer berode = ErodeType::New();
+/*  ErodeType::Pointer berode = ErodeType::New();
   berode->SetInput( reader->GetOutput() );
   
   ErodeType::Pointer herode = ErodeType::New();
@@ -71,7 +85,7 @@ int main(int, char * argv[])
   verode->SetInput( reader->GetOutput() );
   
   SMHErodeType::Pointer smherode = SMHErodeType::New();
-  smherode->SetInput( reader->GetOutput() );
+  smherode->SetInput( reader->GetOutput() );*/
   
 
   GradientType::Pointer bgradient = GradientType::New();
@@ -100,17 +114,17 @@ int main(int, char * argv[])
   vopen->SetInput( reader->GetOutput() );
   
 
-  CloseType::Pointer bclose = CloseType::New();
-  bclose->SetInput( reader->GetOutput() );
-  
-  CloseType::Pointer hclose = CloseType::New();
-  hclose->SetInput( reader->GetOutput() );
-  
-  CloseType::Pointer aclose = CloseType::New();
-  aclose->SetInput( reader->GetOutput() );
-  
-  CloseType::Pointer vclose = CloseType::New();
-  vclose->SetInput( reader->GetOutput() );
+//   CloseType::Pointer bclose = CloseType::New();
+//   bclose->SetInput( reader->GetOutput() );
+//   
+//   CloseType::Pointer hclose = CloseType::New();
+//   hclose->SetInput( reader->GetOutput() );
+//   
+//   CloseType::Pointer aclose = CloseType::New();
+//   aclose->SetInput( reader->GetOutput() );
+//   
+//   CloseType::Pointer vclose = CloseType::New();
+//   vclose->SetInput( reader->GetOutput() );
 
   reader->Update();
   
@@ -125,15 +139,16 @@ int main(int, char * argv[])
   
   std::cout << "#radius" << "\t" 
             << "bd" << "\t" 
+            << "ibd" << "\t" 
             << "hd" << "\t" 
             << "smhd" << "\t" 
             << "ad" << "\t" 
             << "vd" << "\t" 
-            << "be" << "\t" 
+/*            << "be" << "\t" 
             << "he" << "\t" 
             << "smhe" << "\t" 
             << "ae" << "\t" 
-            << "ve" << "\t" 
+            << "ve" << "\t" */
             << "bg" << "\t" 
             << "hg" << "\t" 
             << "ag" << "\t" 
@@ -142,25 +157,26 @@ int main(int, char * argv[])
             << "ho" << "\t" 
             << "ao" << "\t" 
             << "vo" << "\t" 
-            << "bc" << "\t" 
+/*            << "bc" << "\t" 
             << "hc" << "\t" 
             << "ac" << "\t" 
-            << "vc" << "\t" 
+            << "vc" << "\t" */
             << std::endl;
 
   for( std::vector< int >::iterator it=radiusList.begin(); it !=radiusList.end() ; it++)
     {
     itk::TimeProbe bdtime;
+    itk::TimeProbe ibdtime;
     itk::TimeProbe hdtime;
     itk::TimeProbe adtime;
     itk::TimeProbe vdtime;
     itk::TimeProbe smhdtime;
 
-    itk::TimeProbe betime;
-    itk::TimeProbe hetime;
-    itk::TimeProbe aetime;
-    itk::TimeProbe vetime;
-    itk::TimeProbe smhetime;
+//     itk::TimeProbe betime;
+//     itk::TimeProbe hetime;
+//     itk::TimeProbe aetime;
+//     itk::TimeProbe vetime;
+//     itk::TimeProbe smhetime;
 
     itk::TimeProbe bgtime;
     itk::TimeProbe hgtime;
@@ -172,10 +188,10 @@ int main(int, char * argv[])
     itk::TimeProbe aotime;
     itk::TimeProbe votime;
   
-    itk::TimeProbe bctime;
+/*    itk::TimeProbe bctime;
     itk::TimeProbe hctime;
     itk::TimeProbe actime;
-    itk::TimeProbe vctime;
+    itk::TimeProbe vctime;*/
   
     SRType::RadiusType rad;
     rad.Fill( *it );
@@ -190,16 +206,17 @@ int main(int, char * argv[])
     adilate->SetAlgorithm( DilateType::ANCHOR );
     vdilate->SetAlgorithm( DilateType::VHGW );
     smhdilate->SetRadius( rad );
+    ibdilate->SetNumberOfIterations( *it );
 
-    berode->SetKernel( kernel );
-    herode->SetKernel( kernel );
-    aerode->SetKernel( kernel );
-    verode->SetKernel( kernel );
-    berode->SetAlgorithm( ErodeType::BASIC );
-    herode->SetAlgorithm( ErodeType::HISTO );
-    aerode->SetAlgorithm( ErodeType::ANCHOR );
-    verode->SetAlgorithm( ErodeType::VHGW );
-    smherode->SetRadius( rad );
+//     berode->SetKernel( kernel );
+//     herode->SetKernel( kernel );
+//     aerode->SetKernel( kernel );
+//     verode->SetKernel( kernel );
+//     berode->SetAlgorithm( ErodeType::BASIC );
+//     herode->SetAlgorithm( ErodeType::HISTO );
+//     aerode->SetAlgorithm( ErodeType::ANCHOR );
+//     verode->SetAlgorithm( ErodeType::VHGW );
+//     smherode->SetRadius( rad );
 
     bgradient->SetKernel( kernel );
     hgradient->SetKernel( kernel );
@@ -219,14 +236,14 @@ int main(int, char * argv[])
     aopen->SetAlgorithm( OpenType::ANCHOR );
     vopen->SetAlgorithm( OpenType::VHGW );
 
-    bclose->SetKernel( kernel );
-    hclose->SetKernel( kernel );
-    aclose->SetKernel( kernel );
-    vclose->SetKernel( kernel );
-    bclose->SetAlgorithm( CloseType::BASIC );
-    hclose->SetAlgorithm( CloseType::HISTO );
-    aclose->SetAlgorithm( CloseType::ANCHOR );
-    vclose->SetAlgorithm( CloseType::VHGW );
+//     bclose->SetKernel( kernel );
+//     hclose->SetKernel( kernel );
+//     aclose->SetKernel( kernel );
+//     vclose->SetKernel( kernel );
+//     bclose->SetAlgorithm( CloseType::BASIC );
+//     hclose->SetAlgorithm( CloseType::HISTO );
+//     aclose->SetAlgorithm( CloseType::ANCHOR );
+//     vclose->SetAlgorithm( CloseType::VHGW );
 
     int nbOfRepeats;
     if( *it <= 10 )
@@ -245,6 +262,11 @@ int main(int, char * argv[])
       bdilate->Update();
       bdtime.Stop();
       bdilate->Modified();
+
+      ibdtime.Start();
+      ibdilate->Update();
+      ibdtime.Stop();
+      ibdilate->Modified();
 
       hdtime.Start();
       hdilate->Update();
@@ -267,30 +289,30 @@ int main(int, char * argv[])
       vdilate->Modified();
 
 
-      betime.Start();
-      berode->Update();
-      betime.Stop();
-      berode->Modified();
-
-      hetime.Start();
-      herode->Update();
-      hetime.Stop();
-      herode->Modified();
-
-      smhetime.Start();
-      smherode->Update();
-      smhetime.Stop();
-      smherode->Modified();
-
-      aetime.Start();
-      aerode->Update();
-      aetime.Stop();
-      aerode->Modified();
-
-      vetime.Start();
-      verode->Update();
-      vetime.Stop();
-      verode->Modified();
+//       betime.Start();
+//       berode->Update();
+//       betime.Stop();
+//       berode->Modified();
+// 
+//       hetime.Start();
+//       herode->Update();
+//       hetime.Stop();
+//       herode->Modified();
+// 
+//       smhetime.Start();
+//       smherode->Update();
+//       smhetime.Stop();
+//       smherode->Modified();
+// 
+//       aetime.Start();
+//       aerode->Update();
+//       aetime.Stop();
+//       aerode->Modified();
+// 
+//       vetime.Start();
+//       verode->Update();
+//       vetime.Stop();
+//       verode->Modified();
 
 
       bgtime.Start();
@@ -335,39 +357,40 @@ int main(int, char * argv[])
       vopen->Modified();
 
 
-      bctime.Start();
-      bclose->Update();
-      bctime.Stop();
-      bclose->Modified();
-
-      hctime.Start();
-      hclose->Update();
-      hctime.Stop();
-      hclose->Modified();
-
-      actime.Start();
-      aclose->Update();
-      actime.Stop();
-      aclose->Modified();
-
-      vctime.Start();
-      vclose->Update();
-      vctime.Stop();
-      vclose->Modified();
+//       bctime.Start();
+//       bclose->Update();
+//       bctime.Stop();
+//       bclose->Modified();
+// 
+//       hctime.Start();
+//       hclose->Update();
+//       hctime.Stop();
+//       hclose->Modified();
+// 
+//       actime.Start();
+//       aclose->Update();
+//       actime.Stop();
+//       aclose->Modified();
+// 
+//       vctime.Start();
+//       vclose->Update();
+//       vctime.Stop();
+//       vclose->Modified();
 
       }
       
     std::cout << std::setprecision(3) << *it << "\t" 
               << bdtime.GetMeanTime() << "\t" 
+              << ibdtime.GetMeanTime() << "\t" 
               << hdtime.GetMeanTime() << "\t" 
               << smhdtime.GetMeanTime() << "\t" 
               << adtime.GetMeanTime() << "\t" 
               << vdtime.GetMeanTime() << "\t" 
-              << betime.GetMeanTime() << "\t" 
+/*              << betime.GetMeanTime() << "\t" 
               << hetime.GetMeanTime() << "\t" 
               << smhetime.GetMeanTime() << "\t" 
               << aetime.GetMeanTime() << "\t" 
-              << vetime.GetMeanTime() << "\t" 
+              << vetime.GetMeanTime() << "\t" */
               << bgtime.GetMeanTime() << "\t" 
               << hgtime.GetMeanTime() << "\t" 
               << agtime.GetMeanTime() << "\t" 
@@ -376,10 +399,10 @@ int main(int, char * argv[])
               << hotime.GetMeanTime() << "\t" 
               << aotime.GetMeanTime() << "\t" 
               << votime.GetMeanTime() << "\t" 
-              << bctime.GetMeanTime() << "\t" 
+/*              << bctime.GetMeanTime() << "\t" 
               << hctime.GetMeanTime() << "\t" 
               << actime.GetMeanTime() << "\t" 
-              << vctime.GetMeanTime() << "\t" 
+              << vctime.GetMeanTime() << "\t" */
 //<< erode->GetNameOfBackendFilterClass()
               <<std::endl;
     }
