@@ -75,6 +75,17 @@ IterativeImageFilter<TInputImage, TOutputImage>
 
 }
 
+
+template <class TInputImage, class TOutputImage>
+void
+IterativeImageFilter<TInputImage, TOutputImage>
+::PrintSelf(std::ostream &os, Indent indent) const
+{
+  Superclass::PrintSelf(os, indent);
+
+  os << indent << "NumberOfIterations: " << m_NumberOfIterations << std::endl;
+}
+
 }
 
 

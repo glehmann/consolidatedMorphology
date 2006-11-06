@@ -67,6 +67,8 @@ protected:
 
   void GenerateData();
 
+  void PrintSelf(std::ostream& os, Indent indent) const;
+
   typename FilterType::Pointer m_Filter;
   
   typename CastType::Pointer m_Cast;
