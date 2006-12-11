@@ -94,6 +94,7 @@ vHGWErodeDilateImageFilter<TImage, TKernel, TFunction1>
       ++SELength;
 
     InputImageRegionType BigFace = mkEnlargedFace<InputImageType, typename KernelType::LType>(input, IReg, ThisLine);
+
     doFace<TImage, BresType, TFunction1, 
       typename KernelType::LType>(input, output, m_Boundary, ThisLine,  
 				  TheseOffsets, SELength,

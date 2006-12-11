@@ -5,6 +5,7 @@
 #include "itkImageRegionConstIteratorWithIndex.h"
 #include "itkImageRegionConstIterator.h"
 #include "itkNeighborhoodAlgorithm.h"
+#include <list>
 
 namespace itk {
 
@@ -258,6 +259,7 @@ mkEnlargedFace(const typename TInputImage::ConstPointer input,
 	       const typename TInputImage::RegionType AllImage,
 	       const TLine line)
 {
+#if 0
   // use the face calculator to produce a face list
   typedef itk::NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<TInputImage>
 FaceCalculatorType;
@@ -268,12 +270,47 @@ FaceCalculatorType;
   faceList = faceCalculator(input, AllImage, radius);
   typename FaceCalculatorType::FaceListType::iterator fit;
   fit = faceList.begin();
+  ++fit;
+#else
+  // the face list calculator strategy fails in multithreaded mode
+  // with 1D kernels
+  // because it doesn't return faces of the sub-blocks if they don't
+  // fall along the edge of the image
+  typedef typename TInputImage::RegionType RegionType;
+  typedef typename TInputImage::SizeType SizeType;
+  typedef typename TInputImage::IndexType IndexType;
+  typedef typename std::list<RegionType> FaceListType;
+  FaceListType faceList;
+
+  for (unsigned i = 0; i < TInputImage::ImageDimension ; i++)
+    {
+    RegionType R1, R2;
+    SizeType S1 = AllImage.GetSize();
+    IndexType I2 = AllImage.GetIndex();
+
+    S1[i]=1;
+    R1 = AllImage;
+    R2 = AllImage;
+
+    // the first face will have the same starting index and one
+    // dimension removed
+    R1.SetSize(S1);
+    
+    I2[i] = I2[i] + AllImage.GetSize()[i] - 1;
+    R2.SetSize(S1);
+    R2.SetIndex(I2);
+    faceList.push_back(R1);
+    faceList.push_back(R2);
+//    std::cout << R1 << R2 << std::endl;
+    }
+  typename FaceListType::iterator fit;
+  fit = faceList.begin();
+#endif
   typename TInputImage::RegionType RelevantRegion;
   bool foundFace = false;
   float MaxComp = NumericTraits<float>::NonpositiveMin();
   unsigned DomDir = 0;
-  ++fit;
-//  std::cout << "------------" << std::endl;
+  //std::cout << "------------" << std::endl;
   // figure out the dominant direction of the line
   for (unsigned i = 0;i< TInputImage::RegionType::ImageDimension;i++) 
     {
@@ -283,12 +320,14 @@ FaceCalculatorType;
       DomDir = i;
       }
     }
+  
   for (;fit != faceList.end();++fit) 
     {
     // check whether this face is suitable for parallel sweeping - i.e
     // whether the line is within 45 degrees of the perpendicular
     // Figure out the perpendicular using the region size
     unsigned FaceDir = 0;
+//    std::cout << "Face " << *fit << std::endl;
     for (unsigned i = 0;i< TInputImage::RegionType::ImageDimension;i++) 
       {
       if (fit->GetSize()[i] == 1) FaceDir = i;
