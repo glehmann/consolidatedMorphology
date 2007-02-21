@@ -65,7 +65,7 @@ public:
       { RemovePixelMap( p ); }
     }
 
-  inline TInputPixel GetValue()
+  inline TInputPixel GetValue( const TInputPixel & )
     {
     if( useVectorBasedAlgorithm() )
       { return GetValueVector(); }
