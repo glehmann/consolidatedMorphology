@@ -7,7 +7,6 @@
 //#include "itkNeighborhoodAlgorithm.h"
 
 #include "itkAnchorUtilities.h"
-
 namespace itk {
 
 template <class TImage, class TKernel, class TFunction1, class TFunction2>
@@ -15,7 +14,6 @@ AnchorErodeDilateImageFilter<TImage, TKernel, TFunction1, TFunction2>
 ::AnchorErodeDilateImageFilter()
 {
   m_KernelSet = false;
-//   this->SetNumberOfThreads( 2 );
 }
 
 template <class TImage, class TKernel, class TFunction1, class TFunction2>
@@ -81,8 +79,10 @@ AnchorErodeDilateImageFilter<TImage, TKernel, TFunction1, TFunction2>
   // compat
   bufflength += 2;
 
+
   InputImagePixelType * buffer = new InputImagePixelType[bufflength];
   InputImagePixelType * inbuffer = new InputImagePixelType[bufflength];
+
   // iterate over all the structuring elements
   typename KernelType::DecompType decomposition = m_Kernel.GetLines();
   BresType BresLine;
@@ -99,6 +99,7 @@ AnchorErodeDilateImageFilter<TImage, TKernel, TFunction1, TFunction2>
     InputImageRegionType BigFace = mkEnlargedFace<InputImageType, typename KernelType::LType>(input, IReg, ThisLine);
 
     AnchorLine.SetSize(SELength);
+
     doFace<TImage, BresType, AnchorLineType, typename KernelType::LType>(input, output, m_Boundary, ThisLine, AnchorLine, 
 									   TheseOffsets, inbuffer, buffer, IReg, BigFace);
     // after the first pass the input will be taken from the output
@@ -116,7 +117,6 @@ AnchorErodeDilateImageFilter<TImage, TKernel, TFunction1, TFunction2>
     oit.Set(iit.Get());
     }
   progress.CompletedPixel();
-
   delete [] buffer;
   delete [] inbuffer;
 }

@@ -13,7 +13,6 @@ AnchorOpenCloseImageFilter<TImage, TKernel, LessThan, GreaterThan, LessEqual, Gr
 ::AnchorOpenCloseImageFilter()
 {
   m_KernelSet = false;
-//   this->SetNumberOfThreads( 2 );
 }
 
 template <class TImage, class TKernel, class LessThan, class GreaterThan, class LessEqual, class GreaterEqual>
@@ -37,7 +36,6 @@ AnchorOpenCloseImageFilter<TImage, TKernel, LessThan, GreaterThan, LessEqual, Gr
   // TFunction1 will be < for erosions
   // TFunction2 will be <=
 
-
   // the initial version will adopt the methodology of loading a line
   // at a time into a buffer vector, carrying out the opening or
   // closing, and then copy the result to the output. Hopefully this
@@ -54,9 +52,9 @@ AnchorOpenCloseImageFilter<TImage, TKernel, LessThan, GreaterThan, LessEqual, Gr
   InputImageConstPointer input = this->GetInput();
 
   InputImageRegionType IReg = outputRegionForThread;
-  IReg.PadByRadius( m_Kernel.GetRadius() );
-  // Pad 2 times to avoid border effect
-  // TODO: remove the second one - it should not be there
+  // seem to need a double padding for the multi threaded case because
+  // we get boundary effects otherwise
+  IReg.PadByRadius( m_Kernel.GetRadius());
   IReg.PadByRadius( m_Kernel.GetRadius() );
   IReg.Crop( this->GetInput()->GetRequestedRegion() );
 

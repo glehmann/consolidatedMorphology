@@ -99,6 +99,7 @@ void doFace(typename TImage::ConstPointer input,
       // compat
       inbuffer[0]=border;
       inbuffer[len+1]=border;
+
 #if 1
       AnchorLine.doLine(outbuffer, inbuffer, len + 2);  // compat
       copyLineToImage<TImage, TBres>(output, Ind, LineOffsets, outbuffer, start, end);

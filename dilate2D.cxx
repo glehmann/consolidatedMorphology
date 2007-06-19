@@ -20,7 +20,7 @@ int main(int, char * argv[])
   typedef itk::FlatStructuringElement<dim> SRType;
   SRType::RadiusType radius;
   radius.Fill( 4 );
-  SRType kernel = SRType::Box( radius );
+  SRType kernel = SRType::Box( radius);
   
   typedef itk::GrayscaleDilateImageFilter< IType, IType, SRType > DilateType;
   DilateType::Pointer dilate = DilateType::New();
@@ -49,10 +49,10 @@ int main(int, char * argv[])
   writer->SetFileName( argv[5] );
   writer->Update();
 
-/*  IType::Pointer img = kernel.GetImage<IType>();
+  IType::Pointer img = kernel.GetImage<IType>();
   writer->SetInput( img );
   writer->SetFileName( "kernel.png" );
-  writer->Update();*/
+  writer->Update();
   
   
   return 0;

@@ -54,6 +54,7 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
     return;
     }
 
+
   int middle = (int)m_Size/2;
 
   int outLeftP = 0, outRightP = (int)bufflength - 1;
@@ -175,7 +176,6 @@ AnchorErodeDilateLine<TInputPix, TFunction1, TFunction2>
   while (startLine(buffer, inbuffer, Extreme, *m_Histo, outLeftP, outRightP, inLeftP, inRightP, middle, bufflength)){}
 
   finishLine(buffer, inbuffer, Extreme, *m_Histo, outLeftP, outRightP, inLeftP, inRightP, middle, bufflength);
-
 }
 
 template<class TInputPix, class TFunction1, class TFunction2>

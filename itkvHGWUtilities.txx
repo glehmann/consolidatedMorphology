@@ -261,7 +261,8 @@ void fillForwardExt(PixelType *pixbuffer, PixelType *fExtBuffer,
       }
     }
   // finish the rest
-  if ((i != size - 1) && (i < size))
+//  if ((i != size - 1) && (i < size))
+  if (i < size)
     {
     assert(i>=0);
     assert(i<len);
@@ -290,13 +291,13 @@ void fillReverseExt(PixelType *pixbuffer, PixelType *rExtBuffer,
   if ((i > (blocks * (int)KernLen - 1)))
     {
     assert(i>=0);
-    assert(i<len);
+    assert(i<(long)len);
     rExtBuffer[i] = pixbuffer[i];
     --i;
     while (i >= (int)(blocks * KernLen))
       {
       assert(i>=0);
-      assert((i+1)<len);
+      assert((i+1)<(long)len);
       PixelType V = pixbuffer[i];
       rExtBuffer[i] = m_TF(V, rExtBuffer[i+1]);
       --i;
@@ -305,14 +306,14 @@ void fillReverseExt(PixelType *pixbuffer, PixelType *rExtBuffer,
   for (unsigned j = 0; j<(unsigned)blocks;j++)
     {
     assert(i>=0);
-    assert(i<len);
+    assert(i<(long)len);
     PixelType Ext = pixbuffer[i];
     rExtBuffer[i]=Ext;
     --i;
     for (unsigned k = 1; k < KernLen; k++)
       {
       assert(i>=0);
-      assert((i+1)<len);
+      assert((i+1)<(long)len);
       PixelType V = pixbuffer[i];
       rExtBuffer[i] = m_TF(V, rExtBuffer[i+1]);
       --i;

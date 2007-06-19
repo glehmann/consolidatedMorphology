@@ -1,13 +1,13 @@
 
 #ifndef __itkFlatStructuringElement_txx
 #define __itkFlatStructuringElement_txx
-
+#include "vnl/vnl_math.h"
 #include "itkFlatStructuringElement.h"
 #include <math.h>
 #include <vector>
 
 #ifndef M_PI
-#define M_PI 3.14159265358979323846
+#define M_PI vnl_math::pi
 #endif
 
 #include "itkImage.h"

@@ -27,7 +27,7 @@ int main(int, char * argv[])
   open->SetInput( reader->GetOutput() );
   open->SetKernel( kernel );
   
-  itk::SimpleFilterWatcher watcher(open, "filter");
+  //itk::SimpleFilterWatcher watcher(open, "filter");
 
   typedef itk::ImageFileWriter< IType > WriterType;
   WriterType::Pointer writer = WriterType::New();

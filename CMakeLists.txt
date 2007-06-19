@@ -62,7 +62,7 @@ ENDIF(BUILD_WRAPPERS)
 
 IF(BUILD_TESTING)
 
-FOREACH(CurrentExe "testSE" "kernelShape" "dilate2D" "dilate2D_std_kernel" "erode2D")
+FOREACH(CurrentExe "testSE" "kernelShape" "dilate2D" "dilate2Dpoly" "dilate2D_std_kernel" "erode2D")
 ADD_EXECUTABLE(${CurrentExe} ${CurrentExe}.cxx)
 TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
 ENDFOREACH(CurrentExe)
@@ -104,6 +104,8 @@ ENDIF(BUILD_TESTING)
 
 ADD_TEST(Dilate2D dilate2D ${INPUT_IMAGE} dilate2D-basic.png
 dilate2D-histo.png dilate2D-anchor.png dilate2D-vhgw.png)
+ADD_TEST(Dilate2Dpoly dilate2Dpoly ${INPUT_IMAGE} dilate2Dpoly-basic.png
+dilate2Dpoly-histo.png dilate2Dpoly-anchor.png dilate2Dpoly-vhgw.png)
 ADD_TEST(Dilate2DBasicCompare ${IMAGE_COMPARE} dilate2D-basic.png
 ${CMAKE_SOURCE_DIR}/images/dilate2D.png)
 ADD_TEST(Dilate2DHistoCompare ${IMAGE_COMPARE} dilate2D-histo.png
@@ -112,6 +114,10 @@ ADD_TEST(Dilate2DAnchorCompare ${IMAGE_COMPARE} dilate2D-anchor.png
 ${CMAKE_SOURCE_DIR}/images/dilate2D.png)
 ADD_TEST(Dilate2DvHGWCompare ${IMAGE_COMPARE} dilate2D-vhgw.png
 ${CMAKE_SOURCE_DIR}/images/dilate2D.png)
+
+ADD_TEST(Dilate2DPolyHistoCompare ${IMAGE_COMPARE} dilate2D-basic.png dilate2D-histo.png)
+ADD_TEST(Dilate2DPolyAnchorCompare ${IMAGE_COMPARE} dilate2D-basic.png dilate2D-anchor.png)
+ADD_TEST(Dilate2DPolyvHGWCompare ${IMAGE_COMPARE} dilate2D-basic.png dilate2D-vhgw.png)
 
 ADD_TEST(Dilate2Dstd dilate2D_std_kernel ${INPUT_IMAGE} dilate2D-std-basic.png
 dilate2D-std-histo.png)

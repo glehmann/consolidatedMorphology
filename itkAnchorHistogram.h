@@ -2,7 +2,9 @@
 #ifndef __itkAnchorHistogram_h
 #define __itkAnchorHistogram_h
 #include "itkNumericTraits.h"
-
+#include <vector>
+#include <map>
+#include "itkIndent.h"
 namespace itk {
 
 // a simple histogram class hierarchy. One subclass will be maps, the
@@ -115,18 +117,17 @@ private:
   VecType m_Vec;
   unsigned int m_Size;
   TCompare m_Compare;
-  //unsigned int m_CurrentValue;
   TInputPixel m_CurrentValue;
   TInputPixel m_InitVal;
   int m_Direction;
   int m_Entries;
-//  int m_Additions, m_Removals;
 public:
   MorphologyHistogramVec() 
   {
     m_Size = static_cast<unsigned int>( NumericTraits< TInputPixel >::max() - 
 					NumericTraits< TInputPixel >::NonpositiveMin() + 1 );
     m_Vec.resize(m_Size, 0 );
+    std::fill(m_Vec.begin(), m_Vec.end(),0);
     if( m_Compare( NumericTraits< TInputPixel >::max(), 
 		   NumericTraits< TInputPixel >::NonpositiveMin() ) )
       {
@@ -139,14 +140,16 @@ public:
       m_Direction = 1;
       }
     m_Entries = 0;
-//    m_Additions=m_Removals=0;
   }
   ~MorphologyHistogramVec(){}
 
   void Reset(){
-    std::fill(&(m_Vec[0]), &(m_Vec[m_Size-1]),0);
     m_CurrentValue = m_InitVal;
-    m_Entries = 0;
+    if (m_Entries != 0)
+      {
+      std::fill(m_Vec.begin(), m_Vec.end(),0);
+      m_Entries = 0;
+      }
   }
   
   void AddBoundary()
@@ -162,7 +165,8 @@ public:
   
   void AddPixel(const TInputPixel &p)
   {
-    m_Vec[ (long unsigned int)(p - NumericTraits< TInputPixel >::NonpositiveMin())  ]++; 
+    
+    m_Vec[ (long unsigned int)(p - NumericTraits< TInputPixel >::NonpositiveMin())  ]++;
     if (m_Compare(p, m_CurrentValue))
       {
       m_CurrentValue = p;
@@ -172,15 +176,15 @@ public:
 
   void RemovePixel(const TInputPixel &p)
   {
-    assert(p - NumericTraits< TInputPixel >::NonpositiveMin() >= 0);
-    assert((p - NumericTraits< TInputPixel >::NonpositiveMin()) < (int)m_Vec.size());
+    assert((int)p - (int)NumericTraits< TInputPixel >::NonpositiveMin() >= 0);
+    assert(((int)p - (int)NumericTraits< TInputPixel >::NonpositiveMin()) < (int)m_Vec.size());
     assert(m_Entries >= 1);
     m_Vec[ (long unsigned int)(p - NumericTraits< TInputPixel >::NonpositiveMin())  ]--; 
     --m_Entries;
-    assert(static_cast<int>(m_CurrentValue -                                                                                                                      
-			    NumericTraits< TInputPixel >::NonpositiveMin() ) >= 0);
-    assert(static_cast<int>(m_CurrentValue -                                                                                                                      
-			    NumericTraits< TInputPixel >::NonpositiveMin() ) < (int)m_Vec.size());
+    assert(static_cast<int>((int)m_CurrentValue -                                                                                                                      
+			    (int)NumericTraits< TInputPixel >::NonpositiveMin() ) >= 0);
+    assert(static_cast<int>((int)m_CurrentValue -                                                                                                                      
+			    (int)NumericTraits< TInputPixel >::NonpositiveMin() ) < (int)m_Vec.size());
     if (m_Entries > 0)
       {
       while( m_Vec[static_cast<int>(m_CurrentValue - 
