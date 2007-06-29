@@ -82,7 +82,7 @@ ADD_EXECUTABLE(${CurrentExe} ${CurrentExe}.cxx)
 TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
 ENDFOREACH(CurrentExe)
 
-FOREACH(CurrentExe "perf2D" "perf3D" "perf_threads" "perf_binary" "perf_nb_of_neighbors")
+FOREACH(CurrentExe "perf2D" "perf3D" "perf_threads" "perf_binary" "perf_nb_of_neighbors" "perf2Dpoly")
 ADD_EXECUTABLE(${CurrentExe} ${CurrentExe}.cxx)
 TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
 ENDFOREACH(CurrentExe)
