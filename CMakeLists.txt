@@ -72,7 +72,7 @@ ADD_EXECUTABLE(${CurrentExe} ${CurrentExe}.cxx)
 TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
 ENDFOREACH(CurrentExe)
 
-FOREACH(CurrentExe "open2D" "open2D_std_kernel" "close2D" "close2D_std_kernel" "open2D-crop")
+FOREACH(CurrentExe "open2D" "open2D_std_kernel" "close2D" "close2D_std_kernel")
 ADD_EXECUTABLE(${CurrentExe} ${CurrentExe}.cxx)
 TARGET_LINK_LIBRARIES(${CurrentExe} ${Libraries})
 ENDFOREACH(CurrentExe)
