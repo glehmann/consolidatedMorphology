@@ -47,6 +47,7 @@ int main(int, char * argv[])
 
   typedef itk::BasicDilateImageFilter< IType, IType, SRType > BDilateType;
   typedef itk::IterativeImageFilter< IType, IType > IterativeType;
+  typedef itk::SeparableImageFilter< IType, IType, BDilateType > SBDilateType;
 
   DilateType::Pointer bdilate = DilateType::New();
   bdilate->SetInput( reader->GetOutput() );
@@ -72,6 +73,9 @@ int main(int, char * argv[])
   ibdilate->SetFilter( basic_dilate );
   ibdilate->SetInput( reader->GetOutput() );
 
+  SBDilateType::Pointer sbdilate = SBDilateType::New();
+  sbdilate->SetInput( reader->GetOutput() );
+  
 /*  ErodeType::Pointer berode = ErodeType::New();
   berode->SetInput( reader->GetOutput() );
   
@@ -140,6 +144,7 @@ int main(int, char * argv[])
   std::cout << "#radius" << "\t" 
             << "bd" << "\t" 
             << "ibd" << "\t" 
+            << "sbd" << "\t" 
             << "hd" << "\t" 
             << "smhd" << "\t" 
             << "ad" << "\t" 
@@ -167,6 +172,7 @@ int main(int, char * argv[])
     {
     itk::TimeProbe bdtime;
     itk::TimeProbe ibdtime;
+    itk::TimeProbe sbdtime;
     itk::TimeProbe hdtime;
     itk::TimeProbe adtime;
     itk::TimeProbe vdtime;
@@ -206,6 +212,7 @@ int main(int, char * argv[])
     adilate->SetAlgorithm( DilateType::ANCHOR );
     vdilate->SetAlgorithm( DilateType::VHGW );
     smhdilate->SetRadius( rad );
+    sbdilate->SetRadius( rad );
     ibdilate->SetNumberOfIterations( *it );
 
 //     berode->SetKernel( kernel );
@@ -267,6 +274,11 @@ int main(int, char * argv[])
       ibdilate->Update();
       ibdtime.Stop();
       ibdilate->Modified();
+
+      sbdtime.Start();
+      sbdilate->Update();
+      sbdtime.Stop();
+      sbdilate->Modified();
 
       hdtime.Start();
       hdilate->Update();
@@ -382,6 +394,7 @@ int main(int, char * argv[])
     std::cout << std::setprecision(3) << *it << "\t" 
               << bdtime.GetMeanTime() << "\t" 
               << ibdtime.GetMeanTime() << "\t" 
+              << sbdtime.GetMeanTime() << "\t" 
               << hdtime.GetMeanTime() << "\t" 
               << smhdtime.GetMeanTime() << "\t" 
               << adtime.GetMeanTime() << "\t" 
