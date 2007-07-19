@@ -17,7 +17,7 @@
 #ifndef __itkBlackTopHatImageFilter_h
 #define __itkBlackTopHatImageFilter_h
 
-#include "itkImageToImageFilter.h"
+#include "itkKernelImageFilter.h"
 
 namespace itk {
 
@@ -34,12 +34,12 @@ namespace itk {
  */
 template<class TInputImage, class TOutputImage, class TKernel>
 class ITK_EXPORT BlackTopHatImageFilter : 
-    public ImageToImageFilter<TInputImage, TOutputImage>
+    public KernelImageFilter<TInputImage, TOutputImage, TKernel>
 {
 public:
   /** Standard class typedefs. */
   typedef BlackTopHatImageFilter Self;
-  typedef ImageToImageFilter<TInputImage, TOutputImage>
+  typedef KernelImageFilter<TInputImage, TOutputImage, TKernel>
   Superclass;
   typedef SmartPointer<Self>        Pointer;
   typedef SmartPointer<const Self>  ConstPointer;
@@ -70,13 +70,7 @@ public:
 
   /** Runtime information support. */
   itkTypeMacro(BlackTopHatImageFilter, 
-               ImageToImageFilter);
-
-  /** Set kernel (structuring element). */
-  itkSetMacro(Kernel, KernelType);
-  
-  /** Get the kernel (structuring element). */
-  itkGetConstReferenceMacro(Kernel, KernelType);
+               KernelImageFilter);
 
   /** A safe border is added to input image to avoid borders effects
    * and remove it once the closing is done */
@@ -114,9 +108,6 @@ protected:
 private:
   BlackTopHatImageFilter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
-
-  /** kernel or structuring element to use. */
-  KernelType m_Kernel ;
 
   bool m_SafeBorder;
 

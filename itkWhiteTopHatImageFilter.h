@@ -17,7 +17,7 @@
 #ifndef __itkWhiteTopHatImageFilter_h
 #define __itkWhiteTopHatImageFilter_h
 
-#include "itkImageToImageFilter.h"
+#include "itkKernelImageFilter.h"
 
 namespace itk {
 
@@ -34,12 +34,12 @@ namespace itk {
  */
 template<class TInputImage, class TOutputImage, class TKernel>
 class ITK_EXPORT WhiteTopHatImageFilter : 
-    public ImageToImageFilter<TInputImage, TOutputImage>
+    public KernelImageFilter<TInputImage, TOutputImage, TKernel>
 {
 public:
   /** Standard class typedefs. */
   typedef WhiteTopHatImageFilter Self;
-  typedef ImageToImageFilter<TInputImage, TOutputImage>
+  typedef KernelImageFilter<TInputImage, TOutputImage, TKernel>
   Superclass;
   typedef SmartPointer<Self>        Pointer;
   typedef SmartPointer<const Self>  ConstPointer;
@@ -70,14 +70,11 @@ public:
 
   /** Runtime information support. */
   itkTypeMacro(WhiteTopHatImageFilter, 
-               ImageToImageFilter);
+               KernelImageFilter);
 
   /** Set kernel (structuring element). */
   itkSetMacro(Kernel, KernelType);
   
-  /** Get the kernel (structuring element). */
-  itkGetConstReferenceMacro(Kernel, KernelType);
-
   /** A safe border is added to input image to avoid borders effects
    * and remove it once the closing is done */
   itkSetMacro(SafeBorder, bool);
@@ -103,20 +100,12 @@ protected:
   ~WhiteTopHatImageFilter() {};
   void PrintSelf(std::ostream& os, Indent indent) const;
 
-  /** WhiteTopHatImageFilter needs the entire input be
-   * available. Thus, it needs to provide an implementation of
-   * GenerateInputRequestedRegion(). */
-  void GenerateInputRequestedRegion() ;
-
   void GenerateData();
   
 
 private:
   WhiteTopHatImageFilter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
-
-  /** kernel or structuring element to use. */
-  KernelType m_Kernel ;
 
   bool m_SafeBorder;
 

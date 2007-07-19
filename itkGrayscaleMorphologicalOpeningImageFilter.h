@@ -17,7 +17,7 @@
 #ifndef __itkGrayscaleMorphologicalOpeningImageFilter_h
 #define __itkGrayscaleMorphologicalOpeningImageFilter_h
 
-#include "itkImageToImageFilter.h"
+#include "itkKernelImageFilter.h"
 #include "itkMovingHistogramDilateImageFilter.h"
 #include "itkMovingHistogramErodeImageFilter.h"
 #include "itkBasicDilateImageFilter.h"
@@ -49,12 +49,12 @@ namespace itk {
 
 template<class TInputImage, class TOutputImage, class TKernel>
 class ITK_EXPORT GrayscaleMorphologicalOpeningImageFilter : 
-    public ImageToImageFilter<TInputImage, TOutputImage>
+    public KernelImageFilter<TInputImage, TOutputImage, TKernel>
 {
 public:
   /** Standard class typedefs. */
   typedef GrayscaleMorphologicalOpeningImageFilter Self;
-  typedef ImageToImageFilter<TInputImage,TOutputImage>  Superclass;
+  typedef KernelImageFilter<TInputImage,TOutputImage, TKernel>  Superclass;
   typedef SmartPointer<Self>        Pointer;
   typedef SmartPointer<const Self>  ConstPointer;
   
@@ -63,7 +63,7 @@ public:
 
   /** Runtime information support. */
   itkTypeMacro(GrayscaleMorphologicalOpeningImageFilter, 
-               ImageToImageFilter);
+               KernelImageFilter);
   
   /** Image related typedefs. */
   itkStaticConstMacro(ImageDimension, unsigned int,
@@ -96,21 +96,11 @@ public:
   
   /** Set kernel (structuring element). */
   void SetKernel( const KernelType& kernel );
-
-  /** Get the kernel (structuring element). */
-  itkGetConstReferenceMacro(Kernel, KernelType);
   
   /** Set/Get the backend filter class. */
   void SetAlgorithm(int algo );
   itkGetMacro(Algorithm, int);
   
-  /** GrayscaleMorphologicalOpeningImageFilter need to make sure they request enough of an
-   * input image to account for the structuring element size.  The input
-   * requested region is expanded by the radius of the structuring element.
-   * If the request extends past the LargestPossibleRegion for the input,
-   * the request is cropped by the LargestPossibleRegion. */
-  void GenerateInputRequestedRegion() ;
-
   /** GrayscaleMorphologicalOpeningImageFilter need to set its internal filters as modified */
   virtual void Modified() const;
 
@@ -136,9 +126,6 @@ protected:
 private:
   GrayscaleMorphologicalOpeningImageFilter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
-
-  /** kernel or structuring element to use. */
-  KernelType m_Kernel ;
 
   // the filters used internally
   typename HistogramDilateFilterType::Pointer m_HistogramDilateFilter;

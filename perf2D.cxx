@@ -40,7 +40,7 @@ int main(int, char * argv[])
 //   typedef itk::GrayscaleMorphologicalClosingImageFilter< IType, IType, SRType > CloseType;
 
   typedef itk::MovingHistogramDilateImageFilter< IType, IType, SRType > MHDilateType;
-  typedef itk::SeparableImageFilter< IType, IType, MHDilateType, SRType > SMHDilateType;
+  typedef itk::SeparableImageFilter< IType, IType, MHDilateType > SMHDilateType;
 
 //   typedef itk::MovingHistogramErodeImageFilter< IType, IType, SRType > MHErodeType;
 //   typedef itk::SeparableImageFilter< IType, IType, MHErodeType, SRType > SMHErodeType;

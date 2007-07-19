@@ -28,7 +28,6 @@ namespace itk {
 template<class TInputImage, class TOutputImage, class TKernel>
 GrayscaleErodeImageFilter<TInputImage, TOutputImage, TKernel>
 ::GrayscaleErodeImageFilter()
-  : m_Kernel()
 {
   m_BasicFilter = BasicFilterType::New();
   m_HistogramFilter = HistogramFilterType::New();
@@ -37,57 +36,6 @@ GrayscaleErodeImageFilter<TInputImage, TOutputImage, TKernel>
   m_Algorithm = HISTO;
 
   this->SetBoundary( itk::NumericTraits< PixelType >::max() );
-}
-
-template<class TInputImage, class TOutputImage, class TKernel>
-void
-GrayscaleErodeImageFilter<TInputImage, TOutputImage, TKernel>
-::GenerateInputRequestedRegion()
-{
-  // call the superclass' implementation of this method
-  Superclass::GenerateInputRequestedRegion();
-  
-  // get pointers to the input and output
-  typename Superclass::InputImagePointer  inputPtr = 
-    const_cast< TInputImage * >( this->GetInput() );
-  
-  if ( !inputPtr )
-    {
-    return;
-    }
-
-  // get a copy of the input requested region (should equal the output
-  // requested region)
-  typename TInputImage::RegionType inputRequestedRegion;
-  inputRequestedRegion = inputPtr->GetRequestedRegion();
-
-  // pad the input requested region by the operator radius
-  inputRequestedRegion.PadByRadius( m_Kernel.GetRadius() );
-
-  // crop the input requested region at the input's largest possible region
-  if ( inputRequestedRegion.Crop(inputPtr->GetLargestPossibleRegion()) )
-    {
-    inputPtr->SetRequestedRegion( inputRequestedRegion );
-    return;
-    }
-  else
-    {
-    // Couldn't crop the region (requested region is outside the largest
-    // possible region).  Throw an exception.
-
-    // store what we tried to request (prior to trying to crop)
-    inputPtr->SetRequestedRegion( inputRequestedRegion );
-    
-    // build an exception
-    InvalidRequestedRegionError e(__FILE__, __LINE__);
-    OStringStream msg;
-    msg << static_cast<const char *>(this->GetNameOfClass())
-        << "::GenerateInputRequestedRegion()";
-    e.SetLocation(msg.str().c_str());
-    e.SetDescription("Requested region is (at least partially) outside the largest possible region.");
-    e.SetDataObject(inputPtr);
-    throw e;
-    }
 }
 
 template< class TInputImage, class TOutputImage, class TKernel>
@@ -121,8 +69,8 @@ GrayscaleErodeImageFilter< TInputImage, TOutputImage, TKernel>
     // we need to set the kernel on the histogram filter to compare basic and histogram algorithm
     m_HistogramFilter->SetKernel( kernel );
 
-    if( ( ImageDimension == 2 && m_Kernel.Size() < m_HistogramFilter->GetPixelsPerTranslation() * 5.4 )
-        || ( ImageDimension == 3 && m_Kernel.Size() < m_HistogramFilter->GetPixelsPerTranslation() * 4.5 ) )
+    if( ( ImageDimension == 2 && this->GetKernel().Size() < m_HistogramFilter->GetPixelsPerTranslation() * 5.4 )
+        || ( ImageDimension == 3 && this->GetKernel().Size() < m_HistogramFilter->GetPixelsPerTranslation() * 4.5 ) )
       {
       m_BasicFilter->SetKernel( kernel );
       m_Algorithm = BASIC;
@@ -133,7 +81,7 @@ GrayscaleErodeImageFilter< TInputImage, TOutputImage, TKernel>
       }
     }
 
-  m_Kernel = kernel;
+  Superclass::SetKernel( kernel );
 }
 
 template< class TInputImage, class TOutputImage, class TKernel>
@@ -156,7 +104,7 @@ GrayscaleErodeImageFilter< TInputImage, TOutputImage, TKernel>
 {
   const FlatKernelType * flatKernel = NULL;
   try
-    { flatKernel = dynamic_cast< const FlatKernelType* >( & m_Kernel ); }
+    { flatKernel = dynamic_cast< const FlatKernelType* >( & this->GetKernel() ); }
   catch( ... ) {}
 
   if( m_Algorithm != algo )
@@ -164,11 +112,11 @@ GrayscaleErodeImageFilter< TInputImage, TOutputImage, TKernel>
 
     if( algo == BASIC )
       {
-      m_BasicFilter->SetKernel( m_Kernel );
+      m_BasicFilter->SetKernel( this->GetKernel() );
       }
     else if( algo == HISTO )
       {
-      m_HistogramFilter->SetKernel( m_Kernel );
+      m_HistogramFilter->SetKernel( this->GetKernel() );
       }
     else if( flatKernel != NULL && flatKernel->GetDecomposable() && algo == ANCHOR )
       {
@@ -270,7 +218,6 @@ GrayscaleErodeImageFilter<TInputImage, TOutputImage, TKernel>
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "Kernel: " << m_Kernel << std::endl;
   os << indent << "Boundary: " <<  static_cast<typename NumericTraits<PixelType>::PrintType>( m_Boundary ) << std::endl;
   os << indent << "Algorithm: " << m_Algorithm << std::endl;
 }

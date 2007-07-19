@@ -30,7 +30,6 @@ namespace itk {
 template <class TInputImage, class TOutputImage, class TKernel>
 BlackTopHatImageFilter<TInputImage, TOutputImage, TKernel>
 ::BlackTopHatImageFilter()
-  : m_Kernel()
 {
   m_SafeBorder = true;
   m_Algorithm = HISTO;
@@ -60,7 +59,7 @@ BlackTopHatImageFilter<TInputImage, TOutputImage, TKernel>
   inputRequestedRegion = inputPtr->GetRequestedRegion();
 
   // pad the input requested region by the operator radius
-  inputRequestedRegion.PadByRadius( m_Kernel.GetRadius() );
+  inputRequestedRegion.PadByRadius( this->GetKernel().GetRadius() );
 
   // crop the input requested region at the input's largest possible region
   if ( inputRequestedRegion.Crop(inputPtr->GetLargestPossibleRegion()) )
@@ -106,7 +105,7 @@ BlackTopHatImageFilter<TInputImage, TOutputImage, TKernel>
     close = GrayscaleMorphologicalClosingImageFilter<TInputImage, TInputImage, TKernel>::New();
 
   close->SetInput( this->GetInput() );
-  close->SetKernel(this->m_Kernel);
+  close->SetKernel( this->GetKernel() );
   close->SetSafeBorder( m_SafeBorder );
   if( m_ForceAlgorithm )
     {
@@ -148,7 +147,6 @@ BlackTopHatImageFilter<TInputImage, TOutputImage, TKernel>
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "Kernel: " << m_Kernel << std::endl;
   os << indent << "Algorithm: " << m_Algorithm << std::endl;
   os << indent << "SafeBorder: " << m_SafeBorder << std::endl;
   os << indent << "ForceAlgorithm: " << m_ForceAlgorithm << std::endl;
