@@ -43,6 +43,8 @@ int main(int argn, char * argv[])
     }
   else if( type == 4 )
     K = SEType::Annulus(Rad, atoi(argv[4]), atoi(argv[5]));
+  else if( type == 5 )
+    K = SEType::Cross(Rad);
   else
     return 1;
 

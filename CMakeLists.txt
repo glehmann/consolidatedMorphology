@@ -249,6 +249,9 @@ FOREACH(r 1 3 6 10 20 50)
   ADD_TEST(KernelBox2D-${r} kernelShape kernelShape-box-${r}.png ${r} 0)
   ADD_TEST(KernelBox2D-${r}-Compare ${IMAGE_COMPARE} kernelShape-box-${r}.png ${CMAKE_CURRENT_SOURCE_DIR}/images/kernelShape-box-${r}.png)
 
+  ADD_TEST(KernelCross2D-${r} kernelShape kernelShape-cross-${r}.png ${r} 5)
+  ADD_TEST(KernelCross2D-${r}-Compare ${IMAGE_COMPARE} kernelShape-cross-${r}.png ${CMAKE_CURRENT_SOURCE_DIR}/images/kernelShape-cross-${r}.png)
+
   ADD_TEST(KernelBall2D-${r} kernelShape kernelShape-ball-${r}.png ${r} 1)
   ADD_TEST(KernelBall2D-${r}-Compare ${IMAGE_COMPARE} kernelShape-ball-${r}.png ${CMAKE_CURRENT_SOURCE_DIR}/images/kernelShape-ball-${r}.png)
 

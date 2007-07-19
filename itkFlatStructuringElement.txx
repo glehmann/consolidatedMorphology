@@ -616,6 +616,8 @@ FlatStructuringElement<VDimension> FlatStructuringElement<VDimension>
   return(res);
 }
 
+
+
 template<unsigned int VDimension>
 FlatStructuringElement<VDimension> FlatStructuringElement<VDimension>
 ::Box(RadiusType radius)
@@ -642,6 +644,35 @@ FlatStructuringElement<VDimension> FlatStructuringElement<VDimension>
      {
      *kernel_it= true;
      }
+
+  return(res);
+}
+
+
+
+template<unsigned int VDimension>
+FlatStructuringElement<VDimension> FlatStructuringElement<VDimension>
+::Cross(RadiusType radius)
+{
+  // this should work for any number of dimensions
+  FlatStructuringElement res = FlatStructuringElement();
+  res.m_Decomposable = false;
+  res.SetRadius( radius );
+  Iterator kernel_it;
+  for( kernel_it=res.Begin(); kernel_it != res.End(); ++kernel_it )
+    {
+    *kernel_it= false;
+    }
+  for( int d = 0; d<VDimension; d++ )
+    {
+    OffsetType o;
+    o.Fill( 0 );
+    for( int i=-(int)radius[d]; i<=(int)radius[d]; i++ )
+      {
+      o[d] = i;
+      res[o] = true;
+      }
+    }
 
   return(res);
 }

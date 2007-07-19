@@ -34,6 +34,7 @@ public:
   /** Size and value typedef support. */
   typedef typename Superclass::SizeType      SizeType;
   typedef typename Superclass::SizeValueType SizeValueType;
+  typedef typename Superclass::OffsetType OffsetType;
   
   /** Radius typedef support. */
   typedef typename Superclass::RadiusType RadiusType;
@@ -59,6 +60,8 @@ public:
   
   static Self Ball(RadiusType radius);
   
+  static Self Cross( RadiusType radius );
+
   static Self Annulus( RadiusType radius,
                        unsigned int thickness = 1,
                        bool includeCenter = false );
