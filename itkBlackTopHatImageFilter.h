@@ -22,7 +22,11 @@
 namespace itk {
 
 /** \class BlackTopHatImageFilter
- * \brief Black top hat extract local minima that are larger than the structuring element
+ * \brief Black top hat extract local minima that are smaller than the structuring element
+ *
+ * Black top hat extract local minima that are smaller than the structuring
+ * element. It subtract the background in the input image.
+ * The output of the filter transforms the black peaks in white peaks.
  *
  * Top-hats are described in Chapter 4.5 of Pierre Soille's book 
  * "Morphological Image Analysis: Principles and Applications", 

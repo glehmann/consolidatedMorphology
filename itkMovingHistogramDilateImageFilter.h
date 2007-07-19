@@ -25,7 +25,7 @@ namespace itk {
  * \class MovingHistogramDilateImageFilter
  * \brief gray scale dilation of an image
  *
- * MorphologicalGradient an image using grayscale morphology. Dilation takes the
+ * Dilate an image using grayscale morphology. Dilation takes the
  * maximum of all the pixels identified by the structuring element.
  *
  * The structuring element is assumed to be composed of binary

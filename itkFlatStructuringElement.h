@@ -12,6 +12,13 @@ namespace itk {
 /** \class FlatStructuringElement
 * \brief A class to support a variety of flat structuring elements, 
 * including versions created by decomposition of lines.
+* 
+* FlatStructuringElement provides several static methods, which can
+* be used to create a structuring element with a particular shape,
+* size, etc. Currently, those methods allow to create a ball, a box,
+* a cross structuring element, and let create a structuring element
+* based on an image.
+*
 **/
 
 template<unsigned int VDimension>
@@ -56,19 +63,33 @@ public:
 
   /** Various constructors */
 
+  /**
+   * Create a box structuring element. The structuring element is
+   * is decomposable.
+   */
   static Self Box(RadiusType radius);
   
+  /** Create a ball structuring element */
   static Self Ball(RadiusType radius);
   
+  /** Create a cross structuring element */
   static Self Cross( RadiusType radius );
 
+  /** Create an annulus structuring element */
   static Self Annulus( RadiusType radius,
                        unsigned int thickness = 1,
                        bool includeCenter = false );
 
-  // lines is the number of elements in the decomposition
+  /** 
+   * Create a polygon structuring element. The structuring element is
+   * is decomposable.
+   * lines is the number of elements in the decomposition
+   */
   static Self Poly(RadiusType radius, unsigned lines);
   
+  /**
+   * Create a structuring element based on a binary image.
+   */
   template < class ImageType >
   static Self FromImage( const typename ImageType::Pointer image,
       typename ImageType::PixelType foreground=NumericTraits< typename ImageType::PixelType >::max() );
@@ -78,11 +99,17 @@ public:
 
   static Self FromImageUC( const typename Image<unsigned char, VDimension>::Pointer image );
 
+  /**
+   * Returns wether the structuring element is decomposable or not. If the
+   * structuring is decomposable, the set of lines associated with the
+   * structuring may be used by an algorithm instead of the standard buffer.
+   */
   bool GetDecomposable() const
   {
     return m_Decomposable;
   }
 
+  /** Return the lines associated with the structuring element */
   const DecompType & GetLines() const
   {
     return(m_Lines);
@@ -113,6 +140,10 @@ public:
    
 protected:
 
+  /**
+   * Fill the buffer of the structuring element based on the lines 
+   * associated to the structuring element
+   */
   void ComputeBufferFromLines();
 
 
