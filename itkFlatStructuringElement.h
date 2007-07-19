@@ -59,6 +59,10 @@ public:
   
   static Self Ball(RadiusType radius);
   
+  static Self Annulus( RadiusType radius,
+                       unsigned int thickness = 1,
+                       bool includeCenter = false );
+
   // lines is the number of elements in the decomposition
   static Self Poly(RadiusType radius, unsigned lines);
   

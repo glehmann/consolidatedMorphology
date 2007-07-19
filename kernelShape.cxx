@@ -41,6 +41,8 @@ int main(int argn, char * argv[])
     reader->SetFileName( argv[4] );
     K = SEType::FromImage<IType>( reader->GetOutput() );
     }
+  else if( type == 4 )
+    K = SEType::Annulus(Rad, atoi(argv[4]), atoi(argv[5]));
   else
     return 1;
 

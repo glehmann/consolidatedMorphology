@@ -751,6 +751,128 @@ FlatStructuringElement<VDimension> FlatStructuringElement<VDimension>
 }
 
 
+template<unsigned int NDimension>
+FlatStructuringElement<NDimension> 
+FlatStructuringElement<NDimension>
+::Annulus(RadiusType radius,
+          unsigned int thickness,
+          bool includeCenter)
+{
+  Self result = Self();
+  result.SetRadius( radius );
+  result.m_Decomposable = false;
+  
+  // Image typedef
+  typedef Image<bool,NDimension> ImageType;
+
+  // Create an image to hold the ellipsoid
+  //
+  typename ImageType::Pointer kernelImage = ImageType::New();
+  typename ImageType::RegionType region;
+  RadiusType size = radius;
+  for(unsigned int i=0; i<NDimension; i++ )
+    {
+    size[i] = 2*size[i] + 1;
+    }
+  region.SetSize( size );
+
+  kernelImage->SetRegions( region );
+  kernelImage->Allocate();
+
+  // Set the background to be zero
+  //
+  ImageRegionIterator<ImageType> it(kernelImage, region);
+
+  for(it.GoToBegin(); !it.IsAtEnd(); ++it)
+    {
+    it.Set(false);
+    }
+
+  // Create two ellipsoids
+  //
+
+  // Ellipsoid spatial function typedef
+  typedef EllipsoidInteriorExteriorSpatialFunction<NDimension> EllipsoidType;
+  
+  // Create an ellipsoid spatial function for the source image
+  typename EllipsoidType::Pointer ellipsoidOuter = EllipsoidType::New();
+  typename EllipsoidType::Pointer ellipsoidInner = EllipsoidType::New();
+
+  // Define and set the axes lengths for the ellipsoid
+  typename EllipsoidType::InputType axesOuter;
+  typename EllipsoidType::InputType axesInner;
+  for (unsigned int i=0; i < NDimension; i++)
+    {
+    axesOuter[i] = result.GetSize(i);
+    axesInner[i] = std::max( 2*(long)radius[i] + 1 - 2*(long)thickness, (long)1 );
+    }
+  ellipsoidOuter->SetAxes( axesOuter );
+  ellipsoidInner->SetAxes( axesInner );
+
+  // Define and set the center of the ellipsoid in physical space
+  typename EllipsoidType::InputType center;
+  for (unsigned int i=0; i < NDimension; i++)
+    {
+    // put the center of ellipse in the middle of the center pixel
+    center[i] = result.GetRadius(i) + 0.5; 
+    }
+  ellipsoidOuter->SetCenter( center );
+  ellipsoidInner->SetCenter( center );
+
+  // Define the orientations of the ellipsoid axes, for now, we'll use
+  // the identity matrix
+  typename EllipsoidType::OrientationType orientations;
+  orientations.fill( 0.0 );
+  orientations.fill_diagonal( 1.0 );
+  ellipsoidOuter->SetOrientations( orientations );
+  ellipsoidInner->SetOrientations( orientations );
+
+  // Create the starting seed
+  typename ImageType::IndexType seed;
+  for (unsigned int i=0; i < NDimension; i++)
+    {
+    seed[i] = result.GetRadius(i);
+    }
+
+  // Define the iterators for each ellipsoid
+  typedef FloodFilledSpatialFunctionConditionalIterator<ImageType, EllipsoidType>
+    FloodIteratorType;
+  FloodIteratorType itEllipsoidOuter =
+    FloodIteratorType( kernelImage, ellipsoidOuter, seed );
+  FloodIteratorType itEllipsoidInner = 
+    FloodIteratorType( kernelImage, ellipsoidInner, seed );
+  itEllipsoidOuter.SetCenterInclusionStrategy();
+  itEllipsoidInner.SetCenterInclusionStrategy();
+
+  // Iterate through the image and set all outer pixels to 'ON'
+  for(; !itEllipsoidOuter.IsAtEnd(); ++itEllipsoidOuter)
+    {
+    itEllipsoidOuter.Set(true);
+    }
+  // Iterate through the image and set all inner pixels to 'OFF'
+  for(; !itEllipsoidInner.IsAtEnd(); ++itEllipsoidInner)
+    {
+    itEllipsoidInner.Set(false);
+    }
+
+  // Set center pixel if included
+  kernelImage->SetPixel( seed, includeCenter );
+
+  // Copy the annulus into the kernel
+  //
+  Iterator kernel_it;
+  for (it.GoToBegin(), kernel_it=result.Begin(); !it.IsAtEnd(); ++it,++kernel_it)
+    {
+    *kernel_it = it.Get();
+    }
+
+  // Clean up
+  //   ...temporary image should be cleaned up by SmartPointers automatically
+
+  return result;
+}
+
+
 template<unsigned int VDimension>
 template< class ImageType >
 FlatStructuringElement<VDimension>

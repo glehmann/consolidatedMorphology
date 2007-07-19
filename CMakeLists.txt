@@ -252,6 +252,13 @@ FOREACH(r 1 3 6 10 20 50)
   ADD_TEST(KernelBall2D-${r} kernelShape kernelShape-ball-${r}.png ${r} 1)
   ADD_TEST(KernelBall2D-${r}-Compare ${IMAGE_COMPARE} kernelShape-ball-${r}.png ${CMAKE_CURRENT_SOURCE_DIR}/images/kernelShape-ball-${r}.png)
 
+  FOREACH(t 1 3)
+    FOREACH(c 0 1)
+      ADD_TEST(KernelAnnulus2D-${r}-${t}-${c} kernelShape kernelShape-annulus-${r}-${t}-${c}.png ${r} 4 ${t} ${c})
+      ADD_TEST(KernelAnnulus2D-${r}-${t}-${c}-Compare ${IMAGE_COMPARE} kernelShape-annulus-${r}-${t}-${c}.png ${CMAKE_CURRENT_SOURCE_DIR}/images/kernelShape-annulus-${r}-${t}-${c}.png)
+    ENDFOREACH(c)
+  ENDFOREACH(t)
+  
 #   FOREACH(l 2 4 6)
 #     ADD_TEST(KernelPoly2D-${r}-${l} kernelShape kernelShape-poly-${r}-${l}.png ${r} 2 ${l})
 #     ADD_TEST(KernelPoly2D-${r}-${l}-Compare ${IMAGE_COMPARE} kernelShape-poly-${r}-${l}.png ${CMAKE_CURRENT_SOURCE_DIR}/images/kernelShape-poly-${r}-${l}.png)
