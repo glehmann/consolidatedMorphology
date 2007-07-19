@@ -15,8 +15,8 @@ namespace itk {
  * filter, and run it several times (one per dimension) to implement
  * the same separable transform.
  * This filter can be used with the filter for which the neighborhood is
- * defined by the SetRadius() method. For a filter which use the SetKernel()
- * method, the SeparableImageFilter can be used.
+ * defined by the SetRadius() method, like the BoxImageFilter and its
+ * subcalsses.
  *
  * \author Gaetan Lehmann
  * \author Richard Beare

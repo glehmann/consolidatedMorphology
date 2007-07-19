@@ -77,6 +77,7 @@ SeparableImageFilter<TInputImage, TOutputImage, TFilter>
     progress->RegisterInternalFilter( m_Filters[i], 1.0/ImageDimension );
     }
 
+  m_Cast->GraftOutput( this->GetOutput() ); 
   m_Cast->Update();
   this->GraftOutput( m_Cast->GetOutput() );
 
