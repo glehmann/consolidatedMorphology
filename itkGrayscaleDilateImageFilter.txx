@@ -150,7 +150,7 @@ GrayscaleDilateImageFilter<TInputImage, TOutputImage, TKernel>
   // Delegate to a dilate filter.
   if( m_Algorithm == BASIC )
     {
-//     std::cout << "BasicDilateImageFilter" << std::endl;
+    itkDebugMacro("Running BasicDilateImageFilter");
     m_BasicFilter->SetInput( this->GetInput() );
     progress->RegisterInternalFilter( m_BasicFilter, 1.0f );
     
@@ -160,7 +160,7 @@ GrayscaleDilateImageFilter<TInputImage, TOutputImage, TKernel>
     }
   else if( m_Algorithm == HISTO )
     {
-//     std::cout << "MovingHistogramDilateImageFilter" << std::endl;
+    itkDebugMacro("Running MovingHistogramDilateImageFilter");
     m_HistogramFilter->SetInput( this->GetInput() );
     progress->RegisterInternalFilter( m_HistogramFilter, 1.0f );
     
@@ -170,7 +170,7 @@ GrayscaleDilateImageFilter<TInputImage, TOutputImage, TKernel>
     }
   else if( m_Algorithm == ANCHOR )
     {
-//     std::cout << "AnchorDilateImageFilter" << std::endl;
+    itkDebugMacro("Running AnchorDilateImageFilter");
     m_AnchorFilter->SetInput( this->GetInput() );
     progress->RegisterInternalFilter( m_AnchorFilter, 0.9f );
 
@@ -184,7 +184,7 @@ GrayscaleDilateImageFilter<TInputImage, TOutputImage, TKernel>
     }
   else if( m_Algorithm == VHGW )
     {
-//     std::cout << "vHGWDilateImageFilter" << std::endl;
+    itkDebugMacro("Running vHGWDilateImageFilter");
     m_VHGWFilter->SetInput( this->GetInput() );
     progress->RegisterInternalFilter( m_VHGWFilter, 0.9f );
 

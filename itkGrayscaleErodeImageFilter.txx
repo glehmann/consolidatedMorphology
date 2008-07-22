@@ -150,7 +150,7 @@ GrayscaleErodeImageFilter<TInputImage, TOutputImage, TKernel>
   // Delegate to a dilate filter.
   if( m_Algorithm == BASIC )
     {
-//     std::cout << "BasicErodeImageFilter" << std::endl;
+    itkDebugMacro("Running BasicErodeImageFilter");
     m_BasicFilter->SetInput( this->GetInput() );
     progress->RegisterInternalFilter( m_BasicFilter, 1.0f );
     
@@ -160,7 +160,7 @@ GrayscaleErodeImageFilter<TInputImage, TOutputImage, TKernel>
     }
   else if( m_Algorithm == HISTO )
     {
-//     std::cout << "MovingHistogramErodeImageFilter" << std::endl;
+    itkDebugMacro("Running MovingHistogramErodeImageFilter");
     m_HistogramFilter->SetInput( this->GetInput() );
     progress->RegisterInternalFilter( m_HistogramFilter, 1.0f );
     
@@ -170,7 +170,7 @@ GrayscaleErodeImageFilter<TInputImage, TOutputImage, TKernel>
     }
   else if( m_Algorithm == ANCHOR )
     {
-//     std::cout << "AnchorErodeImageFilter" << std::endl;
+    itkDebugMacro("Running AnchorErodeImageFilter");
     m_AnchorFilter->SetInput( this->GetInput() );
     progress->RegisterInternalFilter( m_AnchorFilter, 0.9f );
 
@@ -184,7 +184,7 @@ GrayscaleErodeImageFilter<TInputImage, TOutputImage, TKernel>
     }
   else if( m_Algorithm == VHGW )
     {
-//     std::cout << "vHGWErodeImageFilter" << std::endl;
+    itkDebugMacro("Running vHGWErodeImageFilter");
     m_VHGWFilter->SetInput( this->GetInput() );
     progress->RegisterInternalFilter( m_VHGWFilter, 0.9f );
 
