@@ -41,6 +41,19 @@ GrayscaleDilateImageFilter<TInputImage, TOutputImage, TKernel>
 template< class TInputImage, class TOutputImage, class TKernel>
 void
 GrayscaleDilateImageFilter< TInputImage, TOutputImage, TKernel>
+::SetNumberOfThreads( int nb )
+{
+  Superclass::SetNumberOfThreads( nb );
+  m_HistogramFilter->SetNumberOfThreads( nb );
+  m_AnchorFilter->SetNumberOfThreads( nb );
+  m_VHGWFilter->SetNumberOfThreads( nb );
+  m_BasicFilter->SetNumberOfThreads( nb );
+}
+
+
+template< class TInputImage, class TOutputImage, class TKernel>
+void
+GrayscaleDilateImageFilter< TInputImage, TOutputImage, TKernel>
 ::SetKernel( const KernelType& kernel )
 {
   const FlatKernelType * flatKernel = NULL;

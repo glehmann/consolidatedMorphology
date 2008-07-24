@@ -144,6 +144,8 @@ public:
   static const int ANCHOR = 2;
   static const int VHGW = 3;
 
+  void SetNumberOfThreads( int nb );
+
 
 protected:
   GrayscaleDilateImageFilter();
